@@ -5,7 +5,7 @@ Vue.use(Router)
 
 import Msg from '../pages/Msg'
 import Contacts from '../pages/Contacts'
-import Menu from '../pages/Menu'
+import More from '../pages/More'
 
 const routes = [
   {
@@ -21,8 +21,8 @@ const routes = [
     component: Contacts
   },
   {
-    path: '/menu',
-    component: Menu
+    path: '/more',
+    component: More
   }
 ]
 

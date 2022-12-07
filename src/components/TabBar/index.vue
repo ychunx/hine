@@ -10,9 +10,9 @@
             <img src="../../assets/images/contacts-fill.png">
             <span>通讯录</span>
         </div>
-        <div class="bar-button" :class="scene == 'menu' ? 'active' : ''" @click="changeScene('menu')">
-            <img src="../../assets/images/menu.png">
-            <img src="../../assets/images/menu-fill.png">
+        <div class="bar-button" :class="scene == 'more' ? 'active' : ''" @click="changeScene('more')">
+            <img src="../../assets/images/more.png">
+            <img src="../../assets/images/more-fill.png">
             <span>发现</span>
         </div>
     </div>
