@@ -66,7 +66,7 @@ export default {
             width: 100%;
             background: #fff;
             border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+                border-top-right-radius: 20px;
             li{
                 display: flex;
                 align-items: center;

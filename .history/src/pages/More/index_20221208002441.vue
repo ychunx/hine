@@ -45,6 +45,7 @@ export default {
                 -20px -20px 60px #6e90a0;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
             img{
                 width: 100px;
                 height: 100px;
@@ -64,9 +65,10 @@ export default {
         }
         .more-main{
             width: 100%;
-            background: #fff;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            //background: #fff;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+                box-shadow: 20px 20px 60px #d9d9d9,
+                    -20px -20px 60px #ffffff;
             li{
                 display: flex;
                 align-items: center;

@@ -3,7 +3,7 @@
         <div class="more-top">
             <img src="../../assets/images/1.jpg">
             <div>
-                <p>王强</p>
+                
             </div>
         </div>
         <div class="more-br"></div>
@@ -39,12 +39,10 @@ export default {
             padding: 50px 25px 25px 25px;
             box-sizing: border-box;
             display: flex;
-            //background: #607D8B;
-            background: linear-gradient(145deg, #678695, #56717d);
-            box-shadow: 20px 20px 60px #526a76,
-                -20px -20px 60px #6e90a0;
+            background: #607D8B;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             img{
                 width: 100px;
                 height: 100px;
@@ -53,9 +51,6 @@ export default {
             }
             div{
                 flex: 1;
-                color: #fff;
-                font-size: 20px;
-                font-weight: bold;
             }
         }
         .more-br{
@@ -65,8 +60,6 @@ export default {
         .more-main{
             width: 100%;
             background: #fff;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
             li{
                 display: flex;
                 align-items: center;

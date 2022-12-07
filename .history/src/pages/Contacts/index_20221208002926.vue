@@ -123,8 +123,6 @@ export default {
         .contacts-main{
             width: 100%;
             background: #fff;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
             box-shadow: 20px 20px 60px #d9d9d9,
                     -20px -20px 60px #ffffff;
             li{

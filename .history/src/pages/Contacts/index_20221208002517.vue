@@ -97,11 +97,7 @@ export default {
         background: #E7F0F7;
         .contacts-menu{
             width: 100%;
-            background: #fff;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 20px 20px 60px #d9d9d9,
-                    -20px -20px 60px #ffffff;
+            //background: #fff;
             li{
                 display: flex;
                 align-items: center;
@@ -123,10 +119,6 @@ export default {
         .contacts-main{
             width: 100%;
             background: #fff;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            box-shadow: 20px 20px 60px #d9d9d9,
-                    -20px -20px 60px #ffffff;
             li{
                 display: flex;
                 align-items: center;
