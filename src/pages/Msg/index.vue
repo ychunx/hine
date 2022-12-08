@@ -1,7 +1,7 @@
 <template>
   <div class="msg">
     <TopBar />
-    <ul class="msg-ul">
+    <ul class="msg-ul" @click="intoDialog">
       <li class="msg-item">
         <div class="msg-item-tip">8</div>
         <img src="../../assets/images/1.jpg">
@@ -168,6 +168,11 @@ import TopBar from '../../components/TopBar'
 export default {
     name: 'Msg',
     components:{TopBar},
+    methods:{
+      intoDialog(e){
+        this.$router.push('/dialog')
+      }
+    }
 }
 </script>
 
@@ -234,6 +239,8 @@ export default {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-size: 14px;
+            letter-spacing: 1.5px;
           }
         }
       }

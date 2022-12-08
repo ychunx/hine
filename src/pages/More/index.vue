@@ -6,19 +6,22 @@
                 <p>王强</p>
             </div>
         </div>
-        <div class="more-br"></div>
         <ul class="more-main">
-            <li>
-                <img src="../../assets/images/add.png">
-                <span>好友请求</span>
+            <li @click="intoSearch">
+                <img src="../../assets/images/search.png">
+                <span>搜索</span>
             </li>
             <li>
                 <img src="../../assets/images/add.png">
                 <span>好友请求</span>
             </li>
             <li>
-                <img src="../../assets/images/add.png">
-                <span>好友请求</span>
+                <img src="../../assets/images/group.png">
+                <span>新建群组</span>
+            </li>
+            <li>
+                <img src="../../assets/images/hint.png">
+                <span>新建加密对话</span>
             </li>
         </ul>
     </div>
@@ -27,12 +30,16 @@
 <script>
 export default {
     name: 'More',
+    methods:{
+        intoSearch(){
+            this.$router.push('/search')
+        }
+    }
 }
 </script>
 
 <style lang="less" scoped>
 .more{
-        background: #E7F0F7;
         .more-top{
             width: 100%;
             height: 175px;
@@ -41,8 +48,8 @@ export default {
             display: flex;
             //background: #607D8B;
             background: linear-gradient(145deg, #678695, #56717d);
-            box-shadow: 20px 20px 60px #526a76,
-                -20px -20px 60px #6e90a0;
+            box-shadow: 10px 10px 20px #526a76,
+                -10px -10px 20px #6e90a0;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             img{
@@ -58,15 +65,9 @@ export default {
                 font-weight: bold;
             }
         }
-        .more-br{
-            width: 100%;
-            height: 30px;
-        }
         .more-main{
             width: 100%;
-            background: #fff;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
+            padding-top: 30px;
             li{
                 display: flex;
                 align-items: center;

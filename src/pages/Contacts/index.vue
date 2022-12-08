@@ -7,15 +7,14 @@
                 <span>好友请求</span>
             </li>
             <li>
-                <img src="../../assets/images/add.png">
-                <span>好友请求</span>
+                <img src="../../assets/images/group.png">
+                <span>新建群组</span>
             </li>
             <li>
-                <img src="../../assets/images/add.png">
-                <span>好友请求</span>
+                <img src="../../assets/images/hint.png">
+                <span>新建加密对话</span>
             </li>
         </ul>
-        <div class="contacts-br"></div>
         <ul class="contacts-main">
             <li>
                 <img src="../../assets/images/1.jpg">
@@ -97,6 +96,7 @@ export default {
         background: #E7F0F7;
         .contacts-menu{
             width: 100%;
+            margin-bottom: 20px;
             background: #fff;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
@@ -115,10 +115,6 @@ export default {
                     font-weight: bold;
                 }
             }
-        }
-        .contacts-br{
-            width: 100%;
-            height: 30px;
         }
         .contacts-main{
             width: 100%;

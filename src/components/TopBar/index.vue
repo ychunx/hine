@@ -3,7 +3,7 @@
         <div class="mask"></div>
         <div class="top-bar">
             <div>Hine</div>
-            <div><img src="../../assets/images/search.png"></div>
+            <div @click="intoSearch"><img src="../../assets/images/search.png"></div>
         </div>
     </div>
 </template>
@@ -11,11 +11,16 @@
 <script>
 export default {
     name: 'TopBar',
+    methods:{
+        intoSearch(){
+            this.$router.push('/search')
+        }
+    }
 }
 </script>
 
 <style lang="less" scoped>
-    .mask{
+.mask{
         width: 100%;
         height: 60px;
         position: fixed;
@@ -30,6 +35,8 @@ export default {
         border-bottom: 1px solid #EDEDED;
         //background: #E7F0F7;
         background: rgba(255, 255, 255, 0.9);
+        box-shadow: 10px 10px 20px #f2f2f2,
+                -10px -10px 20px #ffffff;
         position: fixed;
         top: 0;
         left: 0;

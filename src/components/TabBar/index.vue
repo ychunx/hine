@@ -1,5 +1,5 @@
 <template>
-    <div class="bar-box">
+    <div class="bar-box" :class="close ? 'deactive' : ''">
         <div class="bar-button" :class="scene == 'msg' ? 'active' : ''" @click="changeScene('msg')">
             <img src="../../assets/images/msg.png">
             <img src="../../assets/images/msg-fill.png">
@@ -24,9 +24,16 @@ export default {
     data(){
         return {
             scene : 'msg',
+            close: false
         }
     },
     methods:{
+        closeTabBar(){
+            this.close = true
+        },
+        showTabBar(){
+            this.close = false
+        },
         changeScene(scene){
             let curScene = this.$route.path.slice(1)
             if(scene != curScene) {
@@ -34,11 +41,18 @@ export default {
                 this.scene = scene
             }
         }
+    },
+    mounted(){
+        this.$bus.$on('closeTabBar',this.closeTabBar)
+        this.$bus.$on('showTabBar', this.showTabBar)
     }
 }
 </script>
 
 <style lang="less" scoped>
+.bar-box.deactive{
+    transform: translateY(60px);
+}
 .bar-box{
         width: 100%;
         height: 60px;
@@ -48,6 +62,7 @@ export default {
         bottom: 0;
         display: flex;
         justify-content: space-around;
+        transition: all .3s ease-out;
         .bar-button{
             width: 60px;
             height: 60px;

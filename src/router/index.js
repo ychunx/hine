@@ -6,6 +6,8 @@ Vue.use(Router)
 import Msg from '../pages/Msg'
 import Contacts from '../pages/Contacts'
 import More from '../pages/More'
+import Dialog from '../pages/Dialog'
+import search from '../pages/Search'
 
 const routes = [
   {
@@ -23,6 +25,14 @@ const routes = [
   {
     path: '/more',
     component: More
+  },
+  {
+    path: '/dialog',
+    component: Dialog
+  },
+  {
+    path: '/search',
+    component: search
   }
 ]
 
