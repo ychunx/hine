@@ -158,6 +158,58 @@
           </div>
         </div>
       </li>
+      <li class="msg-item">
+        <div class="msg-item-tip">8</div>
+        <img src="../../assets/images/1.jpg">
+        <div class="msg-item-main">
+          <div class="msg-item-title">
+            <span>王强</span>
+            <span>PM 12:00</span>
+          </div>
+          <div class="msg-item-content">
+            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
+          </div>
+        </div>
+      </li>
+      <li class="msg-item">
+        <div class="msg-item-tip">8</div>
+        <img src="../../assets/images/1.jpg">
+        <div class="msg-item-main">
+          <div class="msg-item-title">
+            <span>王强</span>
+            <span>PM 12:00</span>
+          </div>
+          <div class="msg-item-content">
+            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
+          </div>
+        </div>
+      </li>
+      <li class="msg-item">
+        <div class="msg-item-tip">8</div>
+        <img src="../../assets/images/1.jpg">
+        <div class="msg-item-main">
+          <div class="msg-item-title">
+            <span>王强</span>
+            <span>PM 12:00</span>
+          </div>
+          <div class="msg-item-content">
+            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
+          </div>
+        </div>
+      </li>
+      <li class="msg-item">
+        <div class="msg-item-tip">8</div>
+        <img src="../../assets/images/1.jpg">
+        <div class="msg-item-main">
+          <div class="msg-item-title">
+            <span>王强</span>
+            <span>PM 12:00</span>
+          </div>
+          <div class="msg-item-content">
+            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
+          </div>
+        </div>
+      </li>
     </ul>
   </div>
 </template>
@@ -179,9 +231,12 @@ export default {
 <style lang="less" scoped>
 .msg{
   width: 100%;
-  padding: 60px 0;
   .msg-ul{
     width: 100%;
+    height: calc(100vh - 60px);
+    padding-top: 60px;
+    overflow: scroll;
+    box-sizing: border-box;
     .msg-item {
         width: 100%;
         height: 80px;
