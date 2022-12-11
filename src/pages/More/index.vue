@@ -1,9 +1,11 @@
 <template>
     <div class="more">
         <div class="more-top">
-            <img src="../../assets/images/1.jpg">
-            <div>
-                <p>王强</p>
+            <div class="more-top-box">
+                <img src="../../assets/images/1.jpg">
+                <div>
+                    <p>王强</p>
+                </div>
             </div>
         </div>
         <ul class="more-main">
@@ -40,38 +42,56 @@ export default {
 
 <style lang="less" scoped>
 .more{
+        width: 100%;
+        height: calc(100vh - 60px);
+        background: #f9f9f9;
         .more-top{
             width: 100%;
-            height: 175px;
-            padding: 50px 25px 25px 25px;
-            box-sizing: border-box;
-            display: flex;
-            //background: #607D8B;
-            background: linear-gradient(145deg, #678695, #56717d);
-            box-shadow: 10px 10px 20px #526a76,
-                -10px -10px 20px #6e90a0;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            img{
-                width: 100px;
-                height: 100px;
-                border-radius: 10px;
-                margin-right: 20px;
-            }
-            div{
-                flex: 1;
-                color: #fff;
-                font-size: 20px;
-                font-weight: bold;
+            height: 120px;
+            background: #607D8B;
+            position: relative;
+            .more-top-box{
+                width: 90%;
+                height: 175px;
+                border-top-left-radius: 15px;
+                border-top-right-radius: 15px;
+                background: #ffffff;
+                position: absolute;
+                top: 90px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding-top: 60px;
+                box-sizing: border-box;
+                img{
+                    width: 100px;
+                    height: 100px;
+                    border-radius: 50%;
+                    position: absolute;
+                    top: -50px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+                }
+                div{
+                    p{
+                        text-align: center;
+                        font-size: 22px;
+                        font-weight: bold;
+                    }
+                }
             }
         }
         .more-main{
             width: 100%;
-            padding-top: 30px;
+            margin-top: 160px;
             li{
+                width: 90%;
                 display: flex;
                 align-items: center;
-                padding: 15px 30px;
+                padding: 15px;
+                margin: 0 auto;
+                background: #ffffff;
+                box-sizing: border-box;
                 img{
                     width: 20px;
                     height: 20px;
