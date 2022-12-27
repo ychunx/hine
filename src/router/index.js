@@ -7,7 +7,9 @@ import Msg from '../pages/Msg'
 import Contacts from '../pages/Contacts'
 import More from '../pages/More'
 import Dialog from '../pages/Dialog'
-import search from '../pages/Search'
+import Search from '../pages/Search'
+import Login from '../pages/Login'
+import Register from '../pages/Register'
 
 const routes = [
   {
@@ -32,7 +34,15 @@ const routes = [
   },
   {
     path: '/search',
-    component: search
+    component: Search
+  },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/register',
+    component: Register
   }
 ]
 
