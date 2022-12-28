@@ -16,7 +16,7 @@
     </div>
     <div class="button">
         <div class="button-register" @click="intoRegister">创建账号</div>
-        <div class="button-login">登录</div>
+        <div class="button-login" @click="login">登录</div>
     </div>
   </div>
 </template>
@@ -30,6 +30,9 @@ export default {
     methods:{
         intoRegister(){
             this.$router.push('/register')
+        },
+        login(){
+            this.$API.test()
         }
     }
 }

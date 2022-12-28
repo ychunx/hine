@@ -1,5 +1,5 @@
 const state = {
-
+  token: 'this is token'
 }
 
 const mutations = {
