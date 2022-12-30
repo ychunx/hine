@@ -7,17 +7,17 @@
         <span>用户名</span>
     </div>
     <div class="inputs">
-        <input type="text" required @blur="isEmail" v-model="userEmail">
+        <input type="text" required v-model="userEmail">
         <span>电子邮件地址</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model="userPassword">
+        <input type="password" required v-model="passWord">
         <span>密码</span>
     </div>
     <div class="tips">{{tips}}</div>
     <div class="button">
-        <div class="button-register" @click="intoLogin">已有账号</div>
-        <div class="button-login">注册</div>
+        <div class="button-to-login" @click="intoLogin">已有账号</div>
+        <div class="button-register" :class="isComplete ? '' : 'grey'" @click="register">注册</div>
     </div>
   </div>
 </template>
@@ -30,25 +30,43 @@ export default {
             tips: '',
             userName: '',
             userEmail: '',
-            userPassword: ''
+            passWord: ''
         }
-    },
-    mounted() {
-        this.$bus.$emit('closeTabBar')
     },
     methods: {
         intoLogin() {
             this.$router.push('/login')
         },
-        isEmail(e){
-            let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
-            if(!regEmail.test(this.userEmail)) {
-                this.tips = '请输入正确的电子邮件地址！'
+        async register() {
+            if (this.isComplete) {
+                console.log(await this.$API.signup(this.userEmail))
+            } else if (!this.userName) {
+                this.tips = '请输入用户名！'
+            } else if (!this.passWord){
+                this.tips = '请输入密码！'
             } else {
-                this.tips = ''
+                this.tips = '请输入正确的电子邮件地址！'
             }
         }
-    }
+    },
+    computed: {
+        isComplete() {
+            let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+            if (this.userName && this.userEmail && this.passWord && regEmail.test(this.userEmail)) {
+                this.tips = ''
+                return true
+            } else {
+                this.tips = ''
+                if (this.userEmail && !regEmail.test(this.userEmail)) {
+                    this.tips = '请输入正确的电子邮件地址！'
+                }
+                return false
+            }
+        }
+    },
+    mounted() {
+        this.$bus.$emit('closeTabBar')
+    },
 }
 </script>
 
@@ -132,7 +150,7 @@ export default {
             justify-content: space-between;
             line-height: 50px;
 
-            .button-register {
+            .button-to-login {
                 width: 100px;
                 height: 50px;
                 text-align: center;
@@ -143,7 +161,7 @@ export default {
                 }
             }
 
-            .button-login {
+            .button-register {
                 width: 100px;
                 height: 50px;
                 background: #607D8B;
@@ -153,6 +171,9 @@ export default {
                 border-radius: 6px;
                 &:active{
                     background: #34495E;
+                }
+                &.grey{
+                    background: #999;
                 }
             }
         }

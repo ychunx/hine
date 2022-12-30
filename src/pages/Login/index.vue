@@ -3,20 +3,20 @@
     <div class="logo">Hine</div>
     <p>登录</p>
     <div class="inputs">
-        <input type="text" required>
+        <input type="text" required v-model="userName">
         <span>电子邮件地址或用户名</span>
     </div>
     <div class="inputs">
-        <input type="password" required>
+        <input type="password" required v-model="passWord">
         <span>密码</span>
     </div>
     <div class="tips">
-        密码错误！
+        {{tips}}
         <div class="tips-right">忘记密码</div>
     </div>
     <div class="button">
-        <div class="button-register" @click="intoRegister">创建账号</div>
-        <div class="button-login" @click="login">登录</div>
+        <div class="button-to-register" @click="intoRegister">创建账号</div>
+        <div class="button-login" :class="isComplete ? '' : 'grey'" @click="login">登录</div>
     </div>
   </div>
 </template>
@@ -24,16 +24,39 @@
 <script>
 export default {
     name: 'Login',
-    mounted(){
-        this.$bus.$emit('closeTabBar')
+    data(){
+        return {
+            tips: '',
+            userName: '',
+            passWord: '',
+        }
     },
     methods:{
         intoRegister(){
             this.$router.push('/register')
         },
-        login(){
-            this.$API.test()
+        async login(){
+            if(this.isComplete){
+                console.log(await this.$API.test())
+            }else if(this.userName){
+                this.tips = '请输入密码！'
+            }else{
+                this.tips = '请输入账户！'
+            }
         }
+    },
+    computed:{
+        isComplete() {
+            if (this.userName && this.passWord && this.tips == '') {
+                return true
+            } else {
+                this.tips = ''
+                return false
+            }
+        }
+    },
+    mounted() {
+        this.$bus.$emit('closeTabBar')
     }
 }
 </script>
@@ -114,7 +137,7 @@ export default {
             display: flex;
             justify-content: space-between;
             line-height: 50px;
-            .button-register{
+            .button-to-register{
                 width: 100px;
                 height: 50px;
                 text-align: center;
@@ -134,6 +157,9 @@ export default {
                 border-radius: 6px;
                 &:active {
                     background: #34495E;
+                }
+                &.grey{
+                    background: #999;
                 }
             }
         }
