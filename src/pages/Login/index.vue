@@ -3,11 +3,11 @@
     <div class="logo">Hine</div>
     <p>登录</p>
     <div class="inputs">
-        <input type="text" required v-model="userName">
+        <input type="text" required v-model="name">
         <span>电子邮件地址或用户名</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model="passWord">
+        <input type="password" required v-model="psw">
         <span>密码</span>
     </div>
     <div class="tips">
@@ -27,8 +27,8 @@ export default {
     data(){
         return {
             tips: '',
-            userName: '',
-            passWord: '',
+            name: '',
+            psw: '',
         }
     },
     methods:{
@@ -37,17 +37,17 @@ export default {
         },
         async login(){
             if(this.isComplete){
-                console.log(await this.$API.test())
-            }else if(this.userName){
-                this.tips = '请输入密码！'
+                //console.log(await this.$API.test())
+            }else if(this.name){
+                this.tips = '请输入密码'
             }else{
-                this.tips = '请输入账户！'
+                this.tips = '请输入账户'
             }
         }
     },
     computed:{
         isComplete() {
-            if (this.userName && this.passWord && this.tips == '') {
+            if (this.name && this.psw && this.tips == '') {
                 return true
             } else {
                 this.tips = ''

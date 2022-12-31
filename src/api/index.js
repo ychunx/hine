@@ -1,12 +1,20 @@
 // 引入自封装axios
 import requests from "./request"
 
-export const test = () => requests({ url: '/', method: 'get' })
-
-export const signup = (address) => requests({
-    url: '/signup',
+export const adduser = (data) => requests({
+    url: '/signup/adduser',
     method: 'post',
-    data: {
-        address
-    }
+    data
+})
+
+export const nameinuse = (data) => requests({
+    url: '/signup/nameinuse',
+    method: 'post',
+    data
+})
+
+export const emailinuse = (data) => requests({
+    url: '/signup/emailinuse',
+    method: 'post',
+    data
 })

@@ -3,15 +3,15 @@
     <div class="logo">Hine</div>
     <p>注册</p>
     <div class="inputs">
-        <input type="text" required v-model="userName">
+        <input type="text" required v-model="name">
         <span>用户名</span>
     </div>
     <div class="inputs">
-        <input type="text" required v-model="userEmail">
+        <input type="text" required v-model="email">
         <span>电子邮件地址</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model="passWord">
+        <input type="password" required v-model="psw">
         <span>密码</span>
     </div>
     <div class="tips">{{tips}}</div>
@@ -28,9 +28,9 @@ export default {
     data(){
         return {
             tips: '',
-            userName: '',
-            userEmail: '',
-            passWord: ''
+            name: '',
+            email: '',
+            psw: ''
         }
     },
     methods: {
@@ -39,25 +39,45 @@ export default {
         },
         async register() {
             if (this.isComplete) {
-                console.log(await this.$API.signup(this.userEmail))
-            } else if (!this.userName) {
-                this.tips = '请输入用户名！'
-            } else if (!this.passWord){
-                this.tips = '请输入密码！'
+                let { name, email, psw } = this
+
+                // 根据返回数量判断是否已被占用
+                let nameinuse = await this.$API.nameinuse({ name })
+                if (nameinuse.msg != 0) {
+                    this.tips = '用户名已被占用'
+                    return
+                }
+
+                let emailinuse = await this.$API.emailinuse({ email })
+                if (emailinuse.msg != 0) {
+                    this.tips = '电子邮件地址已被占用'
+                    return
+                }
+
+                try {
+                    await this.$store.dispatch('User/register', { name, email, psw })
+                    this.$router.push('/login')
+                } catch (error) {
+                    alert(error.message)
+                }
+            } else if (!this.name) {
+                this.tips = '请输入用户名'
+            } else if (!this.psw){
+                this.tips = '请输入密码'
             } else {
-                this.tips = '请输入正确的电子邮件地址！'
+                this.tips = '请输入正确的电子邮件地址'
             }
         }
     },
     computed: {
         isComplete() {
             let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
-            if (this.userName && this.userEmail && this.passWord && regEmail.test(this.userEmail)) {
+            if (this.name && this.email && this.psw && regEmail.test(this.email)) {
                 this.tips = ''
                 return true
             } else {
                 this.tips = ''
-                if (this.userEmail && !regEmail.test(this.userEmail)) {
+                if (this.email && !regEmail.test(this.email)) {
                     this.tips = '请输入正确的电子邮件地址！'
                 }
                 return false
