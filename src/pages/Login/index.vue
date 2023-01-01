@@ -3,7 +3,7 @@
     <div class="logo">Hine</div>
     <p>登录</p>
     <div class="inputs">
-        <input type="text" required v-model.trim="name">
+        <input type="text" required v-model.trim="acct">
         <span>电子邮件地址或用户名</span>
     </div>
     <div class="inputs">
@@ -27,8 +27,9 @@ export default {
     data(){
         return {
             tips: '',
-            name: '',
+            acct: '',
             psw: '',
+            cipherRes: {}
         }
     },
     methods:{
@@ -37,17 +38,22 @@ export default {
         },
         async login(){
             if(this.isComplete){
-                //console.log(await this.$API.test())
+                try {
+                    let { acct, psw } = this
+                    await this.$store.dispatch('User/signIn', { acct, psw })
+                } catch (error) {
+                    this.tips = error.message
+                }
             }else if(this.name){
                 this.tips = '请输入密码'
             }else{
-                this.tips = '请输入账户'
+                this.tips = '请输入账号'
             }
         }
     },
     computed:{
         isComplete() {
-            if (this.name && this.psw) {
+            if (this.acct && this.psw) {
                 return true
             } else {
                 this.tips = ''

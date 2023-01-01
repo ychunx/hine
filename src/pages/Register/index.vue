@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import CryptoJS from 'crypto-js'
-import jsrsasign from 'jsrsasign'
 export default {
     name: 'Register',
     data(){
@@ -79,7 +77,7 @@ export default {
             }
         }
         ,
-        register() {
+        async register() {
             let { nameQuery, emailQuery } = this
 
             // 提交注册前再次检查占用
@@ -88,7 +86,15 @@ export default {
 
             if (this.isComplete) {
                 this.$refs.registerBtn.innerText = '请稍后'
-                this.addUser()
+
+                try {
+                    let { name, email, psw } = this
+                    await this.$store.dispatch('User/register', { name, email, psw })
+                    this.intoLogin()
+                } catch (error) {
+                    this.$refs.registerBtn.innerText = '注册'
+                    alert(error.message)
+                }
             } else if (!this.name) {
                 this.tips = '请输入用户名'
             } else if (!this.psw){
@@ -97,29 +103,6 @@ export default {
                 // 电子邮件地址为空
                 this.tips = '请输入正确的电子邮件地址'
             }
-        },
-        addUser() {
-            // 由于 jsrsasign 库生成 RSA 密钥对过于缓慢，故使其为异步
-            // 没有深究为什么直接在addUser()设置async不能实现异步
-            setTimeout(async () => {
-                try {
-                    let { name, email, psw } = this
-
-                    // 服务器不存储用户密码
-                    psw = CryptoJS.AES.encrypt(psw, psw).toString()
-
-                    // 生成 RSA 密钥对
-                    var rsaKeypair = jsrsasign.KEYUTIL.generateKeypair('RSA', 1024);
-                    let publicKey = jsrsasign.KEYUTIL.getPEM(rsaKeypair.prvKeyObj);
-                    let privateKey = jsrsasign.KEYUTIL.getPEM(rsaKeypair.prvKeyObj, 'PKCS8PRV');
-
-                    await this.$store.dispatch('User/register', { name, email, psw, publicKey, privateKey })
-                    this.intoLogin()
-                } catch (error) {
-                    this.$refs.registerBtn.innerText = '注册'
-                    alert(error.message)
-                }
-            }, 0)
         }
     },
     computed: {

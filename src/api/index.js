@@ -11,3 +11,8 @@ export const nameinuse = (name) => requests({ url: `/signup/nameinuse/${name}`, 
 
 export const emailinuse = (email) => requests({ url: `/signup/emailinuse/${email}`, method: 'get' })
 
+export const login = (data) => requests({
+    url: '/signin',
+    method: 'post',
+    data
+})
