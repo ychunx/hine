@@ -3,11 +3,11 @@
     <div class="logo">Hine</div>
     <p>登录</p>
     <div class="inputs">
-        <input type="text" required v-model="name">
+        <input type="text" required v-model.trim="name">
         <span>电子邮件地址或用户名</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model="psw">
+        <input type="password" required v-model.trim="psw">
         <span>密码</span>
     </div>
     <div class="tips">
@@ -47,7 +47,7 @@ export default {
     },
     computed:{
         isComplete() {
-            if (this.name && this.psw && this.tips == '') {
+            if (this.name && this.psw) {
                 return true
             } else {
                 this.tips = ''

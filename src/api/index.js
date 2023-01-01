@@ -7,14 +7,7 @@ export const adduser = (data) => requests({
     data
 })
 
-export const nameinuse = (data) => requests({
-    url: '/signup/nameinuse',
-    method: 'post',
-    data
-})
+export const nameinuse = (name) => requests({ url: `/signup/nameinuse/${name}`, method: 'get' })
 
-export const emailinuse = (data) => requests({
-    url: '/signup/emailinuse',
-    method: 'post',
-    data
-})
+export const emailinuse = (email) => requests({ url: `/signup/emailinuse/${email}`, method: 'get' })
+

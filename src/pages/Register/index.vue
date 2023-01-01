@@ -3,26 +3,28 @@
     <div class="logo">Hine</div>
     <p>注册</p>
     <div class="inputs">
-        <input type="text" required v-model="name">
+        <input type="text" required v-model.trim="name" @blur="nameQuery">
         <span>用户名</span>
     </div>
     <div class="inputs">
-        <input type="text" required v-model="email">
+        <input type="text" required v-model.trim="email" @blur="emailQuery">
         <span>电子邮件地址</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model="psw">
+        <input type="password" required v-model.trim="psw">
         <span>密码</span>
     </div>
     <div class="tips">{{tips}}</div>
     <div class="button">
         <div class="button-to-login" @click="intoLogin">已有账号</div>
-        <div class="button-register" :class="isComplete ? '' : 'grey'" @click="register">注册</div>
+        <div class="button-register" :class="isComplete ? '' : 'grey'" @click="register" ref="registerBtn">注册</div>
     </div>
   </div>
 </template>
 
 <script>
+import CryptoJS from 'crypto-js'
+import jsrsasign from 'jsrsasign'
 export default {
     name: 'Register',
     data(){
@@ -30,47 +32,102 @@ export default {
             tips: '',
             name: '',
             email: '',
-            psw: ''
+            psw: '',
+            nameInUse: false,
+            emailInUse: false
         }
     },
     methods: {
         intoLogin() {
             this.$router.push('/login')
         },
-        async register() {
+        async nameQuery() {
+            if (!this.name) {
+                return
+            }
+            // 根据返回数量判断是否已被占用
+            let res = await this.$API.nameinuse(this.name)
+            if (res.msg != 0) {
+                this.tips = '用户名已被占用'
+                this.nameInUse = true
+            } else {
+                this.nameInUse = false
+                // 防止覆盖提示信息
+                if (this.emailInUse || this.tips == '请输入正确的电子邮件地址') {
+                    return
+                }
+                this.tips = ''
+            }
+        },
+        async emailQuery() {
+            let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
+            if (!this.email || !regEmail.test(this.email)) {
+                return
+            }
+            // 根据返回数量判断是否已被占用
+            let res = await this.$API.emailinuse(this.email)
+            if (res.msg != 0) {
+                this.tips = '电子邮件地址已被占用'
+                this.emailInUse = true
+            } else {
+                this.emailInUse = false
+                // 防止覆盖提示信息
+                if (this.nameInUse) {
+                    return
+                }
+                this.tips = ''
+            }
+        }
+        ,
+        register() {
+            let { nameQuery, emailQuery } = this
+
+            // 提交注册前再次检查占用
+            nameQuery()
+            emailQuery()
+
             if (this.isComplete) {
-                let { name, email, psw } = this
-
-                // 根据返回数量判断是否已被占用
-                let nameinuse = await this.$API.nameinuse({ name })
-                if (nameinuse.msg != 0) {
-                    this.tips = '用户名已被占用'
-                    return
-                }
-
-                let emailinuse = await this.$API.emailinuse({ email })
-                if (emailinuse.msg != 0) {
-                    this.tips = '电子邮件地址已被占用'
-                    return
-                }
-
-                try {
-                    await this.$store.dispatch('User/register', { name, email, psw })
-                    this.$router.push('/login')
-                } catch (error) {
-                    alert(error.message)
-                }
+                this.$refs.registerBtn.innerText = '请稍后'
+                this.addUser()
             } else if (!this.name) {
                 this.tips = '请输入用户名'
             } else if (!this.psw){
                 this.tips = '请输入密码'
             } else {
+                // 电子邮件地址为空
                 this.tips = '请输入正确的电子邮件地址'
             }
+        },
+        addUser() {
+            // 由于 jsrsasign 库生成 RSA 密钥对过于缓慢，故使其为异步
+            // 没有深究为什么直接在addUser()设置async不能实现异步
+            setTimeout(async () => {
+                try {
+                    let { name, email, psw } = this
+
+                    // 服务器不存储用户密码
+                    psw = CryptoJS.AES.encrypt(psw, psw).toString()
+
+                    // 生成 RSA 密钥对
+                    var rsaKeypair = jsrsasign.KEYUTIL.generateKeypair('RSA', 1024);
+                    let publicKey = jsrsasign.KEYUTIL.getPEM(rsaKeypair.prvKeyObj);
+                    let privateKey = jsrsasign.KEYUTIL.getPEM(rsaKeypair.prvKeyObj, 'PKCS8PRV');
+
+                    await this.$store.dispatch('User/register', { name, email, psw, publicKey, privateKey })
+                    this.intoLogin()
+                } catch (error) {
+                    this.$refs.registerBtn.innerText = '注册'
+                    alert(error.message)
+                }
+            }, 0)
         }
     },
     computed: {
         isComplete() {
+            if (this.nameInUse || this.emailInUse) {
+                return false
+            }
+
             let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
             if (this.name && this.email && this.psw && regEmail.test(this.email)) {
                 this.tips = ''
@@ -78,7 +135,7 @@ export default {
             } else {
                 this.tips = ''
                 if (this.email && !regEmail.test(this.email)) {
-                    this.tips = '请输入正确的电子邮件地址！'
+                    this.tips = '请输入正确的电子邮件地址'
                 }
                 return false
             }
