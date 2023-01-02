@@ -16,3 +16,7 @@ export const login = (data) => requests({
     method: 'post',
     data
 })
+
+export const reqUserInfo = () => requests({ url: '/signin/getUserInfo', method: 'get' })
+
+//export const logout = () => requests({ url: '/signin/logout', method: 'get' })

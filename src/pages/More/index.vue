@@ -4,7 +4,7 @@
             <div class="more-top-box">
                 <img src="../../assets/images/1.jpg">
                 <div>
-                    <p>王强</p>
+                    <p>{{this.$store.state.User.userInfo.name}}</p>
                 </div>
             </div>
         </div>

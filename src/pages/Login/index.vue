@@ -41,6 +41,7 @@ export default {
                 try {
                     let { acct, psw } = this
                     await this.$store.dispatch('User/signIn', { acct, psw })
+                    this.$router.push('/msg')
                 } catch (error) {
                     this.tips = error.message
                 }
@@ -63,6 +64,9 @@ export default {
     },
     mounted() {
         this.$bus.$emit('closeTabBar')
+    },
+    beforeDestroy() {
+        this.$bus.$emit('showTabBar')
     }
 }
 </script>
