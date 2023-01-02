@@ -1,16 +1,16 @@
 <template>
     <div class="bar-box" :class="close ? 'deactive' : ''">
-        <div class="bar-button" :class="scene == 'msg' ? 'active' : ''" @click="changeScene('msg')">
+        <div class="bar-button" :class="getScene == 'msg' ? 'active' : ''" @click="changeScene('msg')">
             <img src="../../assets/images/msg.png">
             <img src="../../assets/images/msg-fill.png">
             <span>消息</span>
         </div>
-        <div class="bar-button" :class="scene == 'contacts' ? 'active' : ''" @click="changeScene('contacts')">
+        <div class="bar-button" :class="getScene == 'contacts' ? 'active' : ''" @click="changeScene('contacts')">
             <img src="../../assets/images/contacts.png">
             <img src="../../assets/images/contacts-fill.png">
             <span>通讯录</span>
         </div>
-        <div class="bar-button" :class="scene == 'more' ? 'active' : ''" @click="changeScene('more')">
+        <div class="bar-button" :class="getScene == 'more' ? 'active' : ''" @click="changeScene('more')">
             <img src="../../assets/images/more.png">
             <img src="../../assets/images/more-fill.png">
             <span>发现</span>
@@ -23,7 +23,6 @@ export default {
     name: 'TabBar',
     data(){
         return {
-            scene : 'msg',
             close: false
         }
     },
@@ -35,16 +34,20 @@ export default {
             this.close = false
         },
         changeScene(scene){
-            let curScene = this.$route.path.slice(1)
+            let curScene = this.getScene
             if(scene != curScene) {
                 this.$router.push(`/${scene}`)
-                this.scene = scene
             }
         }
     },
     mounted(){
         this.$bus.$on('closeTabBar',this.closeTabBar)
         this.$bus.$on('showTabBar', this.showTabBar)
+    },
+    computed: {
+        getScene() {
+            return this.$route.path.slice(1)
+        }
     }
 }
 </script>

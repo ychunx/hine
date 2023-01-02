@@ -26,6 +26,12 @@
                 <span>新建加密对话</span>
             </li>
         </ul>
+        <ul class="more-main logout">
+            <li @click="logout">
+                <img src="../../assets/images/out.png">
+                <span>退出登录</span>
+            </li>
+        </ul>
     </div>
 </template>
 
@@ -33,8 +39,12 @@
 export default {
     name: 'More',
     methods:{
-        intoSearch(){
+        intoSearch() {
             this.$router.push('/search')
+        },
+        logout() {
+            this.$store.dispatch('User/logout')
+            this.$router.push('/login')
         }
     }
 }
@@ -100,6 +110,9 @@ export default {
                 span{
                     font-weight: bold;
                 }
+            }
+            &.logout{
+                margin-top: 10px;
             }
         }
     }
