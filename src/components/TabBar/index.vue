@@ -53,10 +53,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.bar-box.deactive{
-    transform: translateY(60px);
-}
-.bar-box{
+    .bar-box{
+        &.deactive{
+            transform: translateY(60px);
+        }
         width: 100%;
         height: 60px;
         background: #E7F0F7;
@@ -65,7 +65,7 @@ export default {
         bottom: 0;
         display: flex;
         justify-content: space-around;
-        transition: all .3s ease-out;
+        //transition: all .3s ease-out;
         .bar-button{
             width: 60px;
             height: 60px;
