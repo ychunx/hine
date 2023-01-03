@@ -7,7 +7,7 @@
         <span>电子邮件地址或用户名</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model.trim="psw">
+        <input type="password" required v-model.trim="psw" @keyup.enter="login">
         <span>密码</span>
     </div>
     <div class="tips">
