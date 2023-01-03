@@ -1,69 +1,22 @@
 <template>
     <div class="search">
         <div class="search-top">
-            <img src="../../assets/images/left.png" @click="back">
-            <input type="text" placeholder="搜索">
+            <div class="back" @click="back">
+                <img src="../../assets/images/left.png">
+            </div>
+            <div class="search-input">
+                <input type="text" placeholder="搜索...">
+            </div>
         </div>
         <ul class="search-list">
             <li class="search-item">
-                aaaaaaaaaaaaaaaaa
+                搜索结果
             </li>
             <li class="search-item">
-                aaaaaaaaaaaaaaaaa
+                搜索结果
             </li>
             <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
-            </li>
-            <li class="search-item">
-                aaaaaaaaaaaaaaaaa
+                搜索结果
             </li>
         </ul>
     </div>
@@ -87,30 +40,35 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.search{
+    .search{
         .search-top{
-            padding: 15px;
-            width: 100%;
-            height: 110px;
-            text-align: center;
+            height: 60px;
             box-sizing: border-box;
             background: #ffffff;
             border-bottom: 1px solid #EDEDED;
-            img{
-                width: 30px;
-                height: 30px;
-                display: block;
-                margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            .back{
+                width: 60px;
+                text-align: center;
+                img{
+                    width: 25px;
+                    height: 25px;
+                }
             }
-            input{
-                width: 95%;
-                height: 40px;
-                border: none;
-                font-size: 22px;
+            .search-input{
+                flex: 1;
+                input{
+                    width: 80%;
+                    height: 30px;
+                    outline: none;
+                    border: none;
+                    font-size: 20px;
+                }
             }
         }
         .search-list{
-            height: calc(100vh - 110px);
+            height: calc(100vh - 60px);
             list-style: none;
             overflow: scroll;
             li{
@@ -119,6 +77,8 @@ export default {
                 padding: 0 20px;
                 box-sizing: border-box;
                 border-bottom: 1px solid #EDEDED;
+                display: flex;
+                align-items: center;
             }
         }
     }

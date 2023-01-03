@@ -20,7 +20,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.mask{
+    .mask{
         width: 100%;
         height: 60px;
         position: fixed;
@@ -33,15 +33,12 @@ export default {
         width: 100%;
         height: 60px;
         border-bottom: 1px solid #EDEDED;
-        //background: #E7F0F7;
         background: rgba(255, 255, 255, 0.9);
-        box-shadow: 10px 10px 20px #f2f2f2,
-                -10px -10px 20px #ffffff;
         position: fixed;
         top: 0;
         left: 0;
         z-index: 99;
-        line-height: 60px;
+        line-height: 42.5px;
         font-size: 26px;
         padding: 0 20px;
         display: flex;

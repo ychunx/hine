@@ -194,7 +194,7 @@ export default {
                 font-size: 18px;
                 color: #999;
                 background: #fff;
-                transition: all .3s linear;
+                transition: all .3s;
                 display: inline-block;
                 padding: 0 5px;
             }

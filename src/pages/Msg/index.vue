@@ -1,212 +1,43 @@
 <template>
   <div class="msg">
     <TopBar />
-    <ul class="msg-ul" @click="intoDialog">
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
+    <ul class="msg-ul">
+      <li class="msg-item" @click="intoDialog">
+        <div class="msg-item-tip">3</div>
         <img src="../../assets/images/1.jpg">
         <div class="msg-item-main">
           <div class="msg-item-title">
-            <span>王强</span>
+            <span>{{$store.state.User.userInfo.name}}</span>
             <span>PM 12:00</span>
           </div>
           <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
+            你好啊，{{$store.state.User.userInfo.name}}
           </div>
         </div>
       </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
+      <li class="msg-item" @click="intoDialog">
+        <div class="msg-item-tip">3</div>
         <img src="../../assets/images/1.jpg">
         <div class="msg-item-main">
           <div class="msg-item-title">
-            <span>王强</span>
+            <span>{{$store.state.User.userInfo.name}}</span>
             <span>PM 12:00</span>
           </div>
           <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
+            你好啊，{{$store.state.User.userInfo.name}}
           </div>
         </div>
       </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
+      <li class="msg-item" @click="intoDialog">
+        <div class="msg-item-tip">3</div>
         <img src="../../assets/images/1.jpg">
         <div class="msg-item-main">
           <div class="msg-item-title">
-            <span>王强</span>
+            <span>{{$store.state.User.userInfo.name}}</span>
             <span>PM 12:00</span>
           </div>
           <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
-          </div>
-        </div>
-      </li>
-      <li class="msg-item">
-        <div class="msg-item-tip">8</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>王强</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            啊啊啊啊啊啊啊啊啊啊啊啊aaaaaaaaaaaaaaaaaaa啊啊啊
+            你好啊，{{$store.state.User.userInfo.name}}
           </div>
         </div>
       </li>
@@ -230,7 +61,7 @@ export default {
 
 <style lang="less" scoped>
 .msg{
-  width: 100%;
+  background: #F9F9F9;
   .msg-ul{
     width: 100%;
     height: calc(100vh - 60px);
@@ -246,6 +77,7 @@ export default {
         display: flex;
         justify-content: space-around;
         align-items: center;
+        background: #fff;
         border-bottom: 1px solid #EDEDED;
         .msg-item-tip {
           width: 30px;
@@ -262,7 +94,7 @@ export default {
         img {
           width: 50px;
           height: 50px;
-          border-radius: 10px;
+          border-radius: 20%;
           margin-right: 8px;
         }
         .msg-item-main {

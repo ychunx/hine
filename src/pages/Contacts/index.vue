@@ -19,66 +19,18 @@
             <ul class="contacts-main-box">
                 <li>
                     <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
+                    <span>{{$store.state.User.userInfo.name}}</span>
                 </li>
                 <li>
                     <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
+                    <span>{{$store.state.User.userInfo.name}}</span>
                 </li>
                 <li>
                     <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>王强</span>
+                    <span>{{$store.state.User.userInfo.name}}</span>
                 </li>
             </ul>
-            <h1>共 88 位</h1>
+            <h1>共 3 位</h1>
         </div>
     </div>
 </template>
@@ -94,7 +46,7 @@ export default {
 
 <style lang="less" scoped>
     .contacts{
-        background: #E7F0F7;
+        background: #F9F9F9;
         .contacts-main{
             padding-top: 60px;
             height: calc(100vh - 60px);
@@ -102,12 +54,8 @@ export default {
             overflow: scroll;
             .contacts-menu{
                 width: 100%;
-                margin-bottom: 20px;
+                margin-bottom: 10px;
                 background: #fff;
-                border-bottom-left-radius: 20px;
-                border-bottom-right-radius: 20px;
-                box-shadow: 20px 20px 60px #d9d9d9,
-                        -20px -20px 60px #ffffff;
                 li{
                     display: flex;
                     align-items: center;
@@ -125,20 +73,16 @@ export default {
             .contacts-main-box{
                 width: 100%;
                 background: #fff;
-                border-top-left-radius: 20px;
-                border-top-right-radius: 20px;
-                box-shadow: 20px 20px 60px #d9d9d9,
-                        -20px -20px 60px #ffffff;
                 li{
                     display: flex;
                     align-items: center;
                     padding: 10px 20px;
                     border-bottom: 1px solid #EDEDED;
                     img{
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 10px;
-                        margin-right: 20px;
+                        width: 35px;
+                        height: 35px;
+                        border-radius: 20%;
+                        margin-right: 25px;
                     }
                     span{
                         font-size: 18px;

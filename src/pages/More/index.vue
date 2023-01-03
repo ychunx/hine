@@ -80,7 +80,7 @@ export default {
                     top: -50px;
                     left: 50%;
                     transform: translateX(-50%);
-                    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+                    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
                 }
                 div{
                     p{
@@ -93,7 +93,7 @@ export default {
         }
         .more-main{
             width: 100%;
-            margin-top: 160px;
+            margin-top: 155px;
             li{
                 width: 90%;
                 display: flex;

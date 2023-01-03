@@ -1,18 +1,24 @@
 <template>
     <div class="bar-box" :class="close ? 'deactive' : ''">
         <div class="bar-button" :class="getScene == 'msg' ? 'active' : ''" @click="changeScene('msg')">
-            <img src="../../assets/images/msg.png">
-            <img src="../../assets/images/msg-fill.png">
+            <div>
+                <img src="../../assets/images/msg.png">
+                <img src="../../assets/images/msg-fill.png">
+            </div>
             <span>消息</span>
         </div>
         <div class="bar-button" :class="getScene == 'contacts' ? 'active' : ''" @click="changeScene('contacts')">
-            <img src="../../assets/images/contacts.png">
-            <img src="../../assets/images/contacts-fill.png">
+            <div>
+                <img src="../../assets/images/contacts.png">
+                <img src="../../assets/images/contacts-fill.png">
+            </div>
             <span>通讯录</span>
         </div>
         <div class="bar-button" :class="getScene == 'more' ? 'active' : ''" @click="changeScene('more')">
-            <img src="../../assets/images/more.png">
-            <img src="../../assets/images/more-fill.png">
+            <div>
+                <img src="../../assets/images/more.png">
+                <img src="../../assets/images/more-fill.png">
+            </div>
             <span>发现</span>
         </div>
     </div>
@@ -53,10 +59,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-    .bar-box{
-        &.deactive{
-            transform: translateY(60px);
-        }
+.bar-box{
         width: 100%;
         height: 60px;
         background: #E7F0F7;
@@ -65,43 +68,60 @@ export default {
         bottom: 0;
         display: flex;
         justify-content: space-around;
-        //transition: all .3s ease-out;
+        &.deactive {
+            display: none;
+        }
         .bar-button{
             width: 60px;
             height: 60px;
             padding-top: 15px;
             box-sizing: border-box;
-            text-align: center;
             transition: all .3s ease-out;
-            img{
-                width: 25px;
-                height: 25px;
-                display: block;
-                padding: 3px 17.5px;
+            &.active{
+                padding-top: 7px;
+                div{
+                    background: #D7E4F5;
+                    width: 60px;
+                    border-radius: 30px;
+                    padding-top: 2.5px;
+                    img:nth-child(1) {
+                        display: none;
+                    }
+                    img:nth-child(2) {
+                        display: inline-block;
+                    }
+                }
+                span {
+                    opacity: 1;
+                }
             }
-            img:nth-child(2){
-                display: none;
+            div{
+                height: 30px;
+                width: 25px;
+                box-sizing: border-box;
+                margin: 0 auto;
+                text-align: center;
+                border-radius: 50%;
+                background: #E7F0F7;
+                transition: all .2s ease-out;
+                img {
+                    width: 25px;
+                    height: 25px;
+                }
+                img:nth-child(2) {
+                    display: none;
+                }
             }
             span{
                 font-size: 12px;
                 transition: all .3s ease-out;
-                display: block;
                 opacity: 0;
                 color: #607D8B;
-            }
-        }
-        .bar-button.active{
-            padding-top: 7px;
-            img:nth-child(1){
-                display: none;
-            }
-            img:nth-child(2){
                 display: block;
-                background: #D7E4F5;
-                border-radius: 25px;
-            }
-            span{
-                opacity: 1;
+                text-align: center;
+                line-height: 14px;
+                height: 14px;
+                margin-top: 2px;
             }
         }
     }
