@@ -3,7 +3,7 @@
         <div class="mask"></div>
         <div class="top-bar">
             <div>Hine</div>
-            <div @click="intoSearch"><img src="../../assets/images/search.png"></div>
+            <img src="../../assets/images/search.png" @click="intoSearch">
         </div>
     </div>
 </template>
@@ -48,19 +48,9 @@ export default {
         justify-content: space-between;
         box-sizing: border-box;
         align-items: center;
-        div:nth-child(2){
-            width: 40px;
-            height: 40px;
-            background: #E7F0F7;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 40px;
-            //padding-top: 5px;
-            box-sizing: border-box;
-            img {
-                width: 25px;
-                height: 25px;
-            }
+        img {
+            width: 25px;
+            height: 25px;
         }
     }
 </style>

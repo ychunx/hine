@@ -108,6 +108,7 @@ export default {
                 color: #607D8B;
                 &:focus{
                     border: 2px solid #607D8B;
+                    transition: all .2s ease-in;
                     &+span{
                         color: #607D8B;
                     }
@@ -128,7 +129,9 @@ export default {
                 font-size: 18px;
                 color: #999;
                 background: #fff;
-                transition: all .3s;
+                transition: all .3s linear;
+                display: inline-block;
+                padding: 0 5px;
             }
         }
         .tips{
