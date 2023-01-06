@@ -44,7 +44,7 @@ export default {
                 return
             }
             // 根据返回数量判断是否已被占用
-            let res = await this.$API.nameinuse(this.name)
+            let res = await this.$API.nameInUse(this.name)
             if (res.msg != 0) {
                 this.tips = '用户名已被占用'
                 this.nameInUse = true
@@ -63,7 +63,7 @@ export default {
                 return
             }
             // 根据返回数量判断是否已被占用
-            let res = await this.$API.emailinuse(this.email)
+            let res = await this.$API.emailInUse(this.email)
             if (res.msg != 0) {
                 this.tips = '电子邮件地址已被占用'
                 this.emailInUse = true

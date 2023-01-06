@@ -1,4 +1,4 @@
-import { adduser, login, reqUserInfo, logout } from '@/api'
+import { addUser, login, reqUserInfo } from '@/api'
 import { setToken, getToken, removeToken } from "@/utils/token"
 
 const getDefaultState = () => {
@@ -26,7 +26,7 @@ const mutations = {
 
 const actions = {
   async register({commit}, data) {
-    let res = await adduser(data)
+    let res = await addUser(data)
     if (res.status == 0) {
       return 'ok'
     } else {
