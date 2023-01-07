@@ -16,7 +16,7 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation">发信息</div>
+                <div class="enter-btn" v-if="item.relation" @click="intoDialog">发信息</div>
                 <div class="apply-btn" v-else>加好友</div>
             </li>
             <li class="title" v-show="searchGroups.length != 0">群组</li>
@@ -26,7 +26,7 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation">发信息</div>
+                <div class="enter-btn" v-if="item.relation" @click="intoDialog">发信息</div>
                 <div class="apply-btn" v-else>申请加入</div>
             </li>
         </ul>
@@ -50,21 +50,25 @@ export default {
             this.$router.back()
             this.$store.dispatch('Search/clearResult')
         },
+        intoDialog() {
+            this.$router.push('/dialog')
+        },
         search() {
             clearTimeout(this.timer)
-            this.timer = setTimeout(() => {
-                let key = this.key
-                if (key.trim() == '') {
-                    this.$store.dispatch('Search/clearResult')
-                    this.users = []
-                    this.groups = []
-                } else {
-                    this.$store.dispatch('Search/search', { key }).then(v => {
-                        this.getUsers()
-                        this.getGroups()
-                    })
-                }
-            },1000)
+            this.timer = setTimeout(this.searchHandle,1000)
+        },
+        searchHandle() {
+            let key = this.key
+            if (key.trim() == '') {
+                this.$store.dispatch('Search/clearResult')
+                this.users = []
+                this.groups = []
+            } else {
+                this.$store.dispatch('Search/search', { key }).then(v => {
+                    this.getUsers()
+                    this.getGroups()
+                })
+            }
         },
         getUsers() {
             let usersArr = this.searchUsers
@@ -94,14 +98,13 @@ export default {
             searchUsers: state => state.Search.searchUsers,
             searchGroups: state => state.Search.searchGroups,
             relations: state => state.Search.relations,
-            isInGroup: state => state.Search.isInGroup
+            isInGroup: state => state.Search.isInGroup,
+            keyStore: state => state.Search.key
         })
     },
     mounted() {
-        this.$bus.$emit('closeTabBar')
-    },
-    beforeDestroy(){
-        this.$bus.$emit('showTabBar')
+        this.key = this.keyStore
+        this.searchHandle()
     }
 }
 </script>

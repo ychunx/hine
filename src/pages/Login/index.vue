@@ -64,9 +64,6 @@ export default {
     },
     mounted() {
         this.$bus.$emit('closeTabBar')
-    },
-    beforeDestroy() {
-        this.$bus.$emit('showTabBar')
     }
 }
 </script>

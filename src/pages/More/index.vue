@@ -46,6 +46,12 @@ export default {
             this.$store.dispatch('User/logout')
             this.$router.push('/login')
         }
+    },
+    mounted() {
+        this.$bus.$emit('showTabBar')
+    },
+    beforeDestroy() {
+        this.$bus.$emit('closeTabBar')
     }
 }
 </script>

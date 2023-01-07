@@ -124,9 +124,6 @@ export default {
             }
         }
     },
-    mounted() {
-        this.$bus.$emit('closeTabBar')
-    },
 }
 </script>
 

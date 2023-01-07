@@ -8,7 +8,7 @@
             <div class="dialog-info"><img src="../../assets/images/info.png"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
-            <div class="msg-ul" ref="msgUl">
+            <div class="msg-ul">
                 <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
                 <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
                 <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
@@ -27,9 +27,13 @@
                 <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
             </div>
         </div>
-        <div class="dialog-input">
+        <div class="dialog-input" ref="dialogInput">
             <div class="dialog-input-plus"><img src="../../assets/images/plus.png"></div>
-            <input type="text" class="dialog-input-content">
+            <div class="dialog-input-content">
+                <div contenteditable="true" ref="dialogInputContent" @focus="moveToBottom"></div>
+                <img src="../../assets/images/keyboard.png" @click="chooseType(false)" v-if="isKeyboard">
+                <img src="../../assets/images/emoji.png" @click="chooseType(true)" v-else>
+            </div>
             <div class="dialog-input-send"><img src="../../assets/images/send.png"></div>
         </div>
     </div>
@@ -39,19 +43,34 @@
 <script>
 export default {
     name: 'Dialog',
+    data() {
+        return {
+            isKeyboard: false
+        }
+    },
     methods:{
         back() {
             this.$router.back()
+        },
+        chooseType(type) {
+            this.isKeyboard = type
+            if (type) {
+                this.$refs.dialogInputContent.blur()
+            } else {
+                this.$refs.dialogInputContent.focus()
+            }
+        },
+        moveToBottom() {
+            // 消息盒子滚至底部
+            // 卷起的高度 = 内容的高度 - 输入框离父元素（相当于浏览器视窗顶部）的高度
+            this.$refs.dialogMain.scrollTop = this.$refs.dialogMain.scrollHeight - this.$refs.dialogInput.offsetTop
         }
     },
     mounted(){
-        this.$bus.$emit('closeTabBar')
         this.$nextTick(() => {
-            this.$refs.dialogMain.scrollTop = this.$refs.msgUl.scrollHeight
+            // 进入页面时消息盒子自动滚至底部
+            this.moveToBottom()
         })
-    },
-    beforeDestroy() {
-        this.$bus.$emit('showTabBar')
     }
 }
 </script>
@@ -79,7 +98,7 @@ export default {
             top: 0;
             left: 0;
             .dialog-back{
-                width: 50px;
+                width: 60px;
                 text-align: center;
                 box-sizing: border-box;
                 img{
@@ -91,7 +110,7 @@ export default {
                 flex: 1;
                 height: 60px;
                 text-align: center;
-                line-height: 50px;
+                line-height: 60px;
                 font-size: 20px;
             }
             .dialog-info{
@@ -134,14 +153,15 @@ export default {
         }
         .dialog-input{
             width: 100%;
-            height: 60px;
+            //height: 60px;
             background: #E7F0F7;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: end;
             .dialog-input-plus{
                 width: 50px;
-                height: 28px;
+                height: 60px;
+                padding: 16px 0;
                 text-align: center;
                 box-sizing: border-box;
                 img{
@@ -150,20 +170,31 @@ export default {
                 }
             }
             .dialog-input-content{
-                outline: none;
-                border: none;
                 flex: 1;
-                height: 40px;
+                min-height: 40px;
                 background: #ffffff;
                 border-radius: 5px;
                 font-size: 20px;
-                padding: 0 10px;
+                margin: 10px 0;
                 box-sizing: border-box;
+                display: flex;
+                align-items: end;
+                div{
+                    flex: 1;
+                    outline: none;
+                    padding: 5px 0 5px 10px;
+                }
+                img{
+                    width: 30px;
+                    height: 30px;
+                    margin: 5px;
+                }
             }
             .dialog-input-send{
                 width: 50px;
                 height: 60px;
-                padding: 15px 10px;
+                padding: 15px 0;
+                text-align: center;
                 box-sizing: border-box;
                 img{
                     width: 30px;

@@ -4,7 +4,8 @@ const state = {
     searchUsers: [],
     relations: [],
     searchGroups: [],
-    isInGroups: []
+    isInGroups: [],
+    key: ''
 }
 
 const mutations = {
@@ -20,17 +21,23 @@ const mutations = {
     QUERY_IS_IN_GROUP(state, data) {
         state.isInGroups = data
     },
+    SAVE_KEY(state, key) {
+        state.key = key
+    },
     CLEAR_RESULT(state) {
         state.searchUsers = []
         state.searchGroups = []
         state.relations = []
         state.isInGroups = []
+        state.key = ''
     }
 }
 
 const actions = {
     // 整合搜索为一个方法
-    search({dispatch, state}, data) {
+    search({dispatch, commit, state}, data) {
+        commit('SAVE_KEY', data.key)
+
         let user = dispatch('searchUser', data).then(value => {
             return dispatch('queryFriendRelation', state.searchUsers)
         }, reason => {

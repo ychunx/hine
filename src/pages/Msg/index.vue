@@ -52,10 +52,16 @@ export default {
     name: 'Msg',
     components:{TopBar},
     methods:{
-      intoDialog(e){
+      intoDialog(){
         this.$router.push('/dialog')
       }
-    }
+  },
+  mounted() {
+    this.$bus.$emit('showTabBar')
+  },
+  beforeDestroy() {
+    this.$bus.$emit('closeTabBar')
+  }
 }
 </script>
 

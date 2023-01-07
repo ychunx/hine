@@ -40,7 +40,13 @@ import TopBar from '../../components/TopBar'
 
 export default {
     name: 'Contacts',
-    components:{TopBar}
+    components: { TopBar },
+    mounted() {
+        this.$bus.$emit('showTabBar')
+    },
+    beforeDestroy() {
+        this.$bus.$emit('closeTabBar')
+    }
 }
 </script>
 
