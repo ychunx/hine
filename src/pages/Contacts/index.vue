@@ -3,7 +3,7 @@
         <TopBar />
         <div class="contacts-main">
             <ul class="contacts-menu">
-                <li>
+                <li @click="intoNew">
                     <img src="../../assets/images/add.png">
                     <span>好友请求</span>
                 </li>
@@ -17,20 +17,12 @@
                 </li>
             </ul>
             <ul class="contacts-main-box">
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>{{$store.state.User.userInfo.name}}</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>{{$store.state.User.userInfo.name}}</span>
-                </li>
-                <li>
-                    <img src="../../assets/images/1.jpg">
-                    <span>{{$store.state.User.userInfo.name}}</span>
+                <li v-for="item in this.$store.state.Friend.friends" :key="item._id">
+                    <img :src="item.imgUrl">
+                    <span>{{item.name}}</span>
                 </li>
             </ul>
-            <h1>共 3 位</h1>
+            <h1>共 {{ this.$store.state.Friend.friends.length }} 位</h1>
         </div>
     </div>
 </template>
@@ -41,8 +33,17 @@ import TopBar from '../../components/TopBar'
 export default {
     name: 'Contacts',
     components: { TopBar },
+    methods: {
+        intoNew() {
+            this.$router.push('/new')
+            this.$store.dispatch('Friend/reqFriendApplys')
+        }
+    },
     mounted() {
         this.$bus.$emit('showTabBar')
+        if (this.$store.state.Friend.friends.length == 0) {
+            this.$store.dispatch('Friend/reqFriends')
+        }
     },
     beforeDestroy() {
         this.$bus.$emit('closeTabBar')

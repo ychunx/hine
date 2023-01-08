@@ -142,7 +142,7 @@ export default {
                     padding: 0 20px;
                     display: flex;
                     align-items: center;
-                    justify-content: end;
+                    justify-content: flex-end;
                 }
                 img{
                     width: 50px;
@@ -157,7 +157,7 @@ export default {
             background: #E7F0F7;
             display: flex;
             justify-content: space-between;
-            align-items: end;
+            align-items: flex-end;
             .dialog-input-plus{
                 width: 50px;
                 height: 60px;
@@ -178,7 +178,7 @@ export default {
                 margin: 10px 0;
                 box-sizing: border-box;
                 display: flex;
-                align-items: end;
+                align-items: flex-end;
                 div{
                     flex: 1;
                     outline: none;

@@ -68,15 +68,10 @@ const actions = {
         let allRes = await Promise.all(data.map(async (item) => {
             let friendId = item._id
             let res = await relation({userId, friendId})
-            if (res.status == 0) {
+            if (res.status != 1) {
                 return {
                     friendId,
-                    relation: true
-                }
-            } else if (res.status == 2) {
-                return {
-                    friendId,
-                    relation: false
+                    relation: res.status    // 0是好友、2申请中、3非好友、1错误
                 }
             } else {
                 return Promise.reject(new Error('falie'))
@@ -101,15 +96,10 @@ const actions = {
         let allRes = await Promise.all(data.map(async (item) => {
             let groupId = item._id
             let res = await isInGroup({userId, groupId})
-            if (res.status == 0) {
+            if (res.status != 1) {
                 return {
                     groupId,
-                    relation: true
-                }
-            } else if (res.status == 2) {
-                return {
-                    groupId,
-                    relation: false
+                    relation: res.status    // 0在群内、2非群成员、1错误
                 }
             } else {
                 return Promise.reject(new Error('falie'))

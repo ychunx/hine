@@ -30,5 +30,13 @@ export default [
   {
     path: '/register',
     component: () => import('../pages/Register')
+  },
+  {
+    path: '/apply',
+    component: () => import('../pages/Apply')
+  },
+  {
+    path: '/new',
+    component: () => import('../pages/New')
   }
 ]

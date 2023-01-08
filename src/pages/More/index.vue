@@ -13,18 +13,6 @@
                 <img src="../../assets/images/search.png">
                 <span>搜索</span>
             </li>
-            <li>
-                <img src="../../assets/images/add.png">
-                <span>好友请求</span>
-            </li>
-            <li>
-                <img src="../../assets/images/group.png">
-                <span>新建群组</span>
-            </li>
-            <li>
-                <img src="../../assets/images/hint.png">
-                <span>新建加密对话</span>
-            </li>
         </ul>
         <ul class="more-main logout">
             <li @click="logout">
@@ -58,11 +46,9 @@ export default {
 
 <style lang="less" scoped>
 .more{
-        width: 100%;
         height: calc(100vh - 60px);
         background: #f9f9f9;
         .more-top{
-            width: 100%;
             height: 120px;
             background: #607D8B;
             position: relative;
@@ -86,7 +72,7 @@ export default {
                     top: -50px;
                     left: 50%;
                     transform: translateX(-50%);
-                    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+                    box-shadow: 0 36px 40px 0 rgba(39, 40, 50, 0.1);
                 }
                 div{
                     p{

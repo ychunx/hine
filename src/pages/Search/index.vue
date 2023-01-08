@@ -5,7 +5,7 @@
                 <img src="../../assets/images/left.png">
             </div>
             <div class="search-input">
-                <input type="text" placeholder="搜索..." @input="search" v-model="key">
+                <input type="text" placeholder="搜索..." @input="search" v-model="key" ref="searchInput">
             </div>
         </div>
         <ul class="search-list">
@@ -16,8 +16,9 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation" @click="intoDialog">发信息</div>
-                <div class="apply-btn" v-else>加好友</div>
+                <div class="enter-btn" v-if="item.relation == 0" @click="intoDialog">发信息</div>
+                <div class="apply-btn" v-else-if="item.relation == 2" @click="intoApply(item._id, item.name, item.imgUrl, 'friend')">申请中</div>
+                <div class="apply-btn" v-else @click="intoApply(item._id, item.name, item.imgUrl, 'friend')">加好友</div>
             </li>
             <li class="title" v-show="searchGroups.length != 0">群组</li>
             <li class="search-item" v-for="item in groups" :key="item._id">
@@ -26,8 +27,8 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation" @click="intoDialog">发信息</div>
-                <div class="apply-btn" v-else>申请加入</div>
+                <div class="enter-btn" v-if="item.relation == 0" @click="intoDialog">发信息</div>
+                <div class="apply-btn" v-else @click="intoApply(item._id, item.name, item.imgUrl, 'group')">申请加入</div>
             </li>
         </ul>
     </div>
@@ -91,6 +92,12 @@ export default {
                 }
             }
             this.groups = groupsArr
+        },
+        intoApply(id, name, imgUrl, type) {
+            this.$router.push({
+                path: '/apply',
+                query: { id, name, imgUrl, type }
+            })
         }
     },
     computed: {
@@ -98,13 +105,14 @@ export default {
             searchUsers: state => state.Search.searchUsers,
             searchGroups: state => state.Search.searchGroups,
             relations: state => state.Search.relations,
-            isInGroup: state => state.Search.isInGroup,
+            isInGroups: state => state.Search.isInGroups,
             keyStore: state => state.Search.key
         })
     },
     mounted() {
         this.key = this.keyStore
         this.searchHandle()
+        this.$refs.searchInput.focus()
     }
 }
 </script>
