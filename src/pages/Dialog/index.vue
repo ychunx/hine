@@ -4,28 +4,16 @@
     <div class="dialog">
         <div class="dialog-top">
             <div class="dialog-back"><img src="../../assets/images//left.png" @click="back"></div>
-            <div class="dialog-title">{{ $store.state.User.userInfo.name }}</div>
+            <div class="dialog-title">{{ dialogData.name }}</div>
             <div class="dialog-info"><img src="../../assets/images/info.png"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
-            <div class="msg-ul">
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-                <div class="msg-li-left"><img src="../../assets/images/1.jpg">你好</div>
-                <div class="msg-li-right">你好<img src="../../assets/images/1.jpg"></div>
-            </div>
+            <ul class="msg-ul">
+                <!-- <div class="msg-li-left"><img :src="dialogData.imgUrl">你好</div>
+                <div class="msg-li-right">你好<img :src="$store.state.User.userInfo.imgUrl"></div> -->
+                <li v-for="item in dialogData.msgsArr.friendMsgs || []" :key="item._Id" class="msg-li-left"><img :src="dialogData.imgUrl">{{ item.content }}</li>
+                <li v-for="item in dialogData.msgsArr.myMsgs || []" :key="item._Id" class="msg-li-right">{{ item.content }}<img :src="$store.state.User.userInfo.imgUrl"></li>
+            </ul>
         </div>
         <div class="dialog-input" ref="dialogInput">
             <div class="dialog-input-plus"><img src="../../assets/images/plus.png"></div>
@@ -45,7 +33,8 @@ export default {
     name: 'Dialog',
     data() {
         return {
-            isKeyboard: false
+            isKeyboard: false,
+            dialogData: {}
         }
     },
     methods:{
@@ -66,7 +55,10 @@ export default {
             this.$refs.dialogMain.scrollTop = this.$refs.dialogMain.scrollHeight - this.$refs.dialogInput.offsetTop
         }
     },
-    mounted(){
+    beforeMount() {
+        this.dialogData = this.$route.params
+    },
+    mounted() {
         this.$nextTick(() => {
             // 进入页面时消息盒子自动滚至底部
             this.moveToBottom()
@@ -100,7 +92,6 @@ export default {
             .dialog-back{
                 width: 60px;
                 text-align: center;
-                box-sizing: border-box;
                 img{
                     width: 25px;
                     height: 25px;
@@ -116,7 +107,6 @@ export default {
             .dialog-info{
                 width: 60px;
                 text-align: center;
-                box-sizing: border-box;
                 img{
                     width: 25px;
                     height: 25px;

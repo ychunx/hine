@@ -16,6 +16,7 @@ export default [
     component: () => import('../pages/More')
   },
   {
+    name: 'Dialog',
     path: '/dialog',
     component: () => import('../pages/Dialog')
   },

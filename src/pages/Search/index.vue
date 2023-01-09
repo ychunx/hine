@@ -5,7 +5,7 @@
                 <img src="../../assets/images/left.png">
             </div>
             <div class="search-input">
-                <input type="text" placeholder="搜索..." @input="search" v-model="key" ref="searchInput">
+                <input type="text" placeholder="搜索..." @input="search" v-model="key">
             </div>
         </div>
         <ul class="search-list">
@@ -112,7 +112,6 @@ export default {
     mounted() {
         this.key = this.keyStore
         this.searchHandle()
-        this.$refs.searchInput.focus()
     }
 }
 </script>

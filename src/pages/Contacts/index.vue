@@ -6,6 +6,9 @@
                 <li @click="intoNew">
                     <img src="../../assets/images/add.png">
                     <span>好友请求</span>
+                    <div class="tip" v-show="applyNum != 0">
+                        <div>{{ applyNum }}</div>
+                    </div>
                 </li>
                 <li>
                     <img src="../../assets/images/group.png">
@@ -33,17 +36,29 @@ import TopBar from '../../components/TopBar'
 export default {
     name: 'Contacts',
     components: { TopBar },
+    data() {
+        return {
+
+        }
+    },
     methods: {
         intoNew() {
             this.$router.push('/new')
-            this.$store.dispatch('Friend/reqFriendApplys')
+        }
+    },
+    computed: {
+        applyNum() {
+            return this.$store.state.Friend.friendApplys.length
         }
     },
     mounted() {
         this.$bus.$emit('showTabBar')
-        if (this.$store.state.Friend.friends.length == 0) {
-            this.$store.dispatch('Friend/reqFriends')
-        }
+
+        // if (this.$store.state.Friend.friends.length == 0) {
+        //     this.$store.dispatch('Friend/reqFriends')
+        // }
+
+        this.$store.dispatch('Friend/reqFriendApplys')
     },
     beforeDestroy() {
         this.$bus.$emit('closeTabBar')
@@ -52,7 +67,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-    .contacts{
+.contacts{
         background: #F9F9F9;
         .contacts-main{
             padding-top: 60px;
@@ -74,6 +89,20 @@ export default {
                     }
                     span{
                         font-weight: bold;
+                    }
+                    .tip{
+                        flex: 1;
+                        div{
+                            width: 30px;
+                            height: 20px;
+                            border-radius: 10px;
+                            background: #FA5252;
+                            float: right;
+                            text-align: center;
+                            color: #ffffff;
+                            font-size: 14px;
+                            line-height: 20px;
+                        }
                     }
                 }
             }

@@ -2,42 +2,16 @@
   <div class="msg">
     <TopBar />
     <ul class="msg-ul">
-      <li class="msg-item" @click="intoDialog">
-        <div class="msg-item-tip">3</div>
-        <img src="../../assets/images/1.jpg">
+      <li class="msg-item" @click="intoDialog(item.friendId)" v-for="item in msgList" :key="item.friendId">
+        <div class="msg-item-tip" v-show="item.tip != 0">{{item.tip}}</div>
+        <img :src="item.imgUrl">
         <div class="msg-item-main">
           <div class="msg-item-title">
-            <span>{{$store.state.User.userInfo.name}}</span>
-            <span>PM 12:00</span>
+            <span>{{item.name}}</span>
+            <span>{{item.time}}</span>
           </div>
           <div class="msg-item-content">
-            你好啊，{{$store.state.User.userInfo.name}}
-          </div>
-        </div>
-      </li>
-      <li class="msg-item" @click="intoDialog">
-        <div class="msg-item-tip">3</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>{{$store.state.User.userInfo.name}}</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            你好啊，{{$store.state.User.userInfo.name}}
-          </div>
-        </div>
-      </li>
-      <li class="msg-item" @click="intoDialog">
-        <div class="msg-item-tip">3</div>
-        <img src="../../assets/images/1.jpg">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>{{$store.state.User.userInfo.name}}</span>
-            <span>PM 12:00</span>
-          </div>
-          <div class="msg-item-content">
-            你好啊，{{$store.state.User.userInfo.name}}
+            {{ item.content}}
           </div>
         </div>
       </li>
@@ -47,21 +21,141 @@
 
 <script>
 import TopBar from '../../components/TopBar'
-
+import { mapState } from 'vuex'
 export default {
     name: 'Msg',
     components:{TopBar},
-    methods:{
-      intoDialog(){
-        this.$router.push('/dialog')
+    data() {
+      return {
+        msgsArr: [],
+        msgList: []
       }
-  },
-  mounted() {
-    this.$bus.$emit('showTabBar')
-  },
-  beforeDestroy() {
-    this.$bus.$emit('closeTabBar')
-  }
+    },
+    methods:{
+      intoDialog(friendId){
+        let data = {}
+        this.msgsArr.forEach((item) => {
+          if (item.userId == friendId) {
+            data.msgsArr = {...item}
+          }
+        })
+        this.msgList.forEach((item) => {
+          if (item.friendId == friendId) {
+            data.name = item.name
+            data.imgUrl = item.imgUrl
+          }
+        })
+
+        this.$router.push({
+          name: 'Dialog',
+          params: data
+        })
+      },
+
+      // 合并为一个数组，每个元素是每个好友的所有来回消息和好友id
+      getMsgsArr() {
+        let name = ''
+        let imgUrl = ''
+        this. msgsArr = this.myAllMsgs.reduce((prev, myitem) => {
+          let friendMsg = prev.find((item) => {
+            return item.userId == myitem.friendId
+          })
+
+          if (friendMsg) {
+            friendMsg.myMsgs = myitem.myMsgs
+          } else {
+            prev.push({
+              userId: myitem.friendId,
+              myMsgs: myitem.myMsgs
+            })
+          }
+
+          return prev
+        }, this.friendAllMsgs)
+      },
+
+      // Msg页面展示所需数据
+      getMsgList() {
+        let arr = []
+        let content = ''
+        let time = ''
+        let name = ''
+        let imgUrl = ''
+        let tip = 0
+
+        this.msgsArr.forEach(item => {
+          if (item.friendMsgs && item.myMsgs) {
+            let which = item.friendMsgs[item.friendMsgs.length - 1].time > item.myMsgs[item.myMsgs.length - 1].time
+            if (which) {
+              content = item.friendMsgs[item.friendMsgs.length - 1].content
+              time = item.friendMsgs[item.friendMsgs.length - 1].time
+            } else {
+              content = item.myMsgs[item.myMsgs.length - 1].content
+              time = item.myMsgs[item.myMsgs.length - 1].time
+            }
+          } else if (item.friendMsgs) {
+            content = item.friendMsgs[item.friendMsgs.length - 1].content
+            time = item.friendMsgs[item.friendMsgs.length - 1].time
+          } else {
+            content = item.myMsgs[item.myMsgs.length - 1].content
+            time = item.myMsgs[item.myMsgs.length - 1].time
+          }
+
+          let info = this.$store.state.Friend.friends.find((ele) => {
+            return item.userId == ele._id
+          })
+          if (info) {
+            name = info.name
+            imgUrl = info.imgUrl
+          } else {
+            name = ''
+            imgUrl = ''
+          }
+
+          tip = 0
+          if (item.friendMsgs) {
+            item.friendMsgs.forEach((ele) => {
+              if (ele.state == 1) {
+                tip++
+              }
+            })
+          }
+
+          arr.push({
+            name,
+            imgUrl,
+            time,
+            content,
+            tip,
+            friendId: item.userId
+          })
+        })
+        this.msgList = arr
+      },
+
+      // 挂载前获取数据
+      async getData() {
+        await this.$store.dispatch('Chat/reqAllMsgs')
+        if (this.$store.state.Friend.friends.length == 0) {
+          await this.$store.dispatch('Friend/reqFriends')
+        }
+        this.getMsgsArr()
+        this.getMsgList()
+      }
+    },
+    computed: {
+      ...mapState({
+        friendAllMsgs: state => state.Chat.friendAllMsgs,
+        myAllMsgs: state => state.Chat.myAllMsgs
+      })
+    },
+    mounted() {
+      this.$bus.$emit('showTabBar')
+      this.getData()
+    },
+    beforeDestroy() {
+      this.$bus.$emit('closeTabBar')
+    }
 }
 </script>
 

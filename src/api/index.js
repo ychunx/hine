@@ -1,21 +1,13 @@
 // 引入自封装axios
 import requests from "./request"
 
-export const addUser = (data) => requests({
-    url: '/signup/adduser',
-    method: 'post',
-    data
-})
+export const addUser = (data) => requests({ url: '/signup/adduser', method: 'post', data })
 
 export const nameInUse = (name) => requests({ url: `/signup/nameinuse/${name}`, method: 'get' })
 
 export const emailInUse = (email) => requests({ url: `/signup/emailinuse/${email}`, method: 'get' })
 
-export const login = (data) => requests({
-    url: '/signin/login',
-    method: 'post',
-    data
-})
+export const login = (data) => requests({ url: '/signin/login', method: 'post', data })
 
 export const reqUserInfo = () => requests({ url: '/signin/getUserInfo', method: 'get' })
 
@@ -40,3 +32,7 @@ export const rejectApply = (data) => requests({ url: '/friend/reject', method: '
 export const reqFriends = () => requests({ url: '/friend/getfriends', method: 'get' })
 
 export const deleteFriend = (data) => requests({ url: '/friend/delete', method: 'post', data })
+
+export const reqAllFriendMsgs = () => requests({ url: '/chat/getallfriendmsgs', method: 'get' })
+
+export const reqAllMyMsgs = () => requests({ url: '/chat/getallmymsgs', method: 'get' })

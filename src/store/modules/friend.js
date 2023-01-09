@@ -15,6 +15,7 @@ const mutations = {
 }
 
 const actions = {
+    // 获取好友列表
     async reqFriends({commit}) {
         let res = await reqFriends()
         if (res.status == 0) {
@@ -24,6 +25,7 @@ const actions = {
             return Promise.reject(new Error('falie'))
         }
     },
+    // 获取好友申请列表
     async reqFriendApplys({commit}) {
         let res = await getFriendApplys()
         if (res.status == 0) {
