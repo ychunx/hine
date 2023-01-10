@@ -36,3 +36,5 @@ export const deleteFriend = (data) => requests({ url: '/friend/delete', method: 
 export const reqAllFriendMsgs = () => requests({ url: '/chat/getallfriendmsgs', method: 'get' })
 
 export const reqAllMyMsgs = () => requests({ url: '/chat/getallmymsgs', method: 'get' })
+
+export const readFriendMsgs = (data) => requests({ url: '/chat/readfriendmsgs', method: 'post', data })

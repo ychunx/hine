@@ -2,7 +2,7 @@
   <div class="new">
     <div class="new-top">
         <div class="back" @click="back">
-            <img src="../../assets/images/left.png">
+            <img src="../../../assets/images/left.png">
         </div>
     </div>
     <ul class="new-ul">
@@ -15,7 +15,7 @@
             <div class="li-center">
                 <p>验证信息</p>
                 <div>
-                    {{ item.msgs[item.msgs.length-1].content }}
+                    {{ item.msgs.length > 0 ? item.msgs[item.msgs.length-1].content : '' }}
                 </div>
             </div>
             <div class="li-right">
@@ -39,7 +39,8 @@ export default {
     },
     methods: {
         back() {
-            this.$router.back()
+            this.$bus.$emit('hideNew')
+            this.$store.dispatch('Friend/reqFriends')
         },
         reqData() {
             this.$store.dispatch('Friend/reqFriendApplys')
@@ -73,18 +74,12 @@ export default {
             friendApplys: state => state.Friend.friendApplys,
             userId: state => state.User.userInfo._id
         })
-    },
-    mounted() {
-        this.reqData()
-    },
-    beforeDestroy() {
-        this.$store.dispatch('Friend/reqFriends')
     }
 }
 </script>
 
 <style lang="less" scoped>
-.new{
+    .new{
         background: #E7F0F7;
         height: 100vh;
         .new-top{

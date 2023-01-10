@@ -32,14 +32,14 @@ export default {
         },
         logout() {
             this.$store.dispatch('User/logout')
-            this.$router.push('/login')
+            this.$router.go(0)
         }
     },
     mounted() {
-        this.$bus.$emit('showTabBar')
+        this.$bus.$emit('activeTabBar')
     },
     beforeDestroy() {
-        this.$bus.$emit('closeTabBar')
+        this.$bus.$emit('deactiveTabBar')
     }
 }
 </script>

@@ -16,11 +16,6 @@ export default [
     component: () => import('../pages/More')
   },
   {
-    name: 'Dialog',
-    path: '/dialog',
-    component: () => import('../pages/Dialog')
-  },
-  {
     path: '/search',
     component: () => import('../pages/Search')
   },
@@ -36,8 +31,4 @@ export default [
     path: '/apply',
     component: () => import('../pages/Apply')
   },
-  {
-    path: '/new',
-    component: () => import('../pages/New')
-  }
 ]

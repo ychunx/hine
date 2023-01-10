@@ -1,5 +1,5 @@
 <template>
-    <div class="bar-box" :class="close ? 'deactive' : ''">
+    <div class="bar-box" :class="{deactive, hide}">
         <div class="bar-button" :class="getScene == 'msg' ? 'active' : ''" @click="changeScene('msg')">
             <div>
                 <img src="../../assets/images/msg.png">
@@ -29,17 +29,24 @@ export default {
     name: 'TabBar',
     data(){
         return {
-            close: false
+            deactive: false,
+            hide: false
         }
     },
     methods:{
-        closeTabBar(){
-            this.close = true
+        deactiveTabBar() {
+            this.deactive = true
         },
-        showTabBar(){
-            this.close = false
+        activeTabBar() {
+            this.deactive = false
         },
-        changeScene(scene){
+        hideTabBar() {
+            this.hide = true
+        },
+        showTabBar() {
+            this.hide = false
+        },
+        changeScene(scene) {
             let curScene = this.getScene
             if(scene != curScene) {
                 this.$router.push(`/${scene}`)
@@ -47,8 +54,10 @@ export default {
         }
     },
     mounted(){
-        this.$bus.$on('closeTabBar',this.closeTabBar)
-        this.$bus.$on('showTabBar', this.showTabBar)
+        this.$bus.$on('deactiveTabBar', this.deactiveTabBar)
+        this.$bus.$on('activeTabBar', this.activeTabBar)
+        this.$bus.$on('hideTabBar', this.hideTabBar)
+        this.$bus.$on('showTabBar',this.showTabBar)
     },
     computed: {
         getScene() {
@@ -68,8 +77,12 @@ export default {
         bottom: 0;
         display: flex;
         justify-content: space-around;
+        transition: all .5s;
         &.deactive {
             display: none;
+        }
+        &.hide{
+            transform: translateX(-20%);
         }
         .bar-button{
             width: 60px;

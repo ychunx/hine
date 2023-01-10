@@ -1,34 +1,47 @@
 <template>
   <div class="msg">
-    <TopBar />
-    <ul class="msg-ul">
-      <li class="msg-item" @click="intoDialog(item.friendId)" v-for="item in msgList" :key="item.friendId">
-        <div class="msg-item-tip" v-show="item.tip != 0">{{item.tip}}</div>
-        <img :src="item.imgUrl">
-        <div class="msg-item-main">
-          <div class="msg-item-title">
-            <span>{{item.name}}</span>
-            <span>{{item.time}}</span>
+    <div class="msg-main" :class="{ hide }">
+      <TopBar />
+      <ul class="msg-ul">
+        <li class="msg-item" @click="intoDialog(item.friendId)" v-for="item in msgList" :key="item.friendId">
+          <div class="msg-item-tip" v-show="item.tip != 0">{{ item.tip }}</div>
+          <img :src="item.imgUrl">
+          <div class="msg-item-main">
+            <div class="msg-item-title">
+              <span>{{ item.name }}</span>
+              <span>{{ item.time }}</span>
+            </div>
+            <div class="msg-item-content">
+              {{ item.content }}
+            </div>
           </div>
-          <div class="msg-item-content">
-            {{ item.content}}
-          </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="dialog" :class="{dialogShow}">
+      <Dialog :friend="dialogProp"></Dialog>
+    </div>
   </div>
 </template>
 
 <script>
 import TopBar from '../../components/TopBar'
+import Dialog from './Dialog'
 import { mapState } from 'vuex'
 export default {
     name: 'Msg',
-    components:{TopBar},
+    components:{TopBar, Dialog},
     data() {
       return {
         msgsArr: [],
-        msgList: []
+        msgList: [],
+        hide: false,
+        dialogShow: false,
+        dailogData: {
+          name: '',
+          imgUrl: '',
+          msgsArr: []
+        }
       }
     },
     methods:{
@@ -46,10 +59,20 @@ export default {
           }
         })
 
-        this.$router.push({
-          name: 'Dialog',
-          params: data
-        })
+        this.dailogData = data
+
+        this.$bus.$emit('hideTabBar')
+        this.hideMsg()
+
+        this.$API.readFriendMsgs({userId: this.$store.state.User.userInfo._id, friendId})
+      },
+      hideMsg() {
+        this.hide = true
+        this.dialogShow = true
+      },
+      showMsg() {
+        this.hide = false
+        this.dialogShow = false
       },
 
       // 合并为一个数组，每个元素是每个好友的所有来回消息和好友id
@@ -147,90 +170,121 @@ export default {
       ...mapState({
         friendAllMsgs: state => state.Chat.friendAllMsgs,
         myAllMsgs: state => state.Chat.myAllMsgs
-      })
+      }),
+      dialogProp() {
+        return this.dailogData
+      }
     },
     mounted() {
-      this.$bus.$emit('showTabBar')
+      this.$bus.$emit('activeTabBar')
       this.getData()
+      this.$bus.$on('hideMsg',this.hideMsg)
+      this.$bus.$on('showMsg',this.showMsg)
+      this.$bus.$on('getMsgData', this.getData)
     },
     beforeDestroy() {
-      this.$bus.$emit('closeTabBar')
+      this.$bus.$emit('deactiveTabBar')
     }
 }
 </script>
 
 <style lang="less" scoped>
 .msg{
-  background: #F9F9F9;
-  .msg-ul{
-    width: 100%;
-    height: calc(100vh - 60px);
-    padding-top: 60px;
-    overflow: scroll;
-    box-sizing: border-box;
-    .msg-item {
+    position: relative;
+    .msg-main {
+      background: #F9F9F9;
+      transition: all .5s;
+      &.hide {
+        transform: translateX(-20%);
+      }
+      .msg-ul {
         width: 100%;
-        height: 80px;
-        padding: 0 20px;
-        position: relative;
+        height: calc(100vh - 60px);
+        padding-top: 60px;
+        overflow: scroll;
         box-sizing: border-box;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        background: #fff;
-        border-bottom: 1px solid #EDEDED;
-        .msg-item-tip {
-          width: 30px;
-          height: 20px;
-          border-radius: 10px;
-          color: #fff;
-          background: #FA5252;
-          line-height: 20px;
-          position: absolute;
-          bottom: 15px;
-          right: 20px;
-          text-align: center;
-        }
-        img {
-          width: 50px;
-          height: 50px;
-          border-radius: 20%;
-          margin-right: 8px;
-        }
-        .msg-item-main {
-          flex: 1;
+        .msg-item {
+          width: 100%;
           height: 80px;
-          padding: 15px 0;
-          overflow: hidden;
+          padding: 0 20px;
+          position: relative;
           box-sizing: border-box;
-          .msg-item-title{
-            width: 100%;
-            height: 25px;
-            box-sizing: border-box;
-            span:nth-child(1){
-              font-size: 18px;
-              font-weight: bold;
-            }
-            span:nth-child(2){
-              float: right;
-              color: #999;
-              font-size: 12px;
-            }
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          background: #fff;
+          border-bottom: 1px solid #EDEDED;
+
+          .msg-item-tip {
+            width: 30px;
+            height: 20px;
+            border-radius: 10px;
+            color: #fff;
+            background: #FA5252;
+            line-height: 20px;
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            text-align: center;
           }
-          .msg-item-content{
-            width: 80%;
-            height: 25px;
-            color: #999;
-            font-weight: bold;
-            line-height: 30px;
-            white-space: nowrap;
+
+          img {
+            width: 50px;
+            height: 50px;
+            border-radius: 20%;
+            margin-right: 8px;
+          }
+
+          .msg-item-main {
+            flex: 1;
+            height: 80px;
+            padding: 15px 0;
             overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 14px;
-            letter-spacing: 1.5px;
+            box-sizing: border-box;
+
+            .msg-item-title {
+              width: 100%;
+              height: 25px;
+              box-sizing: border-box;
+
+              span:nth-child(1) {
+                font-size: 18px;
+                font-weight: bold;
+              }
+
+              span:nth-child(2) {
+                float: right;
+                color: #999;
+                font-size: 12px;
+              }
+            }
+
+            .msg-item-content {
+              width: 80%;
+              height: 25px;
+              color: #999;
+              font-weight: bold;
+              line-height: 30px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              font-size: 14px;
+              letter-spacing: 1.5px;
+            }
           }
         }
       }
+    }
+    .dialog{
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 100%;
+      transition: all .3s;
+      z-index: 999;
+      &.dialogShow{
+        left: 0
+      }
+    }
   }
-}
 </style>

@@ -3,26 +3,26 @@
     <div class="mask"></div>
     <div class="dialog">
         <div class="dialog-top">
-            <div class="dialog-back"><img src="../../assets/images//left.png" @click="back"></div>
-            <div class="dialog-title">{{ dialogData.name }}</div>
-            <div class="dialog-info"><img src="../../assets/images/info.png"></div>
+            <div class="dialog-back"><img src="../../../assets/images//left.png" @click="back"></div>
+            <div class="dialog-title">{{ friend.name }}</div>
+            <div class="dialog-info"><img src="../../../assets/images/info.png"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
             <ul class="msg-ul">
                 <!-- <div class="msg-li-left"><img :src="dialogData.imgUrl">你好</div>
                 <div class="msg-li-right">你好<img :src="$store.state.User.userInfo.imgUrl"></div> -->
-                <li v-for="item in dialogData.msgsArr.friendMsgs || []" :key="item._Id" class="msg-li-left"><img :src="dialogData.imgUrl">{{ item.content }}</li>
-                <li v-for="item in dialogData.msgsArr.myMsgs || []" :key="item._Id" class="msg-li-right">{{ item.content }}<img :src="$store.state.User.userInfo.imgUrl"></li>
+                <li v-for="item in friend.msgsArr.friendMsgs || []" :key="item._Id" class="msg-li-left"><img :src="friend.imgUrl">{{ item.content }}</li>
+                <li v-for="item in friend.msgsArr.myMsgs || []" :key="item._Id" class="msg-li-right">{{ item.content }}<img :src="$store.state.User.userInfo.imgUrl"></li>
             </ul>
         </div>
         <div class="dialog-input" ref="dialogInput">
-            <div class="dialog-input-plus"><img src="../../assets/images/plus.png"></div>
+            <div class="dialog-input-plus"><img src="../../../assets/images/plus.png"></div>
             <div class="dialog-input-content">
                 <div contenteditable="true" ref="dialogInputContent" @focus="moveToBottom"></div>
-                <img src="../../assets/images/keyboard.png" @click="chooseType(false)" v-if="isKeyboard">
-                <img src="../../assets/images/emoji.png" @click="chooseType(true)" v-else>
+                <img src="../../../assets/images/keyboard.png" @click="chooseType(false)" v-if="isKeyboard">
+                <img src="../../../assets/images/emoji.png" @click="chooseType(true)" v-else>
             </div>
-            <div class="dialog-input-send"><img src="../../assets/images/send.png"></div>
+            <div class="dialog-input-send"><img src="../../../assets/images/send.png"></div>
         </div>
     </div>
   </div>
@@ -31,15 +31,17 @@
 <script>
 export default {
     name: 'Dialog',
+    props: ['friend'],
     data() {
         return {
             isKeyboard: false,
-            dialogData: {}
         }
     },
     methods:{
         back() {
-            this.$router.back()
+            this.$bus.$emit('getMsgData')
+            this.$bus.$emit('showMsg')
+            this.$bus.$emit('showTabBar')
         },
         chooseType(type) {
             this.isKeyboard = type
@@ -55,9 +57,6 @@ export default {
             this.$refs.dialogMain.scrollTop = this.$refs.dialogMain.scrollHeight - this.$refs.dialogInput.offsetTop
         }
     },
-    beforeMount() {
-        this.dialogData = this.$route.params
-    },
     mounted() {
         this.$nextTick(() => {
             // 进入页面时消息盒子自动滚至底部
@@ -71,13 +70,14 @@ export default {
 .mask {
         width: 100%;
         height: 60px;
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         z-index: 9;
         backdrop-filter: blur(8px);
     }
     .dialog{
+        background: #ffffff;
         .dialog-top{
             width: 100%;
             height: 60px;
@@ -86,7 +86,7 @@ export default {
             align-items: center;
             background: rgba(255, 255, 255, 0.9);
             z-index: 99;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             .dialog-back{

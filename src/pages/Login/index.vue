@@ -63,7 +63,7 @@ export default {
         }
     },
     mounted() {
-        this.$bus.$emit('closeTabBar')
+        this.$bus.$emit('deactiveTabBar')
     }
 }
 </script>
