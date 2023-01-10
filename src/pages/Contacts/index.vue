@@ -60,6 +60,9 @@ export default {
         }
     },
     mounted() {
+        if (this.$store.state.Friend.friends.length == 0) {
+            this.$store.dispatch('Friend/reqFriends')
+        }
         this.$bus.$emit('activeTabBar')
         this.$store.dispatch('Friend/reqFriendApplys')
         this.$bus.$on('hideNew', this.hideNew)
