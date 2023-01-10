@@ -22,7 +22,7 @@
                 <img src="../../../assets/images/keyboard.png" @click="chooseType(false)" v-if="isKeyboard">
                 <img src="../../../assets/images/emoji.png" @click="chooseType(true)" v-else>
             </div>
-            <div class="dialog-input-send"><img src="../../../assets/images/send.png"></div>
+            <div class="dialog-input-send"><img src="../../../assets/images/send.png" @click="send"></div>
         </div>
     </div>
   </div>
@@ -55,6 +55,14 @@ export default {
             // 消息盒子滚至底部
             // 卷起的高度 = 内容的高度 - 输入框离父元素（相当于浏览器视窗顶部）的高度
             this.$refs.dialogMain.scrollTop = this.$refs.dialogMain.scrollHeight - this.$refs.dialogInput.offsetTop
+        },
+        send() {
+            let content = this.$refs.dialogInputContent.innerText
+            let userId = this.$store.state.User.userInfo._id
+            let friendId = this.friend.msgsArr.userId
+            let type = '0'
+            this.$API.sendMsg({userId, friendId, content, type})
+            this.$refs.dialogInputContent.innerText = ''
         }
     },
     mounted() {
