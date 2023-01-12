@@ -5,20 +5,24 @@
         <div class="dialog-top">
             <div class="dialog-back"><img src="../../../assets/images//left.png" @click="back"></div>
             <div class="dialog-title">{{ friend.name }}</div>
-            <div class="dialog-info"><img src="../../../assets/images/info.png"></div>
+            <div class="dialog-info"><img :src="friend.imgUrl"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
             <ul class="msg-ul">
-                <!-- <div class="msg-li-left"><img :src="dialogData.imgUrl">你好</div>
-                <div class="msg-li-right">你好<img :src="$store.state.User.userInfo.imgUrl"></div> -->
-                <li v-for="item in friend.msgsArr.friendMsgs || []" :key="item._Id" class="msg-li-left"><img :src="friend.imgUrl">{{ item.content }}</li>
-                <li v-for="item in friend.msgsArr.myMsgs || []" :key="item._Id" class="msg-li-right">{{ item.content }}<img :src="$store.state.User.userInfo.imgUrl"></li>
+                <li :class="item.from == 'friends' ? 'msg-ul-left' : 'msg-ul-right'" v-for="item in friend.msgsArr" :key="item._id">
+                    <div class="msg-li-content">
+                        {{ item.content }}
+                    </div>
+                    <div class="msg-li-time">
+                        {{ formatDateTime(item.time) }}
+                    </div>
+                </li>
             </ul>
         </div>
-        <div class="dialog-input" ref="dialogInput">
+        <div class="dialog-input">
             <div class="dialog-input-plus"><img src="../../../assets/images/plus.png"></div>
             <div class="dialog-input-content">
-                <div contenteditable="true" ref="dialogInputContent" @focus="moveToBottom"></div>
+                <div contenteditable="true" ref="dialogInputContent" @input="moveToBottom" @focus="moveToBottom"></div>
                 <img src="../../../assets/images/keyboard.png" @click="chooseType(false)" v-if="isKeyboard">
                 <img src="../../../assets/images/emoji.png" @click="chooseType(true)" v-else>
             </div>
@@ -31,7 +35,7 @@
 <script>
 export default {
     name: 'Dialog',
-    props: ['friend'],
+    props: ['msgData', 'intoId'],
     data() {
         return {
             isKeyboard: false,
@@ -39,7 +43,7 @@ export default {
     },
     methods:{
         back() {
-            this.$bus.$emit('getMsgData')
+            this.$API.readFriendMsgs({ userId: this.$store.state.User.userInfo._id, friendId: this.friend.friendId })
             this.$bus.$emit('showMsg')
             this.$bus.$emit('showTabBar')
         },
@@ -51,25 +55,118 @@ export default {
                 this.$refs.dialogInputContent.focus()
             }
         },
-        moveToBottom() {
-            // 消息盒子滚至底部
-            // 卷起的高度 = 内容的高度 - 输入框离父元素（相当于浏览器视窗顶部）的高度
-            this.$refs.dialogMain.scrollTop = this.$refs.dialogMain.scrollHeight - this.$refs.dialogInput.offsetTop
-        },
         send() {
             let content = this.$refs.dialogInputContent.innerText
             let userId = this.$store.state.User.userInfo._id
-            let friendId = this.friend.msgsArr.userId
-            let type = '0'
-            this.$API.sendMsg({userId, friendId, content, type})
+            let friendId = this.friend.friendId
+            let types = '0'
+
+            // 暂时解决,无效，睡觉
+            this.friend.msgsArr.push({
+                content,
+                userId,
+                friendId,
+                types,
+                from: 'own'
+            })
+            this.$API.sendMsg({ userId, friendId, content, types })
+
             this.$refs.dialogInputContent.innerText = ''
+            this.$nextTick(() => {
+                this.moveToBottom()
+            })
+
+            this.$refs.dialogInputContent.focus()
+        },
+        moveToBottom() {
+            // 消息盒子滚至底部
+            // this.$refs.dialogMain.scrollHeight - this.$refs.dialogInput.offsetTop
+            setTimeout(() => {
+                this.$refs.dialogMain && this.$refs.dialogMain.scrollTo(0, this.$refs.dialogMain.scrollHeight)
+            }, 100)
+        },
+
+        // 快速排序
+        qSort(arr) {
+            if (arr.length <= 0) {
+                return []
+            }
+
+            let pivot = arr.splice(0, 1)[0]
+            let lesser = []
+            let greater = []
+
+            arr.forEach(item => {
+                if (item.time < pivot.time) {
+                    lesser.push(item)
+                } else {
+                    greater.push(item)
+                }
+            })
+            return this.qSort(lesser).concat(pivot, this.qSort(greater))
+        },
+
+        // 格式化时间
+        formatDateTime(date) {
+            if (date == "" || !date) {
+                return ""
+            }
+            var date = new Date(date)
+            // var y = date.getFullYear()
+            // var m = date.getMonth() + 1
+            // m = m < 10 ? ('0' + m) : m
+            // var d = date.getDate()
+            // d = d < 10 ? ('0' + d) : d
+            var h = date.getHours()
+            h = h < 10 ? ('0' + h) : h
+            var minute = date.getMinutes()
+            minute = minute < 10 ? ('0' + minute) : minute
+            // var second = date.getSeconds()
+            // second = second < 10 ? ('0' + second) : second
+            return `${h}:${minute}`
+        },
+
+    },
+    computed: {
+        friend() {
+            // watch ?
+            if (this.intoId == '') {
+                return {
+                    msgsArr: [],
+                    name: '',
+                    imgUrl: '',
+                    friendId: ''
+                }
+            }
+
+            let msgsItem = this.msgData.msgsArr.find((item) => {
+                return this.intoId == item.userId
+            })
+            let myMsgs = msgsItem.myMsgs
+            let friendMsgs = msgsItem.friendMsgs
+            myMsgs.forEach(item => {
+                item.from = 'own'
+            })
+            friendMsgs.forEach(item => {
+                item.from = 'friends'
+            })
+            let arr = myMsgs.concat(friendMsgs)
+            let newArr = this.qSort(arr)
+
+            let infoItem = this.msgData.msgList.find((item) => {
+                return this.intoId == item.friendId
+            })
+
+            return {
+                msgsArr: newArr,
+                name: infoItem.name,
+                imgUrl: infoItem.imgUrl,
+                friendId: this.intoId
+            }
         }
     },
     mounted() {
-        this.$nextTick(() => {
-            // 进入页面时消息盒子自动滚至底部
-            this.moveToBottom()
-        })
+        this.$bus.$on('moveToBottom', this.moveToBottom)
     }
 }
 </script>
@@ -114,10 +211,10 @@ export default {
             }
             .dialog-info{
                 width: 60px;
-                text-align: center;
                 img{
-                    width: 25px;
-                    height: 25px;
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 50%;
                 }
             }
         }
@@ -127,31 +224,46 @@ export default {
             .msg-ul{
                 padding-top: 60px;
                 box-sizing: border-box;
-                background: #F9F9F9;
-                .msg-li-left{
-                    height: 80px;
-                    padding: 0 20px;
-                    display: flex;
-                    align-items: center;
-                    background: #E7F0F7;
+                list-style: none;
+                li{
+                    padding: 5px 20px;
+                    width: fit-content;
+                    width: -webkit-fit-content;
+                    width: -moz-fit-content;
+                    .msg-li-time{
+                        font-size: 12px;
+                    }
                 }
-                .msg-li-right{
-                    height: 80px;
-                    padding: 0 20px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-end;
+                .msg-ul-left{
+                    .msg-li-content{
+                        background: #E7F0F7;
+                        border-radius: 20px;
+                        border-bottom-left-radius: 10px;
+                        padding: 10px;
+                    }
+                    .msg-li-time{
+                        padding-left: 5px;
+                    }
                 }
-                img{
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
+                .msg-ul-right{
+                    margin-left: auto;
+                    .msg-li-content{
+                        background: #607D8B;
+                        border-radius: 20px;
+                        border-bottom-right-radius: 10px;
+                        padding: 10px;
+                        color: #ffffff;
+                        text-align: end;
+                    }
+                    .msg-li-time{
+                        text-align: end;
+                        padding-right: 5px;
+                    }
                 }
             }
         }
         .dialog-input{
             width: 100%;
-            //height: 60px;
             background: #E7F0F7;
             display: flex;
             justify-content: space-between;

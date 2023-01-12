@@ -9,7 +9,7 @@
           <div class="msg-item-main">
             <div class="msg-item-title">
               <span>{{ item.name }}</span>
-              <span>{{ item.time }}</span>
+              <span>{{ formatDateTime(item.time) }}</span>
             </div>
             <div class="msg-item-content">
               {{ item.content }}
@@ -19,7 +19,7 @@
       </ul>
     </div>
     <div class="dialog" :class="{dialogShow}">
-      <Dialog :friend="dialogProp"></Dialog>
+      <Dialog :msgData="dialogProp" :intoId="intoId"></Dialog>
     </div>
   </div>
 </template>
@@ -37,32 +37,19 @@ export default {
         msgList: [],
         hide: false,
         dialogShow: false,
-        dailogData: {
-          name: '',
-          imgUrl: '',
-          msgsArr: []
-        }
+        intoId: '',
+        in: false
       }
     },
     methods:{
       intoDialog(friendId){
-        let data = {}
-        this.msgsArr.forEach((item) => {
-          if (item.userId == friendId) {
-            data.msgsArr = {...item}
-          }
-        })
-        this.msgList.forEach((item) => {
-          if (item.friendId == friendId) {
-            data.name = item.name
-            data.imgUrl = item.imgUrl
-          }
-        })
-
-        this.dailogData = data
-
+        this.intoId = friendId
         this.$bus.$emit('hideTabBar')
         this.hideMsg()
+        this.$nextTick(() => {
+          this.$bus.$emit('moveToBottom')
+        })
+        this.in = true
 
         this.$API.readFriendMsgs({userId: this.$store.state.User.userInfo._id, friendId})
       },
@@ -73,13 +60,14 @@ export default {
       showMsg() {
         this.hide = false
         this.dialogShow = false
+        this.in = false
       },
 
       // 合并为一个数组，每个元素是每个好友的所有来回消息和好友id
       getMsgsArr() {
         let name = ''
         let imgUrl = ''
-        this. msgsArr = this.myAllMsgs.reduce((prev, myitem) => {
+        this.msgsArr = this.myAllMsgs.reduce((prev, myitem) => {
           let friendMsg = prev.find((item) => {
             return item.userId == myitem.friendId
           })
@@ -164,6 +152,26 @@ export default {
         }
         this.getMsgsArr()
         this.getMsgList()
+      },
+
+      // 格式化时间
+      formatDateTime(date) {
+        if (date == "" || !date) {
+          return ""
+        }
+        var date = new Date(date)
+        // var y = date.getFullYear()
+        // var m = date.getMonth() + 1
+        // m = m < 10 ? ('0' + m) : m
+        // var d = date.getDate()
+        // d = d < 10 ? ('0' + d) : d
+        var h = date.getHours()
+        h = h < 10 ? ('0' + h) : h
+        var minute = date.getMinutes()
+        minute = minute < 10 ? ('0' + minute) : minute
+        // var second = date.getSeconds()
+        // second = second < 10 ? ('0' + second) : second
+        return `${h}:${minute}`
       }
     },
     computed: {
@@ -172,7 +180,10 @@ export default {
         myAllMsgs: state => state.Chat.myAllMsgs
       }),
       dialogProp() {
-        return this.dailogData
+        return {
+          msgsArr: this.msgsArr,
+          msgList: this.msgList
+        }
       }
     },
     mounted() {
@@ -180,7 +191,14 @@ export default {
       this.getData()
       this.$bus.$on('hideMsg',this.hideMsg)
       this.$bus.$on('showMsg',this.showMsg)
-      this.$bus.$on('getMsgData', this.getData)
+
+      // 暂时解决
+      // setInterval(() => {
+      //   this.getData()
+      //   if (this.in) {
+      //     this.$bus.$emit('moveToBottom')
+      //   }
+      // },2000)
     },
     beforeDestroy() {
       this.$bus.$emit('deactiveTabBar')

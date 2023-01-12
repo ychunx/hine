@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import io from './utils/socket.io.min'
 
 Vue.config.productionTip = false
 
@@ -14,5 +15,6 @@ new Vue({
   beforeCreate() {
     Vue.prototype.$bus = this
     Vue.prototype.$API = API
+    Vue.prototype.$socket = io('http://localhost:3001')
   }
 }).$mount('#app')
