@@ -11,7 +11,7 @@
         <span>电子邮件地址</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model.trim="psw" @keyup.enter="register">
+        <input type="password" required v-model.trim="pwd" @keyup.enter="register">
         <span>密码</span>
     </div>
     <div class="tips">{{tips}}</div>
@@ -30,33 +30,40 @@ export default {
             tips: '',
             name: '',
             email: '',
-            psw: '',
+            pwd: '',
             nameInUse: false,
             emailInUse: false
         }
     },
     methods: {
+        // 跳转登录页
         intoLogin() {
             this.$router.push('/login')
         },
+
+        // 检查用户名占用
         async nameQuery() {
             if (!this.name) {
                 return
             }
             // 根据返回数量判断是否已被占用
             let res = await this.$API.nameInUse(this.name)
-            if (res.msg != 0) {
-                this.tips = '用户名已被占用'
-                this.nameInUse = true
-            } else {
-                this.nameInUse = false
-                // 防止覆盖提示信息
-                if (this.emailInUse || this.tips == '请输入正确的电子邮件地址') {
-                    return
+            if (res.status == 200) {
+                if (res.msg > 0) {
+                    this.tips = '用户名已被占用'
+                    this.nameInUse = true
+                } else {
+                    this.nameInUse = false
+                    // 防止覆盖提示信息
+                    if (this.emailInUse || this.tips == '请输入正确的电子邮件地址') {
+                        return
+                    }
+                    this.tips = ''
                 }
-                this.tips = ''
             }
         },
+
+        // 检查邮箱占用
         async emailQuery() {
             let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
             if (!this.email || !regEmail.test(this.email)) {
@@ -64,40 +71,41 @@ export default {
             }
             // 根据返回数量判断是否已被占用
             let res = await this.$API.emailInUse(this.email)
-            if (res.msg != 0) {
-                this.tips = '电子邮件地址已被占用'
-                this.emailInUse = true
-            } else {
-                this.emailInUse = false
-                // 防止覆盖提示信息
-                if (this.nameInUse) {
-                    return
+            if (res.status == 200) {
+                if (res.msg > 0) {
+                    this.tips = '电子邮件地址已被占用'
+                    this.emailInUse = true
+                } else {
+                    this.emailInUse = false
+                    // 防止覆盖提示信息
+                    if (this.nameInUse) {
+                        return
+                    }
+                    this.tips = ''
                 }
-                this.tips = ''
             }
-        }
-        ,
-        async register() {
-            let { nameQuery, emailQuery } = this
+        },
 
+        // 注册
+        async register() {
             // 提交注册前再次检查占用
-            nameQuery()
-            emailQuery()
+            await this.nameQuery()
+            await this.emailQuery()
 
             if (this.isComplete) {
                 this.$refs.registerBtn.innerText = '请稍后'
 
                 try {
-                    let { name, email, psw } = this
-                    await this.$store.dispatch('User/register', { name, email, psw })
+                    let { name, email, pwd } = this
+                    await this.$store.dispatch('User/register', { name, email, pwd })
                     this.intoLogin()
                 } catch (error) {
                     this.$refs.registerBtn.innerText = '注册'
-                    alert(error.message)
+                    this.tips = error.message
                 }
             } else if (!this.name) {
                 this.tips = '请输入用户名'
-            } else if (!this.psw){
+            } else if (!this.pwd){
                 this.tips = '请输入密码'
             } else {
                 // 电子邮件地址为空
@@ -106,13 +114,14 @@ export default {
         }
     },
     computed: {
+        // 判断是否全部正确填写
         isComplete() {
             if (this.nameInUse || this.emailInUse) {
                 return false
             }
 
             let regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
-            if (this.name && this.email && this.psw && regEmail.test(this.email)) {
+            if (this.name && this.email && this.pwd && regEmail.test(this.email)) {
                 this.tips = ''
                 return true
             } else {

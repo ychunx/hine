@@ -4,17 +4,19 @@
     <div class="dialog">
         <div class="dialog-top">
             <div class="dialog-back"><img src="../../../assets/images//left.png" @click="back"></div>
-            <div class="dialog-title">{{ friend.name }}</div>
-            <div class="dialog-info"><img :src="friend.imgUrl"></div>
+            <div class="dialog-title">名字</div>
+            <div class="dialog-info"><img src="user.png"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
             <ul class="msg-ul">
-                <li :class="item.from == 'friends' ? 'msg-ul-left' : 'msg-ul-right'" v-for="item in friend.msgsArr" :key="item._id">
+                <!-- <li :class="item.from == 'friends' ? 'msg-ul-left' : 'msg-ul-right'"> -->
+                <!-- 判断是哪边发送 -->
+                <li>
                     <div class="msg-li-content">
-                        {{ item.content }}
+                        内容
                     </div>
                     <div class="msg-li-time">
-                        {{ formatDateTime(item.time) }}
+                        时间
                     </div>
                 </li>
             </ul>
@@ -23,8 +25,8 @@
             <div class="dialog-input-plus"><img src="../../../assets/images/plus.png"></div>
             <div class="dialog-input-content">
                 <div contenteditable="true" ref="dialogInputContent" @input="moveToBottom" @focus="moveToBottom"></div>
-                <img src="../../../assets/images/keyboard.png" @click="chooseType(false)" v-if="isKeyboard">
-                <img src="../../../assets/images/emoji.png" @click="chooseType(true)" v-else>
+                <img src="../../../assets/images/keyboard.png" @click="toggleType" v-if="isEmoji">
+                <img src="../../../assets/images/emoji.png" @click="toggleType" v-else>
             </div>
             <div class="dialog-input-send"><img src="../../../assets/images/send.png" @click="send"></div>
         </div>
@@ -38,38 +40,33 @@ export default {
     props: ['msgData', 'intoId'],
     data() {
         return {
-            isKeyboard: false,
+            isEmoji: false,
         }
     },
     methods:{
         back() {
-            this.$API.readFriendMsgs({ userId: this.$store.state.User.userInfo._id, friendId: this.friend.friendId })
             this.$bus.$emit('showMsg')
             this.$bus.$emit('showTabBar')
         },
-        chooseType(type) {
-            this.isKeyboard = type
-            if (type) {
+
+        // 切换键盘
+        toggleType() {
+            this.isEmoji = !this.isEmoji
+            if (this.isEmoji) {
                 this.$refs.dialogInputContent.blur()
             } else {
                 this.$refs.dialogInputContent.focus()
             }
         },
+
+        // 发送消息
         send() {
             let content = this.$refs.dialogInputContent.innerText
             let userId = this.$store.state.User.userInfo._id
             let friendId = this.friend.friendId
             let types = '0'
 
-            // 暂时解决,无效，睡觉
-            this.friend.msgsArr.push({
-                content,
-                userId,
-                friendId,
-                types,
-                from: 'own'
-            })
-            this.$API.sendMsg({ userId, friendId, content, types })
+            // 添加进数组，socket 发送方法
 
             this.$refs.dialogInputContent.innerText = ''
             this.$nextTick(() => {
@@ -78,8 +75,9 @@ export default {
 
             this.$refs.dialogInputContent.focus()
         },
+
+        // 消息盒子滚至底部
         moveToBottom() {
-            // 消息盒子滚至底部
             // this.$refs.dialogMain.scrollHeight - this.$refs.dialogInput.offsetTop
             setTimeout(() => {
                 this.$refs.dialogMain && this.$refs.dialogMain.scrollTo(0, this.$refs.dialogMain.scrollHeight)
@@ -126,44 +124,6 @@ export default {
             return `${h}:${minute}`
         },
 
-    },
-    computed: {
-        friend() {
-            // watch ?
-            if (this.intoId == '') {
-                return {
-                    msgsArr: [],
-                    name: '',
-                    imgUrl: '',
-                    friendId: ''
-                }
-            }
-
-            let msgsItem = this.msgData.msgsArr.find((item) => {
-                return this.intoId == item.userId
-            })
-            let myMsgs = msgsItem.myMsgs
-            let friendMsgs = msgsItem.friendMsgs
-            myMsgs.forEach(item => {
-                item.from = 'own'
-            })
-            friendMsgs.forEach(item => {
-                item.from = 'friends'
-            })
-            let arr = myMsgs.concat(friendMsgs)
-            let newArr = this.qSort(arr)
-
-            let infoItem = this.msgData.msgList.find((item) => {
-                return this.intoId == item.friendId
-            })
-
-            return {
-                msgsArr: newArr,
-                name: infoItem.name,
-                imgUrl: infoItem.imgUrl,
-                friendId: this.intoId
-            }
-        }
     },
     mounted() {
         this.$bus.$on('moveToBottom', this.moveToBottom)

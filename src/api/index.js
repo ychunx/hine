@@ -33,10 +33,6 @@ export const reqFriends = () => requests({ url: '/friend/getfriends', method: 'g
 
 export const deleteFriend = (data) => requests({ url: '/friend/delete', method: 'post', data })
 
-export const reqAllFriendMsgs = () => requests({ url: '/chat/getallfriendmsgs', method: 'get' })
-
-export const reqAllMyMsgs = () => requests({ url: '/chat/getallmymsgs', method: 'get' })
+export const reqAllMsgs = () => requests({ url: '/chat/getallmsgs', method: 'get' })
 
 export const readFriendMsgs = (data) => requests({ url: '/chat/readfriendmsgs', method: 'post', data })
-
-export const sendMsg = (data) => requests({ url: '/chat/sendmsg', method: 'post', data })

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import routes from './routes'
 import store from "@/store"
+import { getToken } from "@/utils/token"
 
 Vue.use(Router)
 
@@ -12,7 +13,7 @@ let router = new Router({
 
 router.beforeEach(async (to, from, next) => {
     // 从vuex获取token
-    let token = store.state.User.token
+    let token = getToken()
     // 从vuex获取用户名（登录后才有）
     let name = store.state.User.userInfo.name
 
@@ -28,7 +29,9 @@ router.beforeEach(async (to, from, next) => {
             // 如果获取不到用户名则让用户重新登录
             try {
               await store.dispatch('User/getUserInfo')
-              next()
+              if (store.state.User.userInfo.name) {
+                next()
+              }
             } catch (error) {
               await store.dispatch('User/logout')
               next('/login')

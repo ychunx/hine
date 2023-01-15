@@ -40,12 +40,17 @@ export default {
     methods: {
         back() {
             this.$bus.$emit('hideNew')
+
+            // 暂时解决，退出时刷新好友列表
             this.$store.dispatch('Friend/reqFriends')
         },
+
+        // 请求好友申请列表
         reqData() {
             this.$store.dispatch('Friend/reqFriendApplys')
-        }
-        ,
+        },
+
+        // 同意添加
         async agree(friendId) {
             let res = await this.$API.agreeApply({friendId, userId: this.userId})
             if (res.status == 0) {
@@ -53,17 +58,23 @@ export default {
             } else {
                 this.errorId = friendId
             }
+
+            // 暂时解决，没有另作数组
             setTimeout(() => {
                 this.reqData()
             }, 300);
         },
+
+        // 拒绝添加
         async reject(friendId) {
             let res = await this.$API.rejectApply({ friendId, userId: this.userId })
-            if (res.status == 0) {
+            if (res.status == 200) {
                 this.successId = friendId
             } else {
                 this.errorId = friendId
             }
+
+            // 暂时解决，没有另作数组
             setTimeout(() => {
                 this.reqData()
             }, 300);

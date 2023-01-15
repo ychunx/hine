@@ -18,21 +18,21 @@ const actions = {
     // 获取好友列表
     async reqFriends({commit}) {
         let res = await reqFriends()
-        if (res.status == 0) {
+        if (res.status == 200) {
             commit('REQ_FRIENDS', res.msg)
             return 'ok'
         } else {
-            return Promise.reject(new Error('falie'))
+            return Promise.reject(new Error('获取好友列表失败'))
         }
     },
     // 获取好友申请列表
     async reqFriendApplys({commit}) {
         let res = await getFriendApplys()
-        if (res.status == 0) {
+        if (res.status == 200) {
             commit('REQ_FRIEND_APPLYS', res.msg)
             return 'ok'
         } else {
-            return Promise.reject(new Error('falie'))
+            return Promise.reject(new Error('获取好友申请列表失败'))
         }
     }
 }

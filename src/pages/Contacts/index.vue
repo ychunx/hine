@@ -21,12 +21,12 @@
                     </li>
                 </ul>
                 <ul class="contacts-main-box">
-                    <li v-for="item in this.$store.state.Friend.friends" :key="item._id">
+                    <li v-for="item in friends" :key="item._id">
                         <img :src="item.imgUrl">
                         <span>{{ item.name }}</span>
                     </li>
                 </ul>
-                <h1>共 {{ this.$store.state.Friend.friends.length }} 位</h1>
+                <h1>共 {{ friendsNum }} 位</h1>
             </div>
         </div>
         <div class="new-box" :class="{newShow}">
@@ -38,6 +38,7 @@
 <script>
 import TopBar from '../../components/TopBar'
 import New from './New'
+import { mapState } from 'vuex'
 export default {
     name: 'Contacts',
     components: { TopBar, New },
@@ -55,16 +56,23 @@ export default {
         }
     },
     computed: {
-        applyNum() {
-            return this.$store.state.Friend.friendApplys.length
-        }
+        ...mapState({
+            friends: state => state.Friend.friends,
+            friendsNum: state => state.Friend.friends.length,
+            applyNum: state => state.Friend.friendApplys.length
+        })
     },
     mounted() {
         if (this.$store.state.Friend.friends.length == 0) {
             this.$store.dispatch('Friend/reqFriends')
         }
+
         this.$bus.$emit('activeTabBar')
+
+        // 暂时解决，挂载时请求好友申请列表
         this.$store.dispatch('Friend/reqFriendApplys')
+
+        // 事件总线绑定关闭好友申请页事件
         this.$bus.$on('hideNew', this.hideNew)
     },
     beforeDestroy() {

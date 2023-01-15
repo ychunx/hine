@@ -16,8 +16,8 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation == 0" @click="intoDialog">发信息</div>
-                <div class="apply-btn" v-else-if="item.relation == 2" @click="intoApply(item._id, item.name, item.imgUrl, 'friend')">申请中</div>
+                <div class="enter-btn" v-if="item.relation == 200" @click="intoDialog">发信息</div>
+                <div class="apply-btn" v-else-if="item.relation == 201" @click="intoApply(item._id, item.name, item.imgUrl, 'friend')">申请中</div>
                 <div class="apply-btn" v-else @click="intoApply(item._id, item.name, item.imgUrl, 'friend')">加好友</div>
             </li>
             <li class="title" v-show="searchGroups.length != 0">群组</li>
@@ -27,7 +27,7 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation == 0" @click="intoDialog">发信息</div>
+                <div class="enter-btn" v-if="item.relation == 200" @click="intoDialog">发信息</div>
                 <div class="apply-btn" v-else @click="intoApply(item._id, item.name, item.imgUrl, 'group')">申请加入</div>
             </li>
         </ul>

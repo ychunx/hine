@@ -7,7 +7,7 @@
         <span>电子邮件地址或用户名</span>
     </div>
     <div class="inputs">
-        <input type="password" required v-model.trim="psw" @keyup.enter="login">
+        <input type="password" required v-model.trim="pwd" @keyup.enter="login">
         <span>密码</span>
     </div>
     <div class="tips">
@@ -28,19 +28,21 @@ export default {
         return {
             tips: '',
             acct: '',
-            psw: '',
-            cipherRes: {}
+            pwd: ''
         }
     },
     methods:{
+        // 跳转注册页
         intoRegister(){
             this.$router.push('/register')
         },
+
+        // 登录
         async login(){
             if(this.isComplete){
                 try {
-                    let { acct, psw } = this
-                    await this.$store.dispatch('User/signIn', { acct, psw })
+                    let { acct, pwd } = this
+                    await this.$store.dispatch('User/signIn', { acct, pwd })
                     this.$router.push('/msg')
                 } catch (error) {
                     this.tips = error.message
@@ -53,8 +55,9 @@ export default {
         }
     },
     computed:{
+        // 判断是否全部正确填写
         isComplete() {
-            if (this.acct && this.psw) {
+            if (this.acct && this.pwd) {
                 return true
             } else {
                 this.tips = ''
