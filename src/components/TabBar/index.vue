@@ -77,7 +77,7 @@ export default {
         bottom: 0;
         display: flex;
         justify-content: space-around;
-        transition: all .5s;
+        transition: all .3s;
         &.deactive {
             display: none;
         }

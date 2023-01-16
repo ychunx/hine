@@ -4,20 +4,14 @@
     <div class="dialog">
         <div class="dialog-top">
             <div class="dialog-back"><img src="../../../assets/images//left.png" @click="back"></div>
-            <div class="dialog-title">名字</div>
-            <div class="dialog-info"><img src="user.png"></div>
+            <div class="dialog-title">{{ msgItem && msgItem.name }}</div>
+            <div class="dialog-info"><img :src="msgItem && msgItem.imgUrl"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
             <ul class="msg-ul">
-                <!-- <li :class="item.from == 'friends' ? 'msg-ul-left' : 'msg-ul-right'"> -->
-                <!-- 判断是哪边发送 -->
-                <li>
-                    <div class="msg-li-content">
-                        内容
-                    </div>
-                    <div class="msg-li-time">
-                        时间
-                    </div>
+                <li v-for="item in msgItem && msgItem.allMsgs" :key="item._id" :class="item.friendId == friendId ? 'msg-ul-right' : 'msg-ul-left'">
+                    <div class="msg-li-content">{{ item.content }}</div>
+                    <div class="msg-li-time">{{ formatDateTime(item.time) }}</div>
                 </li>
             </ul>
         </div>
@@ -37,7 +31,7 @@
 <script>
 export default {
     name: 'Dialog',
-    props: ['msgData', 'intoId'],
+    props: ['msgList', 'friendId'],
     data() {
         return {
             isEmoji: false,
@@ -45,7 +39,7 @@ export default {
     },
     methods:{
         back() {
-            this.$bus.$emit('showMsg')
+            this.$bus.$emit('toggleMsg')
             this.$bus.$emit('showTabBar')
         },
 
@@ -63,10 +57,20 @@ export default {
         send() {
             let content = this.$refs.dialogInputContent.innerText
             let userId = this.$store.state.User.userInfo._id
-            let friendId = this.friend.friendId
-            let types = '0'
+            let friendId = this.friendId
+            let time = new Date()
 
-            // 添加进数组，socket 发送方法
+            // 添加进数组并更改最后消息和时间，socket 发送消息
+            this.msgItem.allMsgs.push({
+                userId,
+                friendId,
+                content,
+                time,
+                types: '0',
+                state: 1,
+            })
+            this.msgItem.lastMsg = content
+            this.msgItem.lastTime = time
 
             this.$refs.dialogInputContent.innerText = ''
             this.$nextTick(() => {
@@ -84,46 +88,39 @@ export default {
             }, 100)
         },
 
-        // 快速排序
-        qSort(arr) {
-            if (arr.length <= 0) {
-                return []
-            }
-
-            let pivot = arr.splice(0, 1)[0]
-            let lesser = []
-            let greater = []
-
-            arr.forEach(item => {
-                if (item.time < pivot.time) {
-                    lesser.push(item)
-                } else {
-                    greater.push(item)
-                }
-            })
-            return this.qSort(lesser).concat(pivot, this.qSort(greater))
-        },
-
         // 格式化时间
         formatDateTime(date) {
             if (date == "" || !date) {
                 return ""
             }
-            var date = new Date(date)
-            // var y = date.getFullYear()
-            // var m = date.getMonth() + 1
-            // m = m < 10 ? ('0' + m) : m
-            // var d = date.getDate()
-            // d = d < 10 ? ('0' + d) : d
-            var h = date.getHours()
+            let newDate = new Date(date)
+            let y = newDate.getFullYear()
+            let m = newDate.getMonth() + 1
+            m = m < 10 ? ('0' + m) : m
+            let d = newDate.getDate()
+            d = d < 10 ? ('0' + d) : d
+            let h = newDate.getHours()
             h = h < 10 ? ('0' + h) : h
-            var minute = date.getMinutes()
+            let minute = newDate.getMinutes()
             minute = minute < 10 ? ('0' + minute) : minute
-            // var second = date.getSeconds()
+            // let second = newDate.getSeconds()
             // second = second < 10 ? ('0' + second) : second
-            return `${h}:${minute}`
+
+            let nowDate = new Date()
+            if (nowDate.getFullYear - y > 0) {
+                return `${y}-${m}-${d} ${h}:${minute}`
+            } else if (nowDate.getDate() - d > 0) {
+                return `${m}-${d} ${h}:${minute}`
+            } else {
+                return `${h}:${minute}`
+            }
         },
 
+    },
+    computed: {
+        msgItem() {
+            return this.msgList.find(item => item.friendId == this.friendId)
+        }
     },
     mounted() {
         this.$bus.$on('moveToBottom', this.moveToBottom)
@@ -143,6 +140,7 @@ export default {
     }
     .dialog{
         background: #ffffff;
+        position: relative;
         .dialog-top{
             width: 100%;
             height: 60px;
@@ -187,6 +185,8 @@ export default {
                 list-style: none;
                 li{
                     padding: 5px 20px;
+                    max-width: 80%;
+                    // 使得盒子宽度和文本宽度一样
                     width: fit-content;
                     width: -webkit-fit-content;
                     width: -moz-fit-content;
@@ -213,7 +213,6 @@ export default {
                         border-bottom-right-radius: 10px;
                         padding: 10px;
                         color: #ffffff;
-                        text-align: end;
                     }
                     .msg-li-time{
                         text-align: end;
@@ -223,6 +222,9 @@ export default {
             }
         }
         .dialog-input{
+            position: absolute;
+            left: 0;
+            bottom: -60px;
             width: 100%;
             background: #E7F0F7;
             display: flex;
@@ -253,6 +255,8 @@ export default {
                     flex: 1;
                     outline: none;
                     padding: 5px 0 5px 10px;
+                    max-height: 200px;
+                    overflow: scroll;
                 }
                 img{
                     width: 30px;

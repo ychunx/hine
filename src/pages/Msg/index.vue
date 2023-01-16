@@ -3,23 +3,23 @@
     <div class="msg-main" :class="{ hide }">
       <TopBar />
       <ul class="msg-ul">
-        <li class="msg-item" v-for="item in allMsgs" :key="item.friendId">
-          <div class="msg-item-tip">0</div>
+        <li class="msg-item" v-for="item in msgList" :key="item.friendId" @click="intoDialog(item.friendId)">
+          <div class="msg-item-tip" v-show="item.unReadNum > 0">{{ item.unReadNum }}</div>
           <img :src="item.imgUrl">
           <div class="msg-item-main">
             <div class="msg-item-title">
               <span>{{ item.name }}</span>
-              <span>最后时间</span>
+              <span>{{ formatDateTime(item.lastTime) }}</span>
             </div>
             <div class="msg-item-content">
-              最后消息
+              {{ item.lastMsg }}
             </div>
           </div>
         </li>
       </ul>
     </div>
-    <div class="dialog" :class="{dialogShow}">
-      <Dialog></Dialog>
+    <div class="dialog" :class="{ 'dialogShow': hide }">
+      <Dialog :msgList="msgList" :friendId="friendId"></Dialog>
     </div>
   </div>
 </template>
@@ -27,34 +27,33 @@
 <script>
 import TopBar from '../../components/TopBar'
 import Dialog from './Dialog'
-import { mapState } from 'vuex'
 export default {
     name: 'Msg',
     components:{TopBar, Dialog},
     data() {
       return {
         hide: false,
-        dialogShow: false,
+        msgList: [],
+        friendId: ''
       }
     },
     methods:{
       intoDialog(friendId){
+        this.friendId = friendId
+
         this.$bus.$emit('hideTabBar')
-        this.hideMsg()
-        
+        this.toggleMsg()
+
         this.$nextTick(() => {
           this.$bus.$emit('moveToBottom')
         })
 
         this.$API.readFriendMsgs({userId: this.$store.state.User.userInfo._id, friendId})
       },
-      hideMsg() {
-        this.hide = true
-        this.dialogShow = true
-      },
-      showMsg() {
-        this.hide = false
-        this.dialogShow = false
+
+      // 切换显示隐藏对话窗
+      toggleMsg() {
+        this.hide = !this.hide
       },
 
       // 获取数据
@@ -63,6 +62,36 @@ export default {
         if (this.$store.state.Friend.friends.length == 0) {
           await this.$store.dispatch('Friend/reqFriends')
         }
+
+        let allMsgs = []
+        this.deepCopy(allMsgs, this.$store.state.Chat.allMsgs)
+
+        // 排序某个好友的记录，并添加最后发送的消息和时间方便展示
+        allMsgs.forEach(item => {
+          item.allMsgs.sort((a, b) => a.time > b.time ? 1 : -1)
+          item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content
+          item.lastTime = item.allMsgs[item.allMsgs.length-1].time
+        })
+        // 排序全部好友的列表
+        allMsgs.sort((a, b) => a.lastTime > b.lastTime ? 1 : -1)
+
+        this.msgList = allMsgs
+      },
+
+      // 深拷贝
+      deepCopy(newObj, oldObj) {
+        for (let key in oldObj) {
+          let item = oldObj[key];
+          if (item instanceof Array) {
+            newObj[key] = [];
+            this.deepCopy(newObj[key], item);
+          } else if (item instanceof Object) {
+            newObj[key] = {};
+            this.deepCopy(newObj[key], item);
+          } else {
+            newObj[key] = item;
+          }
+        }
       },
 
       // 格式化时间
@@ -70,31 +99,34 @@ export default {
         if (date == "" || !date) {
           return ""
         }
-        var date = new Date(date)
-        // var y = date.getFullYear()
-        // var m = date.getMonth() + 1
-        // m = m < 10 ? ('0' + m) : m
-        // var d = date.getDate()
-        // d = d < 10 ? ('0' + d) : d
-        var h = date.getHours()
+        let newDate = new Date(date)
+        let y = newDate.getFullYear()
+        let m = newDate.getMonth() + 1
+        m = m < 10 ? ('0' + m) : m
+        let d = newDate.getDate()
+        d = d < 10 ? ('0' + d) : d
+        let h = newDate.getHours()
         h = h < 10 ? ('0' + h) : h
-        var minute = date.getMinutes()
+        let minute = newDate.getMinutes()
         minute = minute < 10 ? ('0' + minute) : minute
-        // var second = date.getSeconds()
+        // let second = newDate.getSeconds()
         // second = second < 10 ? ('0' + second) : second
-        return `${h}:${minute}`
+
+        let nowDate = new Date()
+        if (nowDate.getFullYear - y > 0) {
+          return `${y}-${m}-${d} ${h}:${minute}`
+        } else if (nowDate.getDate() - d > 0) {
+          return `${m}-${d} ${h}:${minute}`
+        } else {
+          return `${h}:${minute}`
+        }
       }
-    },
-    computed: {
-      ...mapState({
-        allMsgs: state => state.Chat.allMsgs,
-      })
+
     },
     mounted() {
       this.$bus.$emit('activeTabBar')
 
-      this.$bus.$on('hideMsg',this.hideMsg)
-      this.$bus.$on('showMsg',this.showMsg)
+      this.$bus.$on('toggleMsg',this.toggleMsg)
 
       this.getMsgData()
 
@@ -117,7 +149,7 @@ export default {
     position: relative;
     .msg-main {
       background: #F9F9F9;
-      transition: all .5s;
+      transition: all .3s;
       &.hide {
         transform: translateX(-20%);
       }
@@ -140,12 +172,12 @@ export default {
           border-bottom: 1px solid #EDEDED;
 
           .msg-item-tip {
-            width: 30px;
             height: 20px;
+            line-height: 20px;
+            padding: 0 5px;
             border-radius: 10px;
             color: #fff;
             background: #FA5252;
-            line-height: 20px;
             position: absolute;
             bottom: 15px;
             right: 20px;
