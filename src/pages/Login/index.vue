@@ -43,6 +43,7 @@ export default {
                 try {
                     let { acct, pwd } = this
                     await this.$store.dispatch('User/signIn', { acct, pwd })
+                    await this.$store.dispatch('User/getUserInfo')
                     this.$router.push('/msg')
                 } catch (error) {
                     this.tips = error.message

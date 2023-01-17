@@ -21,11 +21,11 @@ export const searchGroup = (data) => requests({ url: '/search/group', method: 'p
 
 export const isInGroup = (data) => requests({ url: '/search/isingroup', method: 'post', data })
 
-export const friendApply = (data) => requests({ url: '/friend/apply', method: 'post', data })
+//export const friendApply = (data) => requests({ url: '/friend/apply', method: 'post', data })
 
 export const getFriendApplys = () => requests({ url: '/friend/getfriendapplys', method: 'get' })
 
-export const agreeApply = (data) => requests({ url: '/friend/agree', method: 'post', data })
+//export const agreeApply = (data) => requests({ url: '/friend/agree', method: 'post', data })
 
 export const rejectApply = (data) => requests({ url: '/friend/reject', method: 'post', data })
 

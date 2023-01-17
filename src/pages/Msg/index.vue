@@ -3,7 +3,7 @@
     <div class="msg-main" :class="{ hide }">
       <TopBar />
       <ul class="msg-ul">
-        <li class="msg-item" v-for="item in msgList" :key="item.friendId" @click="intoDialog(item.friendId)">
+        <li class="msg-item" v-for="item in allMsgs" :key="item.friendId" @click="intoDialog(item.friendId)">
           <div class="msg-item-tip" v-show="item.unReadNum > 0">{{ item.unReadNum }}</div>
           <img :src="item.imgUrl">
           <div class="msg-item-main">
@@ -19,7 +19,7 @@
       </ul>
     </div>
     <div class="dialog" :class="{ 'dialogShow': hide }">
-      <Dialog :msgList="msgList" :friendId="friendId"></Dialog>
+      <Dialog :friendId="friendId"></Dialog>
     </div>
   </div>
 </template>
@@ -33,7 +33,6 @@ export default {
     data() {
       return {
         hide: false,
-        msgList: [],
         friendId: ''
       }
     },
@@ -46,51 +45,15 @@ export default {
 
         this.$nextTick(() => {
           this.$bus.$emit('moveToBottom')
+          this.$bus.$emit('readMsg')
         })
-
-        this.$API.readFriendMsgs({userId: this.$store.state.User.userInfo._id, friendId})
       },
 
       // 切换显示隐藏对话窗
       toggleMsg() {
         this.hide = !this.hide
-      },
-
-      // 获取数据
-      async getMsgData() {
-        await this.$store.dispatch('Chat/reqAllMsgs')
-        if (this.$store.state.Friend.friends.length == 0) {
-          await this.$store.dispatch('Friend/reqFriends')
-        }
-
-        let allMsgs = []
-        this.deepCopy(allMsgs, this.$store.state.Chat.allMsgs)
-
-        // 排序某个好友的记录，并添加最后发送的消息和时间方便展示
-        allMsgs.forEach(item => {
-          item.allMsgs.sort((a, b) => a.time > b.time ? 1 : -1)
-          item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content
-          item.lastTime = item.allMsgs[item.allMsgs.length-1].time
-        })
-        // 排序全部好友的列表
-        allMsgs.sort((a, b) => a.lastTime > b.lastTime ? 1 : -1)
-
-        this.msgList = allMsgs
-      },
-
-      // 深拷贝
-      deepCopy(newObj, oldObj) {
-        for (let key in oldObj) {
-          let item = oldObj[key];
-          if (item instanceof Array) {
-            newObj[key] = [];
-            this.deepCopy(newObj[key], item);
-          } else if (item instanceof Object) {
-            newObj[key] = {};
-            this.deepCopy(newObj[key], item);
-          } else {
-            newObj[key] = item;
-          }
+        if (!this.hide) {
+          this.friendId =''
         }
       },
 
@@ -123,20 +86,24 @@ export default {
       }
 
     },
+    computed: {
+      allMsgs() {
+        return this.$store.state.Chat.allMsgs
+      }
+    },
     mounted() {
+      // 显示底栏
       this.$bus.$emit('activeTabBar')
 
-      this.$bus.$on('toggleMsg',this.toggleMsg)
+      // 显示/隐藏对话页
+      this.$bus.$on('toggleMsg', this.toggleMsg)
 
-      this.getMsgData()
-
-      // 暂时解决
-      // setInterval(() => {
-      //   this.getData()
-      //   if (this.in) {
-      //     this.$bus.$emit('moveToBottom')
-      //   }
-      // },2000)
+      // 在聊天页中，新收到的消息自动设为已读
+      this.$bus.$on('autoReadMsg', () => {
+        if (this.friendId) {
+          this.$bus.$emit('readMsg')
+        }
+      })
     },
     beforeDestroy() {
       this.$bus.$emit('deactiveTabBar')

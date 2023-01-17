@@ -7,10 +7,87 @@
 
 <script>
 import TabBar from './components/TabBar'
-
+import { mapState } from 'vuex'
 export default {
   name: 'App',
-  components:{TabBar}
+  components:{TabBar},
+  methods: {
+    // 获取消息页数据
+    async getMsgData() {
+      await this.$store.dispatch('Chat/reqAllMsgs')
+
+      // 排序全部好友的列表
+      this.allMsgs.sort((a, b) => a.lastTime > b.lastTime ? 1 : -1)
+      // 排序某个好友的记录，并添加最后发送的消息和时间方便展示
+      this.allMsgs.forEach(item => {
+        item.allMsgs.sort((a, b) => a.time > b.time ? 1 : -1)
+        item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content
+        item.lastTime = item.allMsgs[item.allMsgs.length - 1].time
+      })
+    },
+
+    // 获取通讯录页数据
+    getContactsData() {
+      this.$store.dispatch('Friend/reqFriends')
+      this.$store.dispatch('Friend/reqFriendApplys')
+    }
+  },
+  computed: {
+    ...mapState({
+      _id: state => state.User.userInfo._id,
+      allMsgs: state => state.Chat.allMsgs
+    })
+  },
+  watch: {
+    _id() {
+      // 上线、获取数据
+      // socket 根据用户 id 来发收信息，同接口一致
+      if (this._id) {
+        this.$socket.emit('online', this._id)
+        this.getMsgData()
+        this.getContactsData()
+      }
+    }
+  },
+  mounted() {
+    // 接收消息
+    this.$socket.on('receiveMsg', (msg) => {
+      let friend = this.$store.state.Chat.allMsgs.find(item => {
+        return item.friendId == msg.userId
+      })
+      friend.allMsgs.push(msg)
+      friend.lastMsg = msg.content
+      friend.lastTime = msg.time
+      friend.unReadNum++
+
+      // 判断是否已读消息
+      this.$bus.$emit('autoReadMsg')
+    })
+
+    // 接收申请
+    this.$socket.on('receiveApply', () => {
+      this.getContactsData()
+    })
+
+    // 申请被同意
+    this.$socket.on('acceptedApply', () => {
+      this.getContactsData()
+      this.getMsgData()
+    })
+
+    // 关闭窗口前下线
+    window.addEventListener('beforeunload', () => {
+      if (this._id) {
+        this.$socket.emit('offline', this._id)
+      }
+    })
+
+    // 被挤下线
+    this.$socket.on('forceOffline', () => {
+      this.$store.dispatch('User/logout')
+      this.$router.go(0)
+    })
+  }
 }
 </script>
 

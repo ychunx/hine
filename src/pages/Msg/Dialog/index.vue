@@ -31,7 +31,7 @@
 <script>
 export default {
     name: 'Dialog',
-    props: ['msgList', 'friendId'],
+    props: ['friendId'],
     data() {
         return {
             isEmoji: false,
@@ -59,18 +59,21 @@ export default {
             let userId = this.$store.state.User.userInfo._id
             let friendId = this.friendId
             let time = new Date()
-
-            // 添加进数组并更改最后消息和时间，socket 发送消息
-            this.msgItem.allMsgs.push({
+            let msg = {
                 userId,
                 friendId,
                 content,
-                time,
                 types: '0',
-                state: 1,
-            })
+                time,
+                state: 1,   // 对方在已读所有消息的时候也要把本地的state更改
+            }
+
+            // 添加进数组并更改最后消息和时间，socket 发送消息
+            this.msgItem.allMsgs.push(msg)
             this.msgItem.lastMsg = content
             this.msgItem.lastTime = time
+
+            this.$socket.emit('sendMsg', msg)
 
             this.$refs.dialogInputContent.innerText = ''
             this.$nextTick(() => {
@@ -86,6 +89,12 @@ export default {
             setTimeout(() => {
                 this.$refs.dialogMain && this.$refs.dialogMain.scrollTo(0, this.$refs.dialogMain.scrollHeight)
             }, 100)
+        },
+
+        // 已读消息
+        readMsg() {
+            this.msgItem.unReadNum = 0
+            this.$API.readFriendMsgs({ userId: this.$store.state.User.userInfo._id, friendId: this.msgItem.friendId })
         },
 
         // 格式化时间
@@ -119,11 +128,12 @@ export default {
     },
     computed: {
         msgItem() {
-            return this.msgList.find(item => item.friendId == this.friendId)
+            return this.$store.state.Chat.allMsgs.find(item => item.friendId == this.friendId)
         }
     },
     mounted() {
         this.$bus.$on('moveToBottom', this.moveToBottom)
+        this.$bus.$on('readMsg', this.readMsg)
     }
 }
 </script>

@@ -40,29 +40,22 @@ export default {
     methods: {
         back() {
             this.$bus.$emit('hideNew')
-
-            // 暂时解决，退出时刷新好友列表
-            this.$store.dispatch('Friend/reqFriends')
-        },
-
-        // 请求好友申请列表
-        reqData() {
-            this.$store.dispatch('Friend/reqFriendApplys')
         },
 
         // 同意添加
         async agree(friendId) {
-            let res = await this.$API.agreeApply({friendId, userId: this.userId})
-            if (res.status == 0) {
-                this.successId = friendId
-            } else {
-                this.errorId = friendId
-            }
+            this.$socket.emit('agreeApply', { friendId, userId: this.userId })
 
-            // 暂时解决，没有另作数组
+            // 没有回复，没有出错处理
+            this.successId = friendId
+            // 本应用动画回调函数执行，但只编写了过渡
             setTimeout(() => {
-                this.reqData()
-            }, 300);
+                this.friendApplys.forEach((item, index) => {
+                    if (item.friendId == friendId) {
+                        this.friendApplys.splice(index, 1)
+                    }
+                }, 300)
+            })
         },
 
         // 拒绝添加
@@ -70,14 +63,16 @@ export default {
             let res = await this.$API.rejectApply({ friendId, userId: this.userId })
             if (res.status == 200) {
                 this.successId = friendId
+                setTimeout(() => {
+                    this.friendApplys.forEach((item, index) => {
+                        if (item.friendId == friendId) {
+                            this.friendApplys.splice(index, 1)
+                        }
+                    })
+                }, 300)
             } else {
                 this.errorId = friendId
             }
-
-            // 暂时解决，没有另作数组
-            setTimeout(() => {
-                this.reqData()
-            }, 300);
         }
     },
     computed: {

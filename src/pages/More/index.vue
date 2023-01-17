@@ -53,6 +53,7 @@ export default {
             this.$router.push('/search')
         },
         logout() {
+            this.$socket.emit('offline', this.userInfo._id)
             this.$store.dispatch('User/logout')
             this.$router.go(0)
         },

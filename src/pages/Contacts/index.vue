@@ -63,16 +63,8 @@ export default {
         })
     },
     mounted() {
-        if (this.$store.state.Friend.friends.length == 0) {
-            this.$store.dispatch('Friend/reqFriends')
-        }
-
         this.$bus.$emit('activeTabBar')
 
-        // 暂时解决，挂载时请求好友申请列表
-        this.$store.dispatch('Friend/reqFriendApplys')
-
-        // 事件总线绑定关闭好友申请页事件
         this.$bus.$on('hideNew', this.hideNew)
     },
     beforeDestroy() {

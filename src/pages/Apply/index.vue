@@ -11,7 +11,7 @@
         </div>
         <div class="apply-bottom">
             <div class="apply-back" @click="back">取消</div>
-            <div class="apply-send" @click="send" ref="applySend">发送</div>
+            <div class="apply-send" @click="send">发送</div>
         </div>
     </div>
 </template>
@@ -32,29 +32,21 @@ export default {
             this.$router.back()
         },
         async send() {
-            this.$refs.applySend.innerText = '请稍后'
-
             let data = {}
             data.content = this.$refs.applyInput.innerText.trim()
             data.userId = this.$store.state.User.userInfo._id
+            data.types = '0'
 
-            try {
-                let res = ''
-                if (this.type == 'friend') {
-                    data.friendId = this.id
-                    res = await this.$API.friendApply(data)
-                } else {
-                    data.groupId = this.id
-                    //res = await this.$API.groupApply(data)
-                }
-                if (res.status == 0) {
-                    this.back()
-                } else {
-                    this.$refs.applySend.innerText = '添加失败'
-                }
-            } catch (error) {
-                this.$refs.applySend.innerText = `添加失败${error}`
+            if (this.type == 'friend') {
+                // 申请添加好友
+                data.friendId = this.id
+                this.$socket.emit('friendApply', data)
+            } else {
+                // 申请加入群组
+                data.groupId = this.id
+                //this.$socket.emit('groupApply', data)
             }
+            this.back()
         }
     },
     mounted() {
