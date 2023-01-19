@@ -16,7 +16,7 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation == 200" @click="intoDialog">发信息</div>
+                <div class="enter-btn" v-if="item.relation == 200" @click="intoDialog(item._id)">发信息</div>
                 <div class="apply-btn" v-else-if="item.relation == 201" @click="intoApply(item._id, item.name, item.imgUrl, 'friend')">申请中</div>
                 <div class="apply-btn" v-else @click="intoApply(item._id, item.name, item.imgUrl, 'friend')">加好友</div>
             </li>
@@ -27,7 +27,7 @@
                     <p class="info-name">{{ item.name }}</p>
                     <p class="info-email">{{ item.email }}</p>
                 </div>
-                <div class="enter-btn" v-if="item.relation == 200" @click="intoDialog">发信息</div>
+                <div class="enter-btn" v-if="item.relation == 200">发信息</div>
                 <div class="apply-btn" v-else @click="intoApply(item._id, item.name, item.imgUrl, 'group')">申请加入</div>
             </li>
         </ul>
@@ -51,8 +51,12 @@ export default {
             this.$router.back()
             this.$store.dispatch('Search/clearResult')
         },
-        intoDialog() {
-            this.$router.push('/dialog')
+
+        intoDialog(friendId) {
+            this.$router.push('/msg')
+            this.$nextTick(() => {
+                this.$bus.$emit('intoDialog', friendId)
+            })
         },
         search() {
             clearTimeout(this.timer)

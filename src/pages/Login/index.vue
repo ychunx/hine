@@ -16,7 +16,7 @@
     </div>
     <div class="button">
         <div class="button-to-register" @click="intoRegister">创建账号</div>
-        <div class="button-login" :class="isComplete ? '' : 'grey'" @click="login">登录</div>
+        <div class="button-login" :class="isComplete ? '' : 'grey'" @click="login" ref="loginBtn">登录</div>
     </div>
   </div>
 </template>
@@ -41,12 +41,14 @@ export default {
         async login(){
             if(this.isComplete){
                 try {
+                    this.$refs.loginBtn.innerText = '登录中'
                     let { acct, pwd } = this
                     await this.$store.dispatch('User/signIn', { acct, pwd })
                     await this.$store.dispatch('User/getUserInfo')
                     this.$router.push('/msg')
                 } catch (error) {
                     this.tips = error.message
+                    this.$refs.loginBtn.innerText = '登录'
                 }
             }else if(this.name){
                 this.tips = '请输入密码'

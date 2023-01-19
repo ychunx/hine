@@ -12,12 +12,12 @@ export default {
   name: 'App',
   components:{TabBar},
   methods: {
-    // 获取消息页数据
+    // 获取消息页数据，★排序有问题
     async getMsgData() {
       await this.$store.dispatch('Chat/reqAllMsgs')
 
       // 排序全部好友的列表
-      this.allMsgs.sort((a, b) => a.lastTime > b.lastTime ? 1 : -1)
+      this.allMsgs.sort((a, b) => a.lastTime < b.lastTime ? 1 : -1)
       // 排序某个好友的记录，并添加最后发送的消息和时间方便展示
       this.allMsgs.forEach(item => {
         item.allMsgs.sort((a, b) => a.time > b.time ? 1 : -1)
@@ -40,17 +40,18 @@ export default {
   },
   watch: {
     _id() {
+      // 监控 _id 来获取数据是为了兼顾未登录、已登录和登录失效状态的情况
       // 上线、获取数据
       // socket 根据用户 id 来发收信息，同接口一致
       if (this._id) {
-        this.$socket.emit('online', this._id)
         this.getMsgData()
         this.getContactsData()
+        this.$socket.emit('online', this._id)
       }
     }
   },
   mounted() {
-    // 接收消息
+    // 接收消息，★还差新建好友消息项（首次消息）
     this.$socket.on('receiveMsg', (msg) => {
       let friend = this.$store.state.Chat.allMsgs.find(item => {
         return item.friendId == msg.userId
@@ -60,16 +61,16 @@ export default {
       friend.lastTime = msg.time
       friend.unReadNum++
 
-      // 判断是否已读消息
+      // 判断是否已读消息，在该好友对话页则已读
       this.$bus.$emit('autoReadMsg')
     })
 
-    // 接收申请
+    // 接收申请，有人请求添加，刷新申请列表
     this.$socket.on('receiveApply', () => {
       this.getContactsData()
     })
 
-    // 申请被同意
+    // 申请被同意，用户申请添加被通过，刷新全部数据
     this.$socket.on('acceptedApply', () => {
       this.getContactsData()
       this.getMsgData()

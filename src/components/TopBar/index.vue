@@ -13,6 +13,8 @@ export default {
     name: 'TopBar',
     methods:{
         intoSearch(){
+            // 跳转前清空搜索结果数据
+            this.$store.dispatch('Search/clearResult')
             this.$router.push('/search')
         }
     }

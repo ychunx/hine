@@ -78,8 +78,30 @@ export default {
         let nowDate = new Date()
         if (nowDate.getFullYear - y > 0) {
           return `${y}-${m}-${d} ${h}:${minute}`
+        } else if (nowDate.getDate() - d > 2 && nowDate.getDate() - d < 7) {
+          let weeks = newDate.getDay()
+          switch(weeks) {
+            case 0:
+              return `星期日 ${h}:${minute}`
+            case 1:
+              return `星期一 ${h}:${minute}`
+            case 2:
+              return `星期二 ${h}:${minute}`
+            case 3:
+              return `星期三 ${h}:${minute}`
+            case 4:
+              return `星期四 ${h}:${minute}`
+            case 5:
+              return `星期五 ${h}:${minute}`
+            case 6:
+              return `星期六 ${h}:${minute}`
+            default:
+              return `${m}-${d} ${h}:${minute}`
+          }
+        } else if (nowDate.getDate() - d > 1) {
+          return `前天 ${h}:${minute}`
         } else if (nowDate.getDate() - d > 0) {
-          return `${m}-${d} ${h}:${minute}`
+          return `昨天 ${h}:${minute}`
         } else {
           return `${h}:${minute}`
         }
@@ -96,11 +118,13 @@ export default {
       this.$bus.$emit('activeTabBar')
 
       // 显示/隐藏对话页
+      this.$bus.$on('intoDialog', this.intoDialog)
       this.$bus.$on('toggleMsg', this.toggleMsg)
 
       // 在聊天页中，新收到的消息自动设为已读
       this.$bus.$on('autoReadMsg', () => {
         if (this.friendId) {
+          this.$bus.$emit('moveToBottom')
           this.$bus.$emit('readMsg')
         }
       })
