@@ -31,4 +31,8 @@ export default [
     path: '/apply',
     component: () => import('../pages/Apply')
   },
+  {
+    path: '/detail',
+    component: () => import('../pages/Detail')
+  }
 ]

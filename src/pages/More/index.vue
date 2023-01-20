@@ -98,7 +98,7 @@ export default {
         background: #f9f9f9;
         overflow: scroll;
         .more-top{
-            height: 120px;
+            height: 160px;
             background: #607D8B;
             position: relative;
             .more-top-box{
@@ -108,7 +108,7 @@ export default {
                 border-top-right-radius: 15px;
                 background: #ffffff;
                 position: absolute;
-                top: 90px;
+                top: 130px;
                 left: 50%;
                 transform: translateX(-50%);
                 padding-top: 60px;

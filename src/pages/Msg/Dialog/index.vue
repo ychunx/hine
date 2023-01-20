@@ -5,7 +5,7 @@
         <div class="dialog-top">
             <div class="dialog-back"><img src="../../../assets/images//left.png" @click="back"></div>
             <div class="dialog-title">{{ msgItem && msgItem.name }}</div>
-            <div class="dialog-info"><img :src="msgItem && msgItem.imgUrl"></div>
+            <div class="dialog-info"><img :src="msgItem && msgItem.imgUrl" @click="intoDetails(msgItem.friendId)"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
             <ul class="msg-ul">
@@ -120,7 +120,7 @@ export default {
             let nowDate = new Date()
             if (nowDate.getFullYear - y > 0) {
                 return `${y}-${m}-${d} ${h}:${minute}`
-            } else if (nowDate.getDate() - d > 0 && nowDate.getDate() - d < 7) {
+            } else if (nowDate.getDate() - d > 2 && nowDate.getDate() - d < 7) {
                 let weeks = newDate.getDay()
                 switch (weeks) {
                     case 0:
@@ -148,6 +148,17 @@ export default {
                 return `${h}:${minute}`
             }
         },
+
+        // 进入用户详情页
+        intoDetails(id) {
+            this.$router.push({
+                path: '/detail',
+                query: {
+                    id,
+                    from: '/msg'
+                }
+            })
+        }
 
     },
     computed: {

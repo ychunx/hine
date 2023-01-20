@@ -21,7 +21,7 @@
                     </li>
                 </ul>
                 <ul class="contacts-main-box">
-                    <li v-for="item in friends" :key="item._id">
+                    <li v-for="item in friends" :key="item._id" @click="intoDetails(item._id)">
                         <img :src="item.imgUrl">
                         <span>{{ item.name }}</span>
                     </li>
@@ -53,6 +53,14 @@ export default {
         },
         hideNew() {
             this.newShow = false
+        },
+
+        // 进入用户详情页
+        intoDetails(id) {
+            this.$router.push({
+                path: '/detail',
+                query: { id }
+            })
         }
     },
     computed: {

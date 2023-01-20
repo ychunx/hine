@@ -60,7 +60,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.apply{
+    .apply{
         height: 100vh;
         .apply-top{
             height: 20vh;

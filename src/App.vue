@@ -51,6 +51,11 @@ export default {
     }
   },
   mounted() {
+    // 刷新数据，供路由组件使用
+    this.$bus.$on('refreshData', () => {
+      this.getMsgData()
+      this.getContactsData()
+    })
     // 接收消息，★还差新建好友消息项（首次消息）
     this.$socket.on('receiveMsg', (msg) => {
       let friend = this.$store.state.Chat.allMsgs.find(item => {
