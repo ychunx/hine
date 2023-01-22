@@ -36,3 +36,17 @@ export const deleteFriend = (data) => requests({ url: '/friend/delete', method: 
 export const reqAllMsgs = () => requests({ url: '/chat/getallmsgs', method: 'get' })
 
 export const readFriendMsgs = (data) => requests({ url: '/chat/readfriendmsgs', method: 'post', data })
+
+export const modifyName = (data) => requests({ url: '/detail/name', method: 'post', data })
+
+export const modifyEmail = (data) => requests({ url: '/detail/email', method: 'post', data })
+
+export const modifyPwd = (data) => requests({ url: '/detail/pwd', method: 'post', data })
+
+export const modifySex = (data) => requests({ url: '/detail/sex', method: 'post', data })
+
+export const modifyBirth = (data) => requests({ url: '/detail/birth', method: 'post', data })
+
+export const modifySignature = (data) => requests({ url: '/detail/signature', method: 'post', data })
+
+export const modifyImgUrl = (data) => requests({ url: '/detail/imgurl', method: 'post', data })

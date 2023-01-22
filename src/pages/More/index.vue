@@ -2,28 +2,44 @@
     <div class="more">
         <div class="more-top">
             <div class="more-top-box">
-                <img :src="userInfo.imgUrl">
-                <p>{{ userInfo.name }}</p>
+                <img :src="userInfo.imgUrl" class="userImg">
+                <p class="name">{{ userInfo.name }}</p>
+                <p class="email">{{ userInfo.email }}</p>
                 <div>
                     {{ userInfo.signature }}
+                    <img src="../../assets/images/modify.png" v-show="!modifySignature" @click="toggleSignature(true)">
+                    <img src="../../assets/images/finish.png" v-show="modifySignature" @click="toggleSignature(false)">
                 </div>
             </div>
         </div>
         <ul class="more-main">
-            <li>
-                <div class="more-main-left">邮箱</div>
-                <div class="more-main-center">{{ userInfo.email }}</div>
-                <div class="more-main-right"><img src="../../assets/images/right.png"></div>
-            </li>
-            <li>
+            <li @click="toggleSex">
                 <div class="more-main-left">性别</div>
                 <div class="more-main-center">{{ userInfo.sex }}</div>
-                <div class="more-main-right"><img src="../../assets/images/right.png"></div>
+                <div class="more-main-right"><img src="../../assets/images/right.png" :class="{ showSex }"></div>
             </li>
-            <li>
+            <li class="modify-box" :class="{ showSex }">
+                <div class="btn-group">
+                    <div class="modify-btn">
+                        <span :class="{ 'btn-selected': sex === '男'}" @click="sex = '男'">男</span>
+                        <span :class="{ 'btn-selected': sex === '你猜猜~'}" @click="sex = '你猜猜~'">不公开</span>
+                        <span :class="{ 'btn-selected': sex === '女'}" @click="sex = '女'">女</span>
+                    </div>
+                    <div class="finish-btn" @click="finishSex">完成</div>
+                </div>
+            </li>
+            <li @click="toggleBirth">
                 <div class="more-main-left">生日</div>
                 <div class="more-main-center">{{ formatDateTime(userInfo.birth) }}</div>
-                <div class="more-main-right"><img src="../../assets/images/right.png"></div>
+                <div class="more-main-right"><img src="../../assets/images/right.png" :class="{ showBirth }"></div>
+            </li>
+            <li class="modify-box modify-birth" :class="{ showBirth }">
+                <div class="btn-group">
+                    <div class="modify-input">
+                        <span>修改为：</span><input type="text" v-model="birth">
+                    </div>
+                    <div class="finish-btn" @click="finishBirth">完成</div>
+                </div>
             </li>
             <li>
                 <div class="more-main-left">注册</div>
@@ -31,11 +47,28 @@
                 <div class="more-main-right"></div>
             </li>
         </ul>
-        <ul class="more-main logout">
-            <li>
+        <ul class="more-main second">
+            <li @click="toggleModify">
                 <div class="more-main-left"><img src="../../assets/images/change.png"></div>
-                <div class="more-main-center">修改密码</div>
-                <div class="more-main-right"><img src="../../assets/images/right.png"></div>
+                <div class="more-main-center">修改密码、用户名、邮箱</div>
+                <div class="more-main-right"><img src="../../assets/images/right.png" :class="{ showModify }"></div>
+            </li>
+            <li class="modify-box" :class="{ showModify }">
+                <div class="btn-group">
+                    <div class="modify-btn">
+                        <span :class="{ 'btn-selected': modifySelect === 'name'}" @click="modifyType('name')">用户名</span>
+                        <span :class="{ 'btn-selected': modifySelect === 'email'}" @click="modifyType('email')">邮箱</span>
+                        <span :class="{ 'btn-selected': modifySelect === 'pwd'}" @click="modifyType('pwd')">密码</span>
+                    </div>
+                    <div class="finish-btn" :class="{grey}" @click="finishModify">完成</div>
+                </div>
+                <div class="modify-input">
+                    <span>当前密码：</span><input type="password" v-model="pwd">
+                </div>
+                <div class="modify-input">
+                    <span>修改为：</span><input type="text" v-model="newData">
+                </div>
+                <p class="tips">{{ tips }}</p>
             </li>
             <li @click="logout">
                 <div class="more-main-left"><img src="../../assets/images/out.png"></div>
@@ -48,15 +81,103 @@
 <script>
 export default {
     name: 'More',
+    data() {
+        return {
+            showModify: false,
+            showSex: false,
+            showBirth: false,
+            modifySignature: false,
+            modifySelect: 'name',
+            pwd: '',
+            newData: '',
+            tips: '',
+            sex: '你猜猜~',
+            birth: '',
+            signature: ''
+        }
+    },
     methods:{
         intoSearch() {
             this.$router.push('/search')
         },
+
+        toggleModify() {
+            this.pwd = ''
+            this.newData = ''
+            this.tips = ''
+            this.showModify = !this.showModify
+        },
+        toggleSex() {
+            this.showSex = !this.showSex
+        },
+        toggleBirth() {
+            this.showBirth = !this.showBirth
+        },
+        toggleSignature(bool) {
+            this.modifySignature = bool
+            if (bool) {
+                // 改成输入
+            } else {
+                // 调用接口
+            }
+        },
+
+        modifyType(type) {
+          this.modifySelect = type
+        },
+        async finishModify() {
+            if (this.grey) {
+                return
+            }
+
+            let data = {}
+            data.pwd = this.pwd
+            let res = {}
+            if (this.modifySelect == 'name') {
+                data.newName = this.newData
+                res = await this.$API.modifyName(data)
+            } else if (this.modifySelect == 'email') {
+                data.newEmail = this.newData
+                res = await this.$API.modifyEmail(data)
+            } else {
+                data.newPwd = this.newData
+                res = await this.$API.modifyPwd(data)
+            }
+            if (res.status == 200) {
+                this.$store.dispatch('User/getUserInfo')
+                this.pwd = ''
+                this.newData = ''
+                this.tips = ''
+                this.showModify = false
+            } else {
+                this.tips = res.msg
+            }
+        },
+        async finishSex() {
+            let res = await this.$API.modifySex({newSex: this.sex})
+            if (res.status == 200) {
+                this.$store.dispatch('User/getUserInfo')
+                this.showSex = false
+            }
+        },
+        async finishBirth() {
+            if (this.birth == '') {
+                return
+            }
+            let res = await this.$API.modifyBirth({ newBirth: this.birth })
+            if (res.status == 200) {
+                this.$store.dispatch('User/getUserInfo')
+                this.birth = ''
+                this.showBirth = false
+            }
+        },
+
         logout() {
             this.$socket.emit('offline', this.userInfo._id)
             this.$store.dispatch('User/logout')
             this.$router.go(0)
         },
+
         // 格式化时间
         formatDateTime(date) {
             if (date == "" || !date) {
@@ -81,6 +202,9 @@ export default {
     computed: {
         userInfo() {
             return this.$store.state.User.userInfo
+        },
+        grey() {
+            return !this.pwd || !this.newData
         }
     },
     mounted() {
@@ -93,17 +217,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.more{
+.more {
         height: calc(100vh - 60px);
         background: #f9f9f9;
         overflow: scroll;
-        .more-top{
+        .more-top {
             height: 160px;
             background: #607D8B;
             position: relative;
             .more-top-box{
                 width: 90%;
-                height: 175px;
+                height: 200px;
                 border-top-left-radius: 15px;
                 border-top-right-radius: 15px;
                 background: #ffffff;
@@ -113,7 +237,7 @@ export default {
                 transform: translateX(-50%);
                 padding-top: 60px;
                 box-sizing: border-box;
-                img{
+                .userImg{
                     width: 100px;
                     height: 100px;
                     border-radius: 50%;
@@ -123,28 +247,42 @@ export default {
                     transform: translateX(-50%);
                     box-shadow: 0 36px 40px 0 rgba(39, 40, 50, 0.1);
                 }
-                p {
+                .name {
                     text-align: center;
                     font-size: 22px;
                     font-weight: bold;
                     height: 30px;
                     line-height: 30px;
                 }
+                .email{
+                    text-align: center;
+                    font-size: 14px;
+                    height: 20px;
+                    line-height: 20px;
+                }
                 div{
                     height: 75px;
                     padding: 10px 10px;
-                    margin: 0 10px;
+                    margin: 5px 10px 0;
                     box-sizing: border-box;
                     overflow: scroll;
                     background: #f9f9f9;
                     border-radius: 10px;
+                    position: relative;
+                    img {
+                        width: 20px;
+                        height: 20px;
+                        position: absolute;
+                        bottom: 10px;
+                        right: 10px;
+                    }
                 }
             }
         }
-        .more-main{
+        .more-main {
             width: 100%;
-            margin-top: 155px;
-            li{
+            margin-top: 180px;
+            li {
                 width: 90%;
                 height: 55px;
                 margin: 0 auto;
@@ -170,9 +308,106 @@ export default {
                 }
                 .more-main-right{
                     padding-right: 10px;
+                    img {
+                        transition: all .3s ease;
+                    }
+                    img.showModify,
+                    img.showSex,
+                    img.showBirth {
+                        transform: rotate(90deg);
+                    }
+                }
+                &.showSex,
+                &.showBirth {
+                    height: 50px;
+                }
+                &.showModify {
+                    height: 170px;
                 }
             }
-            &.logout{
+            .modify-box {
+                height: 0;
+                overflow: hidden;
+                transition: all .3s ease;
+                display: block;
+                padding: 0 20px;
+                .btn-group {
+                    height: 30px;
+                    margin: 10px 0;
+                    display: flex;
+                    justify-content: space-between;
+                    .modify-btn {
+                        flex: 1;
+                        border: 1px solid #607D8B;
+                        border-radius: 8px;
+                        display: flex;
+                        overflow: hidden;
+                        span {
+                            line-height: 30px;
+                            display: inline-block;
+                            flex: 1;
+                            text-align: center;
+                            transition: all .3s;
+                            &:not(:last-child) {
+                                border-right: 1px solid #607D8B;
+                            }
+                            &.btn-selected {
+                                background: #607D8B;
+                                color: #ffffff;
+                            }
+                        }
+                    }
+                    .finish-btn {
+                        width: 60px;
+                        color: #ffffff;
+                        background: #607D8B;
+                        border-radius: 8px;
+                        line-height: 30px;
+                        text-align: center;
+                        margin-left: 60px;
+                        &.grey {
+                            background: #999;
+                        }
+                    }
+                }
+                .modify-input {
+                    height: 50px;
+                    display: flex;
+                    align-items: center;
+                    span {
+                        width: 80px;
+                        color: #607D8B;
+                    }
+                    input {
+                        flex: 1;
+                        height: 30px;
+                        border-radius: 8px;
+                        outline: none;
+                        border: 1px solid #607D8B;
+                        padding-left: 10px;
+                        box-sizing: border-box;
+                    }
+                }
+                .tips {
+                    font-size: 12px;
+                    text-align: end;
+                    color: #FF5D5B;
+                }
+                &.modify-birth {
+                    .btn-group {
+                        .finish-btn {
+                            margin-left: 0;
+                        }
+                    }
+                    .modify-input {
+                        height: 30px;
+                        span {
+                            width: 70px;
+                        }
+                    }
+                }
+            }
+            &.second {
                 margin-top: 10px;
             }
         }
