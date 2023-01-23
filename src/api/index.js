@@ -50,3 +50,5 @@ export const modifyBirth = (data) => requests({ url: '/detail/birth', method: 'p
 export const modifySignature = (data) => requests({ url: '/detail/signature', method: 'post', data })
 
 export const modifyImgUrl = (data) => requests({ url: '/detail/imgurl', method: 'post', data })
+
+export const modifyNickname = (data) => requests({ url: '/detail/nickname', method: 'post', data })

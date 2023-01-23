@@ -23,7 +23,7 @@
                 <ul class="contacts-main-box">
                     <li v-for="item in friends" :key="item._id" @click="intoDetails(item._id)">
                         <img :src="item.imgUrl">
-                        <span>{{ item.name }}</span>
+                        <span>{{ item.nickname ? item.nickname : item.name }}</span>
                     </li>
                 </ul>
                 <h1>共 {{ friendsNum }} 位</h1>
@@ -141,7 +141,7 @@ export default {
                         }
 
                         span {
-                            font-size: 18px;
+                            font-size: 16px;
                             font-weight: bold;
                         }
                     }

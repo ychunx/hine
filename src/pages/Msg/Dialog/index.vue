@@ -4,7 +4,7 @@
     <div class="dialog">
         <div class="dialog-top">
             <div class="dialog-back"><img src="../../../assets/images//left.png" @click="back"></div>
-            <div class="dialog-title">{{ msgItem && msgItem.name }}</div>
+            <div class="dialog-title">{{ msgItem && msgItem.nickname || msgItem && msgItem.name }}</div>
             <div class="dialog-info"><img :src="msgItem && msgItem.imgUrl" @click="intoDetails(msgItem.friendId)"></div>
         </div>
         <div class="dialog-main" ref="dialogMain">
@@ -55,7 +55,10 @@ export default {
 
         // 发送消息
         send() {
-            let content = this.$refs.dialogInputContent.innerText
+            let content = this.$refs.dialogInputContent.innerText.trim()
+            if (content == '') {
+                return
+            }
             let userId = this.$store.state.User.userInfo._id
             let friendId = this.friendId
             let time = new Date()

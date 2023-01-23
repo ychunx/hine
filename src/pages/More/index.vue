@@ -5,7 +5,7 @@
                 <img :src="userInfo.imgUrl" class="userImg">
                 <p class="name">{{ userInfo.name }}</p>
                 <p class="email">{{ userInfo.email }}</p>
-                <div>
+                <div ref="userSignature">
                     {{ userInfo.signature }}
                     <img src="../../assets/images/modify.png" v-show="!modifySignature" @click="toggleSignature(true)">
                     <img src="../../assets/images/finish.png" v-show="modifySignature" @click="toggleSignature(false)">
@@ -93,7 +93,6 @@ export default {
             tips: '',
             sex: '你猜猜~',
             birth: '',
-            signature: ''
         }
     },
     methods:{
@@ -113,12 +112,19 @@ export default {
         toggleBirth() {
             this.showBirth = !this.showBirth
         },
-        toggleSignature(bool) {
+        async toggleSignature(bool) {
             this.modifySignature = bool
             if (bool) {
                 // 改成输入
+                this.$refs.userSignature.setAttribute('contenteditable', true)
+                this.$refs.userSignature.focus()
             } else {
                 // 调用接口
+                let res = await this.$API.modifySignature({ newSignature: this.$refs.userSignature.innerText})
+                if (res.status == 200) {
+                    this.$store.dispatch('User/getUserInfo')
+                    this.$refs.userSignature.setAttribute('contenteditable', false)
+                }
             }
         },
 

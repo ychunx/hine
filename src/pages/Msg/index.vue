@@ -8,7 +8,7 @@
           <img :src="item.imgUrl">
           <div class="msg-item-main">
             <div class="msg-item-title">
-              <span>{{ item.name }}</span>
+              <span>{{ item.nickname ? item.nickname : item.name }}</span>
               <span>{{ formatDateTime(item.lastTime) }}</span>
             </div>
             <div class="msg-item-content">
@@ -196,7 +196,6 @@ export default {
 
               span:nth-child(1) {
                 font-size: 18px;
-                font-weight: bold;
               }
 
               span:nth-child(2) {

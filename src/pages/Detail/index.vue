@@ -8,10 +8,18 @@
       <li>
         <p>{{ info && info.name }}</p>
       </li>
-      <li>
+      <li @click="toggleNickname">
         <div class="detail-main-left">备注</div>
         <div class="detail-main-center">{{ info && info.nickname }}</div>
-        <div class="detail-main-right"><img src="../../assets/images/right.png"></div>
+        <div class="detail-main-right"><img src="../../assets/images/right.png" :class="{showNickname}"></div>
+      </li>
+      <li class="modify-nickname" :class="{ showNickname }">
+        <div class="btn-group">
+          <div class="modify-input">
+            <span>修改为：</span><input type="text" v-model="nickname">
+          </div>
+          <div class="finish-btn" @click="finishNickname">完成</div>
+        </div>
       </li>
       <li>
         <div class="detail-main-left">邮箱</div>
@@ -47,6 +55,8 @@ export default {
     data() {
         return {
             id: '',
+            showNickname: false,
+            nickname: ''
         }
     },
     methods: {
@@ -100,6 +110,21 @@ export default {
         // second = second < 10 ? ('0' + second) : second
 
         return `${y}-${m}-${d}`
+      },
+
+      toggleNickname() {
+        this.showNickname = !this.showNickname
+      },
+      async finishNickname() {
+        let data = {}
+        data.userId = this.$store.state.User.userInfo._id
+        data.friendId = this.id
+        data.newNickname = this.nickname
+        let res = await this.$API.modifyNickname(data)
+        if (res.status == 200) {
+          this.nickname = ''
+          this.showNickname = false
+        }
       }
     },
     mounted() {
@@ -177,11 +202,61 @@ export default {
         }
         .detail-main-right {
           padding-right: 10px;
+          img {
+            transition: all .3s ease;
+          }
+          img.showNickname {
+            transform: rotate(90deg);
+          }
         }
         &.signature {
           padding: 20px 20px 20px 0;
           height: auto;
           align-items: flex-start;
+        }
+        &.showNickname {
+          height: 50px;
+        }
+      }
+      .modify-nickname {
+        height: 0;
+        overflow: hidden;
+        transition: all .3s ease;
+        display: block;
+        padding: 0 20px;
+        .btn-group {
+          height: 30px;
+          margin: 10px 0;
+          display: flex;
+          justify-content: space-between;
+          .finish-btn {
+              width: 60px;
+              color: #ffffff;
+              background: #607D8B;
+              border-radius: 8px;
+              line-height: 30px;
+              text-align: center;
+          }
+        }
+        .modify-input {
+          height: 30px;
+          display: flex;
+          align-items: center;
+
+          span {
+            width: 80px;
+            color: #607D8B;
+          }
+
+          input {
+            flex: 1;
+            height: 30px;
+            border-radius: 8px;
+            outline: none;
+            border: 1px solid #607D8B;
+            padding-left: 10px;
+            box-sizing: border-box;
+          }
         }
       }
     }
