@@ -2,10 +2,11 @@
     <div class="more">
         <div class="more-top">
             <div class="more-top-box">
-                <img :src="userInfo.imgUrl" class="userImg">
+                <div class="portrait"><img :src="userInfo.imgUrl" @click="$refs.portraitFile.click()"></div>
+                <input type="file" ref="portraitFile" style="display: none;" @change="modifyPortrait($event)">
                 <p class="name">{{ userInfo.name }}</p>
                 <p class="email">{{ userInfo.email }}</p>
-                <div ref="userSignature">
+                <div class="signature" ref="userSignature">
                     {{ userInfo.signature }}
                     <img src="../../assets/images/modify.png" v-show="!modifySignature" @click="toggleSignature(true)">
                     <img src="../../assets/images/finish.png" v-show="modifySignature" @click="toggleSignature(false)">
@@ -177,6 +178,23 @@ export default {
                 this.showBirth = false
             }
         },
+        async modifyPortrait(e) {
+            e.preventDefault();
+
+            let formData = new FormData()
+            let file = this.$refs.portraitFile.files[0]
+            let name = file.name
+
+            formData.append('portraitFile', file, name)
+
+            let res1 = await this.$API.uploadPortrait(formData)
+            if (res1.status == 200) {
+                let res2 = await this.$API.modifymodifyPortraitUrl({ newPortraitUrl: res1.msg})
+                if (res2.status == 200) {
+                    this.$store.dispatch('User/getUserInfo')
+                }
+            }
+        },
 
         logout() {
             this.$socket.emit('offline', this.userInfo._id)
@@ -243,7 +261,7 @@ export default {
                 transform: translateX(-50%);
                 padding-top: 60px;
                 box-sizing: border-box;
-                .userImg{
+                .portrait{
                     width: 100px;
                     height: 100px;
                     border-radius: 50%;
@@ -252,6 +270,10 @@ export default {
                     left: 50%;
                     transform: translateX(-50%);
                     box-shadow: 0 36px 40px 0 rgba(39, 40, 50, 0.1);
+                    overflow: hidden;
+                    img {
+                        width: 100px;
+                    }
                 }
                 .name {
                     text-align: center;
@@ -266,7 +288,7 @@ export default {
                     height: 20px;
                     line-height: 20px;
                 }
-                div{
+                .signature{
                     height: 75px;
                     padding: 10px 10px;
                     margin: 5px 10px 0;

@@ -49,6 +49,15 @@ export const modifyBirth = (data) => requests({ url: '/detail/birth', method: 'p
 
 export const modifySignature = (data) => requests({ url: '/detail/signature', method: 'post', data })
 
-export const modifyImgUrl = (data) => requests({ url: '/detail/imgurl', method: 'post', data })
+export const modifymodifyPortraitUrl = (data) => requests({ url: '/detail/portrait', method: 'post', data })
 
 export const modifyNickname = (data) => requests({ url: '/detail/nickname', method: 'post', data })
+
+export const uploadPortrait = (data) => requests({
+    url: '/upload/portrait',
+    method: 'post',
+    data,
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+})
