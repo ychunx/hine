@@ -53,7 +53,7 @@ export default {
             }
         },
 
-        // 发送消息
+        // 发送消息，★还差新建消息
         send() {
             let content = this.$refs.dialogInputContent.innerText.trim()
             if (content == '') {
@@ -68,7 +68,6 @@ export default {
                 content,
                 types: '0',
                 time,
-                state: 1,   // 对方在已读所有消息的时候也要把本地的state更改
             }
 
             // 添加进数组并更改最后消息和时间，socket 发送消息

@@ -124,6 +124,7 @@ export default {
         if (res.status == 200) {
           this.nickname = ''
           this.showNickname = false
+          this.$bus.$emit('refreshData')
         }
       }
     },

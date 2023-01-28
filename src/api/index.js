@@ -61,3 +61,7 @@ export const uploadPortrait = (data) => requests({
         'Content-Type': 'multipart/form-data'
     }
 })
+
+export const reqAllEncryptedMsgs = () => requests({ url: '/chat/getallencryptedmsgs', method: 'get' })
+
+export const readFriendEncryptedMsgs = (data) => requests({ url: '/chat/readfriendencryptedmsgs', method: 'post', data })

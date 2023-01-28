@@ -12,12 +12,12 @@
                         </div>
                     </li>
                     <li>
-                        <img src="../../assets/images/group.png">
-                        <span>新建群组</span>
-                    </li>
-                    <li>
                         <img src="../../assets/images/hint.png">
                         <span>新建加密对话</span>
+                    </li>
+                    <li>
+                        <img src="../../assets/images/group.png">
+                        <span>新建群组</span>
                     </li>
                 </ul>
                 <ul class="contacts-main-box">

@@ -56,11 +56,10 @@ export default {
       this.getMsgData()
       this.getContactsData()
     })
+
     // 接收消息，★还差新建好友消息项（首次消息）
     this.$socket.on('receiveMsg', (msg) => {
-      let friend = this.$store.state.Chat.allMsgs.find(item => {
-        return item.friendId == msg.userId
-      })
+      let friend = this.$store.state.Chat.allMsgs.find(item => item.friendId == msg.userId)
       friend.allMsgs.push(msg)
       friend.lastMsg = msg.content
       friend.lastTime = msg.time

@@ -3,9 +3,9 @@ import axios from 'axios'
 import { getToken } from "@/utils/token"
 
 const requests = axios.create({
-    //baseURL: 'http://localhost:3000/api',
+    baseURL: 'http://localhost:3000/api',
     //baseURL: 'http://43.138.238.142:3000/api',
-    baseURL: 'http://192.168.2.105:3000/api',
+    //baseURL: 'http://192.168.2.105:3000/api',
     timeout: 5000
 })
 
