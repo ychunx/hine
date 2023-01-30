@@ -53,7 +53,7 @@ export default {
             }
         },
 
-        // 发送消息，★还差新建消息
+        // 发送消息
         send() {
             let content = this.$refs.dialogInputContent.innerText.trim()
             if (content == '') {
@@ -70,10 +70,27 @@ export default {
                 time,
             }
 
-            // 添加进数组并更改最后消息和时间，socket 发送消息
-            this.msgItem.allMsgs.push(msg)
-            this.msgItem.lastMsg = content
-            this.msgItem.lastTime = time
+            if (this.msgItem) {
+                // 添加进数组并更改最后消息和时间，socket 发送消息
+                this.msgItem.allMsgs.push(msg)
+                this.msgItem.lastMsg = content
+                this.msgItem.lastTime = time
+            } else {
+                // 如果没有当前会话则新建消息项
+                let data = {}
+                data.allMsgs = [msg]
+                data.friendId = msg.friendId
+                data.lastMsg = msg.content
+                data.lastTime = msg.time
+                data.unReadNum = 0
+
+                let friendInfo = this.$store.state.Friend.friends.find(item => item._id == msg.friendId)
+                data.imgUrl = friendInfo.imgUrl
+                data.name = friendInfo.name
+                data.nickname = friendInfo.nickname
+
+                this.$store.state.Chat.allMsgs.unshift(data)
+            }
 
             this.$socket.emit('sendMsg', msg)
 
@@ -97,7 +114,7 @@ export default {
         readMsg() {
             if (this.msgItem) {
                 this.msgItem.unReadNum = 0
-                this.$API.readFriendMsgs({ userId: this.$store.state.User.userInfo._id, friendId: this.msgItem.friendId })
+                this.$API.readFriendMsgs({ friendId: this.msgItem.friendId })
             }
         },
 

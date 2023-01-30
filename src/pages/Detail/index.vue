@@ -74,10 +74,9 @@ export default {
         })
       },
 
-      // 删除好友，★没有使用socket刷新对方数据
+      // 删除好友，(★没有使用socket刷新对方数据)
       async deleteFriend() {
         let data = {
-          userId: this.$store.state.User.userInfo._id,
           friendId: this.id
         }
         let res = await this.$API.deleteFriend(data)

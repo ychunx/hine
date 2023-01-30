@@ -59,6 +59,7 @@ export default {
             })
         },
         search() {
+            // 防抖
             clearTimeout(this.timer)
             this.timer = setTimeout(this.searchHandle,1000)
         },

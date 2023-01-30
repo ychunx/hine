@@ -57,13 +57,30 @@ export default {
       this.getContactsData()
     })
 
-    // 接收消息，★还差新建好友消息项（首次消息）
+    // 接收消息
     this.$socket.on('receiveMsg', (msg) => {
       let friend = this.$store.state.Chat.allMsgs.find(item => item.friendId == msg.userId)
-      friend.allMsgs.push(msg)
-      friend.lastMsg = msg.content
-      friend.lastTime = msg.time
-      friend.unReadNum++
+      if (friend) {
+        friend.allMsgs.push(msg)
+        friend.lastMsg = msg.content
+        friend.lastTime = msg.time
+        friend.unReadNum++
+      } else {
+        // 新建好友消息项（首次消息）
+        let data = {}
+        data.allMsgs = [msg]
+        data.friendId = msg.userId
+        data.lastMsg = msg.content
+        data.lastTime = msg.time
+        data.unReadNum = 1
+
+        let friendInfo = this.$store.state.Friend.friends.find(item => item._id == msg.userId)
+        data.imgUrl = friendInfo.imgUrl
+        data.name = friendInfo.name
+        data.nickname = friendInfo.nickname
+
+        this.$store.state.Chat.allMsgs.unshift(data)
+      }
 
       // 判断是否已读消息，在该好友对话页则已读
       this.$bus.$emit('autoReadMsg')

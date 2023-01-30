@@ -60,7 +60,7 @@ export default {
 
         // 拒绝添加
         async reject(friendId) {
-            let res = await this.$API.rejectApply({ friendId, userId: this.userId })
+            let res = await this.$API.rejectApply({ friendId })
             if (res.status == 200) {
                 this.successId = friendId
                 setTimeout(() => {

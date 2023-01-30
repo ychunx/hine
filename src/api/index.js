@@ -65,3 +65,7 @@ export const uploadPortrait = (data) => requests({
 export const reqAllEncryptedMsgs = () => requests({ url: '/chat/getallencryptedmsgs', method: 'get' })
 
 export const readFriendEncryptedMsgs = (data) => requests({ url: '/chat/readfriendencryptedmsgs', method: 'post', data })
+
+export const deleteFriendMsgs = (data) => requests({ url: '/chat/delete', method: 'post', data })
+
+export const deleteFriendEncryptedMsgs = (data) => requests({ url: '/chat/deleteencrypted', method: 'post', data })
