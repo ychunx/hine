@@ -1,38 +1,42 @@
 export default [
   {
-    path: '/',
-    redirect: '/msg',
+    path: "/",
+    redirect: "/msg",
   },
   {
-    path: '/msg',
-    component: () => import('../pages/Msg')
+    path: "/msg",
+    component: () => import("../pages/Msg"),
   },
   {
-    path: '/contacts',
-    component: () => import('../pages/Contacts')
+    path: "/contacts",
+    component: () => import("../pages/Contacts"),
   },
   {
-    path: '/more',
-    component: () => import('../pages/More')
+    path: "/more",
+    component: () => import("../pages/More"),
   },
   {
-    path: '/search',
-    component: () => import('../pages/Search')
+    path: "/search",
+    component: () => import("../pages/Search"),
   },
   {
-    path: '/login',
-    component: () => import('../pages/Login')
+    path: "/login",
+    component: () => import("../pages/Login"),
   },
   {
-    path: '/register',
-    component: () => import('../pages/Register')
+    path: "/register",
+    component: () => import("../pages/Register"),
   },
   {
-    path: '/apply',
-    component: () => import('../pages/Apply')
+    path: "/apply",
+    component: () => import("../pages/Apply"),
   },
   {
-    path: '/detail',
-    component: () => import('../pages/Detail')
-  }
-]
+    path: "/detail",
+    component: () => import("../pages/Detail"),
+  },
+  {
+    path: "/dialog",
+    component: () => import("../pages/Msg/EncryptedDialog"),
+  },
+];
