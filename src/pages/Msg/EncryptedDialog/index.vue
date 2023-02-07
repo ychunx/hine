@@ -2,7 +2,7 @@
   <div class="encrypted-dialog">
     <div class="encrypted-dialog-top">
       <div class="back" @click="back">
-        <img src="../../../assets/images/left.png" />
+        <img src="../../../assets/images/left.png" v-show="!dialogShow" />
       </div>
       <div class="encrypted-dialog-top-portraits" :class="{ dialogShow }">
         <div
@@ -48,7 +48,7 @@
         <div class="dialog-top-title">
           {{ (msgItem && msgItem.nickname) || (msgItem && msgItem.name) }}
         </div>
-        <img src="../../../assets/images/x.png" @click="closeDialog" />
+        <img src="../../../assets/images/x.png" @click="toggleMsg" />
       </div>
       <div class="dialog-main" ref="dialogMain">
         <ul class="msg-ul">
@@ -107,14 +107,15 @@ export default {
       this.$router.back();
     },
 
+    // 进入对话
     intoDialog(friendId) {
       this.friendId = friendId;
 
       this.toggleMsg();
 
       this.$nextTick(() => {
-        this.$bus.$emit("moveToBottom");
-        this.$bus.$emit("readMsg");
+        this.moveToBottom();
+        this.readMsg(friendId);
       });
     },
 
@@ -221,9 +222,9 @@ export default {
       let differDays = new Date(nowDate - newDate).getDate();
       if (nowDate.getFullYear - y > 0) {
         return `${y}-${m}-${d} ${h}:${minute}`;
-      } else if (differDays >= 7) {
+      } else if (differDays > 7) {
         return `${m}-${d} ${h}:${minute}`;
-      } else if (differDays > 2 && differDays < 7) {
+      } else if (differDays > 3 && differDays <= 7) {
         let weeks = newDate.getDay();
         switch (weeks) {
           case 0:
@@ -243,21 +244,26 @@ export default {
           default:
             return `${m}-${d} ${h}:${minute}`;
         }
-      } else if (differDays > 1) {
+      } else if (differDays > 2) {
         return `前天 ${h}:${minute}`;
-      } else if (differDays > 0) {
+      } else if (differDays > 1) {
         return `昨天 ${h}:${minute}`;
       } else {
         return `${h}:${minute}`;
       }
     },
 
-    closeDialog() {
-      this.dialogShow = false;
-    },
-
+    // 点击头像更换聊天对象
     changeFriend(id) {
       this.friendId = id;
+    },
+
+    // 已读消息
+    readMsg(friendId) {
+      if (this.msgItem) {
+        this.msgItem.unReadNum = 0;
+        this.$API.readFriendEncryptedMsgs({ friendId });
+      }
     },
   },
   computed: {
@@ -270,6 +276,15 @@ export default {
       );
     },
   },
+  mounted() {
+    // 在聊天页中，新收到的消息自动设为已读
+    this.$bus.$on("autoReadEncryptedMsg", () => {
+      if (this.friendId) {
+        this.moveToBottom();
+        this.readMsg(this.friendId);
+      }
+    });
+  }
 };
 </script>
 
