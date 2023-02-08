@@ -11,13 +11,13 @@
               <div>{{ applyNum }}</div>
             </div>
           </li>
-          <li>
+          <li @click="intoBuild">
             <img src="../../assets/images/hint.png" />
             <span>新建加密对话</span>
           </li>
           <li>
             <img src="../../assets/images/group.png" />
-            <span>新建群组</span>
+            <span><s>新建群组</s></span>
           </li>
         </ul>
         <ul class="contacts-main-box">
@@ -36,19 +36,24 @@
     <div class="new-box" :class="{ newShow }">
       <New></New>
     </div>
+    <div class="build-box" :class="{ buildShow }">
+      <Build></Build>
+    </div>
   </div>
 </template>
 
 <script>
 import TopBar from "../../components/TopBar";
 import New from "./New";
+import Build from "./Build";
 import { mapState } from "vuex";
 export default {
   name: "Contacts",
-  components: { TopBar, New },
+  components: { TopBar, New, Build },
   data() {
     return {
       newShow: false,
+      buildShow: false,
     };
   },
   methods: {
@@ -57,6 +62,12 @@ export default {
     },
     hideNew() {
       this.newShow = false;
+    },
+    intoBuild() {
+      this.buildShow = true;
+    },
+    hideBuild() {
+      this.buildShow = false;
     },
 
     // 进入用户详情页
@@ -78,6 +89,7 @@ export default {
     this.$bus.$emit("activeTabBar");
 
     this.$bus.$on("hideNew", this.hideNew);
+    this.$bus.$on("hideBuild", this.hideBuild);
   },
   beforeDestroy() {
     this.$bus.$emit("deactiveTabBar");
@@ -163,12 +175,8 @@ export default {
       }
     }
   }
-  .new-box {
-    // width: 20px;
-    // height: 20px;
-    // top: 75px;
-    // left: 30px;
-
+  .new-box,
+  .build-box {
     border-radius: 20px;
     position: absolute;
     z-index: -1;
@@ -180,7 +188,8 @@ export default {
 
     transition: all 0.3s ease-out;
     overflow: hidden;
-    &.newShow {
+    &.newShow,
+    &.buildShow {
       width: 100%;
       height: 100vh;
       z-index: 999;
@@ -188,6 +197,9 @@ export default {
       left: 0;
       border-radius: 0;
     }
+  }
+  .build-box {
+    top: 110px;
   }
 }
 </style>

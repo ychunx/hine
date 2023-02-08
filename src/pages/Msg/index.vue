@@ -3,9 +3,31 @@
     <div class="msg-main" :class="{ hide }">
       <TopBar />
       <ul class="msg-ul">
-        <li class="msg-encrypted" @click="intoEncryptedDialog">
-          <img src="../../assets/images/hint.png" />
-          <div class="msg-encrypted-title">加密对话</div>
+        <li class="msg-encrypted">
+          <img
+            src="../../assets/images/hint.png"
+            @click="intoEncryptedDialog"
+          />
+          <div class="msg-encrypted-title">
+            <span
+              v-show="!inputShow"
+              @click="intoEncryptedDialog"
+              class="msg-encrypted-title-text"
+              >加密对话<span
+                v-show="unReadEncryptedNum != 0"
+                class="msg-encrypted-title-tip"
+                >{{ unReadEncryptedNum }}</span
+              ></span
+            >
+            <input
+              type="text"
+              placeholder="请输入密码"
+              v-show="inputShow"
+              v-model="pwd"
+              ref="pwdInput"
+            />
+            <button v-show="inputShow" @click.stop="matchPwd">确认</button>
+          </div>
         </li>
         <li
           class="msg-item"
@@ -45,6 +67,8 @@ export default {
     return {
       hide: false,
       friendId: "",
+      inputShow: false,
+      pwd: "",
     };
   },
   methods: {
@@ -61,7 +85,26 @@ export default {
     },
 
     intoEncryptedDialog() {
-      this.$router.push('/dialog')
+      if (!this.$bus.pwdCorrect) {
+        this.inputShow = true;
+        this.$nextTick(() => {
+          this.$refs.pwdInput.focus();
+        });
+        if (this.$store.state.User.password) {
+          this.pwd = "密码错误";
+        }
+      } else {
+        this.$router.push("/dialog");
+      }
+    },
+
+    // 进入加密聊天页的验证
+    matchPwd() {
+      this.$store.dispatch("User/savePassword", this.pwd);
+      // 暂时解决，需要等待监控 pwd 且解密完成
+      setTimeout(() => {
+        this.intoEncryptedDialog();
+      }, 100);
     },
 
     // 切换显示隐藏对话窗
@@ -129,6 +172,13 @@ export default {
     allMsgs() {
       return this.$store.state.Chat.allMsgs;
     },
+    unReadEncryptedNum() {
+      let num = 0;
+      this.$store.state.Chat.allEncryptedMsgs.forEach((item) => {
+        num += item.unReadNum;
+      });
+      return num;
+    },
   },
   mounted() {
     // 显示底栏
@@ -145,6 +195,8 @@ export default {
         this.$bus.$emit("readMsg");
       }
     });
+
+    this.$bus.$on("intoEncryptedDialog", this.intoEncryptedDialog);
   },
   beforeDestroy() {
     this.$bus.$emit("deactiveTabBar");
@@ -189,6 +241,41 @@ export default {
         .msg-encrypted-title {
           font-size: 18px;
           color: #607d8b;
+          flex: 1;
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          .msg-encrypted-title-text {
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            position: relative;
+            .msg-encrypted-title-tip {
+              position: absolute;
+              bottom: 10px;
+              right: 0;
+              line-height: 20px;
+              background: #fa5252;
+              color: #fff;
+              font-size: 16px;
+              padding: 0 5px;
+              border-radius: 10px;
+            }
+          }
+          input {
+            width: 75%;
+            height: 32px;
+            outline: none;
+            font-size: 16px;
+            padding-left: 10px;
+            box-sizing: border-box;
+          }
+          button {
+            width: 20%;
+            height: 30px;
+            color: #607d8b;
+          }
         }
       }
       .msg-item {

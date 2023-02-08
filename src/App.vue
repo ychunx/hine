@@ -8,9 +8,17 @@
 <script>
 import TabBar from "./components/TabBar";
 import { mapState } from "vuex";
+import JSEncrypt from "jsencrypt";
+import CryptoJS from "crypto-js";
 export default {
   name: "App",
   components: { TabBar },
+  data() {
+    return {
+      myPrivateKey: "",
+      jsDecrypt: null,
+    };
+  },
   methods: {
     // 获取消息页数据，★排序有问题
     async getMsgData() {
@@ -25,7 +33,44 @@ export default {
       });
 
       await this.$store.dispatch("Chat/reqAllEncryptedMsgs");
-      // ★解密操作
+      // 解密全部消息
+      if (this.jsDecrypt) {
+        this.decryptMsgs();
+      }
+    },
+
+    // 获取通讯录页数据
+    getContactsData() {
+      this.$store.dispatch("Friend/reqFriends");
+      this.$store.dispatch("Friend/reqFriendApplys");
+    },
+
+    // 解密私钥
+    decryptPrivateKey() {
+      try {
+        this.myPrivateKey = CryptoJS.AES.decrypt(
+          this.userPrivateKey,
+          this.pwd
+        ).toString(CryptoJS.enc.Utf8);
+        this.jsDecrypt = new JSEncrypt();
+        this.jsDecrypt.setPrivateKey(this.myPrivateKey);
+
+        this.$bus.pwdCorrect = true;
+
+        // 获取到私钥了就着手解密消息
+        this.decryptMsgs();
+      } catch (error) {
+        this.$bus.pwdCorrect = false;
+      }
+    },
+
+    // 解密消息
+    decryptMsgs() {
+      this.allEncryptedMsgs.forEach((item) => {
+        item.allMsgs.forEach((msg) => {
+          msg.content = this.jsDecrypt.decrypt(msg.content);
+        });
+      });
 
       // 排序全部好友的列表
       this.allEncryptedMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
@@ -36,16 +81,12 @@ export default {
         item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
       });
     },
-
-    // 获取通讯录页数据
-    getContactsData() {
-      this.$store.dispatch("Friend/reqFriends");
-      this.$store.dispatch("Friend/reqFriendApplys");
-    },
   },
   computed: {
     ...mapState({
       _id: (state) => state.User.userInfo._id,
+      pwd: (state) => state.User.password,
+      userPrivateKey: (state) => state.User.userInfo.privateKey,
       allMsgs: (state) => state.Chat.allMsgs,
       allEncryptedMsgs: (state) => state.Chat.allEncryptedMsgs,
     }),
@@ -59,6 +100,17 @@ export default {
         this.getMsgData();
         this.getContactsData();
         this.$socket.emit("online", this._id);
+
+        // 解决使用密码登录时的私钥获取
+        if (this.pwd) {
+          this.decryptPrivateKey();
+        }
+      }
+    },
+    pwd() {
+      // 解决 token 有效状态下的私钥获取，即需要用户输入密码后才能查看
+      if (this.pwd && this._id) {
+        this.decryptPrivateKey();
       }
     },
   },
@@ -102,8 +154,15 @@ export default {
       this.$bus.$emit("autoReadMsg");
     });
 
-    // 接收加密消息，★解密
+    // 接收加密消息
     this.$socket.on("receiveEncryptedMsg", (msg) => {
+      // 解密消息
+      try {
+        msg.content = this.jsDecrypt.decrypt(msg.content);
+      } catch (error) {
+        console.log("用户没有验证密码");
+      }
+
       let friend = this.$store.state.Chat.allEncryptedMsgs.find(
         (item) => item.friendId == msg.userId
       );

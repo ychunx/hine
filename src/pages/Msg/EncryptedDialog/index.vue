@@ -93,6 +93,7 @@
 </template>
 
 <script>
+import JSEncrypt from "jsencrypt";
 export default {
   name: "EncryptedDialog",
   data() {
@@ -105,6 +106,7 @@ export default {
   methods: {
     back() {
       this.$router.back();
+      this.$bus.$emit("showTabBar");
     },
 
     // 进入对话
@@ -137,7 +139,7 @@ export default {
       }
     },
 
-    // 发送消息
+    // 发送消息，★重新打开软件后看不到自己发的消息，原因是自己发的消息是由对方公钥加密的
     send() {
       let content = this.$refs.dialogInputContent.innerText.trim();
       if (content == "") {
@@ -179,9 +181,17 @@ export default {
         this.$store.state.Chat.allEncryptedMsgs.unshift(data);
       }
 
-      // ★加密后发送
+      // 加密后发送
+      let newMsg = { ...msg };
+      let friendPublicKey = this.friends.find(
+        (item) => item._id == this.friendId
+      ).publicKey;
 
-      this.$socket.emit("sendMsg", msg);
+      let jsEncrypt = new JSEncrypt();
+      jsEncrypt.setPublicKey(friendPublicKey);
+      newMsg.content = jsEncrypt.encrypt(newMsg.content);
+
+      this.$socket.emit("sendMsg", newMsg);
 
       this.$refs.dialogInputContent.innerText = "";
       this.$nextTick(() => {
@@ -275,6 +285,9 @@ export default {
         (item) => item.friendId == this.friendId
       );
     },
+    friends() {
+      return this.$store.state.Friend.friends;
+    },
   },
   mounted() {
     // 在聊天页中，新收到的消息自动设为已读
@@ -284,7 +297,9 @@ export default {
         this.readMsg(this.friendId);
       }
     });
-  }
+
+    this.$bus.$on("intoDialog", this.intoDialog);
+  },
 };
 </script>
 

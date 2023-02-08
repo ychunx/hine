@@ -3,6 +3,7 @@ import { setToken, removeToken } from "@/utils/token";
 
 const state = {
   userInfo: {},
+  password: "",
 };
 
 const mutations = {
@@ -11,8 +12,11 @@ const mutations = {
   },
   LOGOUT(state) {
     state.token = "";
-    state.userInfo = {};
+    state.password = "";
     removeToken();
+  },
+  SAVE_PASSWORD(state, data) {
+    state.password = data;
   },
 };
 
@@ -32,6 +36,7 @@ const actions = {
     let res = await login(data);
     if (res.status == 200) {
       setToken(res.msg);
+      commit("SAVE_PASSWORD", data.pwd);
       return "ok";
     } else if (res.status == 201) {
       return Promise.reject(new Error(res.msg));
@@ -62,6 +67,10 @@ const actions = {
     } else {
       return Promise.reject(new Error("falie"));
     }
+  },
+
+  savePassword({ commit }, pwd) {
+    commit("SAVE_PASSWORD", pwd);
   },
 };
 
