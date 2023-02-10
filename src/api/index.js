@@ -86,6 +86,16 @@ export const uploadPortrait = (data) =>
     },
   });
 
+export const uploadImage = (data) =>
+  requests({
+    url: "/upload/image",
+    method: "post",
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
 export const reqAllEncryptedMsgs = () =>
   requests({ url: "/chat/getallencryptedmsgs", method: "get" });
 

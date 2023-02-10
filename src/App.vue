@@ -29,6 +29,9 @@ export default {
       this.allMsgs.forEach((item) => {
         item.allMsgs.sort((a, b) => (a.time > b.time ? 1 : -1));
         item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content;
+        if (item.allMsgs[item.allMsgs.length - 1].types == '1') {
+          item.lastMsg = '[图片]'
+        }
         item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
       });
 
@@ -78,6 +81,9 @@ export default {
       this.allEncryptedMsgs.forEach((item) => {
         item.allMsgs.sort((a, b) => (a.time > b.time ? 1 : -1));
         item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content;
+        if (item.allMsgs[item.allMsgs.length - 1].types == '1') {
+          item.lastMsg = '[图片]'
+        }
         item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
       });
     },

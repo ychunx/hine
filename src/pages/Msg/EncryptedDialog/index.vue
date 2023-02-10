@@ -63,9 +63,6 @@
         </ul>
       </div>
       <div class="dialog-input">
-        <div class="dialog-input-plus">
-          <img src="../../../assets/images/plus.png" />
-        </div>
         <div class="dialog-input-content">
           <div
             contenteditable="true"
@@ -510,17 +507,7 @@ export default {
       justify-content: space-between;
       align-items: flex-end;
       border-radius: 15px;
-      .dialog-input-plus {
-        width: 50px;
-        height: 60px;
-        padding: 16px 0;
-        text-align: center;
-        box-sizing: border-box;
-        img {
-          width: 28px;
-          height: 28px;
-        }
-      }
+      padding-left: 10px;
       .dialog-input-content {
         flex: 1;
         min-height: 40px;

@@ -16,20 +16,21 @@
           />
         </div>
       </div>
-      <div class="dialog-main" ref="dialogMain">
+      <div class="dialog-main" :class="{ showInputMore }" ref="dialogMain">
         <ul class="msg-ul">
           <li
             v-for="item in msgItem && msgItem.allMsgs"
             :key="item._id"
             :class="item.friendId == friendId ? 'msg-ul-right' : 'msg-ul-left'"
           >
-            <div class="msg-li-content">{{ item.content }}</div>
+            <div class="msg-li-content" v-if="item.types == '0'">{{ item.content }}</div>
+            <div class="msg-li-content"  v-else><img :src="item.content"></div>
             <div class="msg-li-time">{{ formatDateTime(item.time) }}</div>
           </li>
         </ul>
       </div>
       <div class="dialog-input">
-        <div class="dialog-input-plus">
+        <div class="dialog-input-plus" @click="toggleInputMore">
           <img src="../../../assets/images/plus.png" />
         </div>
         <div class="dialog-input-content">
@@ -51,7 +52,19 @@
           />
         </div>
         <div class="dialog-input-send">
-          <img src="../../../assets/images/send.png" @click="send" />
+          <img src="../../../assets/images/send.png" @click="send(null)" />
+        </div>
+        <div class="dialog-input-more">
+          <div @click="$refs.uploadImgFile.click()">
+            <img src="../../../assets/images/image.png" />
+            <p>图片</p>
+            <input
+              type="file"
+              ref="uploadImgFile"
+              style="display: none"
+              @change="uploadImg($event)"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -65,6 +78,7 @@ export default {
   data() {
     return {
       isEmoji: false,
+      showInputMore: false,
     };
   },
   methods: {
@@ -84,11 +98,19 @@ export default {
     },
 
     // 发送消息
-    send() {
-      let content = this.$refs.dialogInputContent.innerText.trim();
-      if (content == "") {
-        return;
+    send(content) {
+      let types = "1";
+      let text = this.$refs.dialogInputContent.innerText.trim();
+
+      if (!content) {
+        if (text == "") {
+          return;
+        } else {
+          content = text;
+          types = "0";
+        }
       }
+      console.log(content, types)
       let userId = this.$store.state.User.userInfo._id;
       let friendId = this.friendId;
       let time = new Date();
@@ -96,7 +118,7 @@ export default {
         userId,
         friendId,
         content,
-        types: "0",
+        types,
         time,
       };
 
@@ -214,6 +236,28 @@ export default {
         },
       });
     },
+
+    toggleInputMore() {
+      this.showInputMore = !this.showInputMore;
+      this.moveToBottom();
+    },
+
+    // 发送图片
+    async uploadImg(e) {
+      e.preventDefault();
+
+      let formData = new FormData();
+      let file = this.$refs.uploadImgFile.files[0];
+      let name = file.name;
+
+      formData.append("uploadImgFile", file, name);
+
+      let res = await this.$API.uploadImage(formData);
+      if (res.status == 200) {
+        this.send(res.msg)
+        this.toggleInputMore()
+      }
+    },
   },
   computed: {
     msgItem() {
@@ -280,6 +324,10 @@ export default {
   .dialog-main {
     height: calc(100vh - 60px);
     overflow: scroll;
+    transition: all 0.1s ease-out;
+    &.showInputMore {
+      height: calc(100vh - 160px);
+    }
     .msg-ul {
       padding-top: 60px;
       box-sizing: border-box;
@@ -293,6 +341,10 @@ export default {
         width: -moz-fit-content;
         .msg-li-time {
           font-size: 12px;
+        }
+        img {
+          max-width: 100%;
+          border-radius: 15px;
         }
       }
       .msg-ul-left {
@@ -374,6 +426,29 @@ export default {
       img {
         width: 30px;
         height: 30px;
+      }
+    }
+    .dialog-input-more {
+      width: 100%;
+      height: 100px;
+      background: #e7f0f7;
+      position: absolute;
+      left: 0;
+      bottom: -100px;
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      overflow-x: scroll;
+      div {
+        margin: 0 25px;
+        img {
+          width: 50px;
+          height: 50px;
+        }
+        p {
+          text-align: center;
+          color: #607d8b;
+        }
       }
     }
   }
