@@ -326,6 +326,7 @@ export default {
         overflow: hidden;
         img {
           width: 100px;
+          height: 100px;
         }
       }
       .name {

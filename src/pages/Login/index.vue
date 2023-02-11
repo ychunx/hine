@@ -54,7 +54,7 @@ export default {
           await this.$store.dispatch("User/getUserInfo");
           this.$router.push("/msg");
         } catch (error) {
-          this.tips = '账号或密码错误';
+          this.tips = "账号或密码错误";
           this.$refs.loginBtn.innerText = "登录";
         }
       } else if (this.name) {

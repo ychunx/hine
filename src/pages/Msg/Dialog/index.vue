@@ -23,8 +23,10 @@
             :key="item._id"
             :class="item.friendId == friendId ? 'msg-ul-right' : 'msg-ul-left'"
           >
-            <div class="msg-li-content" v-if="item.types == '0'">{{ item.content }}</div>
-            <div class="msg-li-content"  v-else><img :src="item.content"></div>
+            <div class="msg-li-content" v-if="item.types == '0'">
+              {{ item.content }}
+            </div>
+            <div class="msg-li-content" v-else><img :src="item.content" /></div>
             <div class="msg-li-time">{{ formatDateTime(item.time) }}</div>
           </li>
         </ul>
@@ -110,7 +112,7 @@ export default {
           types = "0";
         }
       }
-      console.log(content, types)
+
       let userId = this.$store.state.User.userInfo._id;
       let friendId = this.friendId;
       let time = new Date();
@@ -254,8 +256,8 @@ export default {
 
       let res = await this.$API.uploadImage(formData);
       if (res.status == 200) {
-        this.send(res.msg)
-        this.toggleInputMore()
+        this.send(res.msg);
+        this.toggleInputMore();
       }
     },
   },
