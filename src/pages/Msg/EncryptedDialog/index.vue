@@ -136,7 +136,7 @@ export default {
       }
     },
 
-    // 发送消息，★重新打开软件后看不到自己发的消息，原因是自己发的消息是由对方公钥加密的
+    // 发送消息
     send() {
       let content = this.$refs.dialogInputContent.innerText.trim();
       if (content == "") {
@@ -179,14 +179,22 @@ export default {
       }
 
       // 加密后发送
+      // 重新打开软件后看不到自己发的消息，原因是自己发的消息是由对方公钥加密的，故需要同时使用自己的公钥加密一次存储，用|分隔
       let newMsg = { ...msg };
       let friendPublicKey = this.friends.find(
         (item) => item._id == this.friendId
       ).publicKey;
 
       let jsEncrypt = new JSEncrypt();
+
+      // 对方公钥加密
       jsEncrypt.setPublicKey(friendPublicKey);
-      newMsg.content = jsEncrypt.encrypt(newMsg.content);
+      let oppositeEncrypted = jsEncrypt.encrypt(newMsg.content);
+      // 自己公钥加密
+      jsEncrypt.setPublicKey(this.$store.state.User.userInfo.publicKey);
+      let ownEncrypted = jsEncrypt.encrypt(newMsg.content);
+
+      newMsg.content = `${oppositeEncrypted}|${ownEncrypted}`;
 
       this.$socket.emit("sendMsg", newMsg);
 

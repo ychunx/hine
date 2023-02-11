@@ -29,8 +29,8 @@ export default {
       this.allMsgs.forEach((item) => {
         item.allMsgs.sort((a, b) => (a.time > b.time ? 1 : -1));
         item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content;
-        if (item.allMsgs[item.allMsgs.length - 1].types == '1') {
-          item.lastMsg = '[图片]'
+        if (item.allMsgs[item.allMsgs.length - 1].types == "1") {
+          item.lastMsg = "[图片]";
         }
         item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
       });
@@ -71,7 +71,14 @@ export default {
     decryptMsgs() {
       this.allEncryptedMsgs.forEach((item) => {
         item.allMsgs.forEach((msg) => {
-          msg.content = this.jsDecrypt.decrypt(msg.content);
+          // 重新打开软件后看不到自己发的消息，原因是自己发的消息是由对方公钥加密的，故需要同时使用自己的公钥加密一次存储，用|分隔
+          let oppositeEncrypted = msg.content.split("|")[0];
+          let ownEncrypted = msg.content.split("|")[1];
+          if (msg.friendId == item.friendId) {
+            msg.content = this.jsDecrypt.decrypt(ownEncrypted);
+          } else {
+            msg.content = this.jsDecrypt.decrypt(oppositeEncrypted);
+          }
         });
       });
 
@@ -81,8 +88,8 @@ export default {
       this.allEncryptedMsgs.forEach((item) => {
         item.allMsgs.sort((a, b) => (a.time > b.time ? 1 : -1));
         item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content;
-        if (item.allMsgs[item.allMsgs.length - 1].types == '1') {
-          item.lastMsg = '[图片]'
+        if (item.allMsgs[item.allMsgs.length - 1].types == "1") {
+          item.lastMsg = "[图片]";
         }
         item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
       });
