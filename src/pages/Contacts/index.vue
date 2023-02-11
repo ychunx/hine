@@ -15,9 +15,9 @@
             <img src="../../assets/images/hint.png" />
             <span>新建加密对话</span>
           </li>
-          <li>
+          <li @click="intoBuildGroup">
             <img src="../../assets/images/group.png" />
-            <span><s>新建群组</s></span>
+            <span>新建群组</span>
           </li>
         </ul>
         <ul class="contacts-main-box">
@@ -39,6 +39,9 @@
     <div class="build-box" :class="{ buildShow }">
       <Build></Build>
     </div>
+    <div class="build-group-box" :class="{ buildGroupShow }">
+      <BuildGroup></BuildGroup>
+    </div>
   </div>
 </template>
 
@@ -46,14 +49,16 @@
 import TopBar from "../../components/TopBar";
 import New from "./New";
 import Build from "./Build";
+import BuildGroup from "./BuildGroup";
 import { mapState } from "vuex";
 export default {
   name: "Contacts",
-  components: { TopBar, New, Build },
+  components: { TopBar, New, Build, BuildGroup },
   data() {
     return {
       newShow: false,
       buildShow: false,
+      buildGroupShow: false,
     };
   },
   methods: {
@@ -68,6 +73,12 @@ export default {
     },
     hideBuild() {
       this.buildShow = false;
+    },
+    intoBuildGroup() {
+      this.buildGroupShow = true;
+    },
+    hideBuildGroup() {
+      this.buildGroupShow = false;
     },
 
     // 进入用户详情页
@@ -90,6 +101,7 @@ export default {
 
     this.$bus.$on("hideNew", this.hideNew);
     this.$bus.$on("hideBuild", this.hideBuild);
+    this.$bus.$on("hideBuildGroup", this.hideBuildGroup);
   },
   beforeDestroy() {
     this.$bus.$emit("deactiveTabBar");
@@ -176,7 +188,8 @@ export default {
     }
   }
   .new-box,
-  .build-box {
+  .build-box,
+  .build-group-box {
     border-radius: 20px;
     position: absolute;
     z-index: -1;
@@ -189,7 +202,8 @@ export default {
     transition: all 0.3s ease-out;
     overflow: hidden;
     &.newShow,
-    &.buildShow {
+    &.buildShow,
+    &.buildGroupShow {
       width: 100%;
       height: 100vh;
       z-index: 999;
@@ -200,6 +214,9 @@ export default {
   }
   .build-box {
     top: 110px;
+  }
+  .build-group-box {
+    top: 160px;
   }
 }
 </style>

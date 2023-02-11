@@ -69,8 +69,8 @@ export default {
           if (item.friendId == friendId) {
             this.friendApplys.splice(index, 1);
           }
-        }, 300);
-      });
+        });
+      }, 300);
     },
 
     // 拒绝添加
@@ -131,7 +131,7 @@ export default {
         background: rgba(255, 182, 193, 0.5);
       }
       &.reqSuccess {
-        transition: all 0.3s;
+        transition: all 0.3s ease-out;
         transform: translateX(-120%);
       }
       .li-left {

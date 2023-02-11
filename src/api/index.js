@@ -86,6 +86,16 @@ export const uploadPortrait = (data) =>
     },
   });
 
+export const uploadGroupPortrait = (data) =>
+  requests({
+    url: "/upload/groupportrait",
+    method: "post",
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
 export const uploadImage = (data) =>
   requests({
     url: "/upload/image",
@@ -107,3 +117,9 @@ export const deleteFriendMsgs = (data) =>
 
 export const deleteFriendEncryptedMsgs = (data) =>
   requests({ url: "/chat/deleteencrypted", method: "post", data });
+
+export const groupNameInUse = (name) =>
+  requests({ url: `/group/nameinuse/${name}`, method: "get" });
+
+export const buildGroup = (data) =>
+  requests({ url: "/group/build", method: "post", data });

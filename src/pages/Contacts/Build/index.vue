@@ -92,11 +92,12 @@ export default {
   }
   .build-main-box {
     width: 90%;
+    max-height: calc(100vh - 130px);
     background: #fff;
     margin: 0 auto;
     border-radius: 15px;
     box-shadow: 0 18px 20px 0 rgba(39, 40, 50, 0.1);
-    overflow: hidden;
+    overflow: scroll;
     li {
       display: flex;
       align-items: center;
