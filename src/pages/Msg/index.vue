@@ -3,16 +3,10 @@
     <div class="msg-main" :class="{ hide }">
       <TopBar />
       <ul class="msg-ul">
-        <li class="msg-encrypted">
-          <img
-            src="../../assets/images/hint.png"
-            @click="intoEncryptedDialog"
-          />
+        <li class="msg-encrypted" @click="intoEncryptedDialog">
+          <img src="../../assets/images/hint.png" />
           <div class="msg-encrypted-title">
-            <span
-              v-show="!inputShow"
-              @click="intoEncryptedDialog"
-              class="msg-encrypted-title-text"
+            <span v-show="!inputShow" class="msg-encrypted-title-text"
               >加密对话<span
                 v-show="unReadEncryptedNum != 0"
                 class="msg-encrypted-title-tip"
@@ -27,6 +21,18 @@
               ref="pwdInput"
             />
             <button v-show="inputShow" @click.stop="matchPwd">确认</button>
+          </div>
+        </li>
+        <li class="msg-group" @click="intoGroupDialog">
+          <img src="../../assets/images/group.png" />
+          <div class="msg-group-title">
+            <span class="msg-group-title-text"
+              >群组对话<span
+                v-show="unReadEncryptedNum != 0"
+                class="msg-group-title-tip"
+                >{{ unReadEncryptedNum }}</span
+              ></span
+            >
           </div>
         </li>
         <li
@@ -96,6 +102,10 @@ export default {
       } else {
         this.$router.push("/dialog");
       }
+    },
+
+    intoGroupDialog() {
+      this.$router.push("/groupdialog");
     },
 
     // 进入加密聊天页的验证
@@ -222,7 +232,8 @@ export default {
       li:active {
         background: #f9f9f9;
       }
-      .msg-encrypted {
+      .msg-encrypted,
+      .msg-group {
         width: 100%;
         height: 60px;
         padding: 0 20px;
@@ -238,7 +249,8 @@ export default {
           margin: 0 10px 0 2px;
           border: 3px solid #607d8b;
         }
-        .msg-encrypted-title {
+        .msg-encrypted-title,
+        .msg-group-title {
           font-size: 18px;
           color: #607d8b;
           flex: 1;
@@ -246,12 +258,14 @@ export default {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          .msg-encrypted-title-text {
+          .msg-encrypted-title-text,
+          .msg-group-title-text {
             width: 100%;
             height: 60px;
             line-height: 60px;
             position: relative;
-            .msg-encrypted-title-tip {
+            .msg-encrypted-title-tip,
+            .msg-group-title-tip {
               position: absolute;
               bottom: 10px;
               right: 0;

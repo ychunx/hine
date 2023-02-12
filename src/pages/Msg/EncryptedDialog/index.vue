@@ -310,7 +310,7 @@ export default {
 
 <style lang="less" scoped>
 .encrypted-dialog {
-  background: #f9f9f9;
+  background: #F0F3F8;
   height: 100vh;
   position: relative;
   .encrypted-dialog-top {
@@ -441,16 +441,17 @@ export default {
     left: 0;
     transition: all 0.3s;
     z-index: 999;
-    background: #fff;
-    padding: 0 20px;
+    background: #f9f9f9;
     box-sizing: border-box;
     &.dialogShow {
       top: 60px;
     }
     .dialog-top {
       height: 50px;
+      padding: 0 20px;
       display: flex;
       align-items: center;
+      background: #fff;
       border-bottom: 1px solid #ededed;
       span {
         width: 15px;
@@ -466,6 +467,7 @@ export default {
       }
     }
     .dialog-main {
+      padding: 0 20px;
       height: calc(100vh - 180px);
       overflow: scroll;
       .msg-ul {
@@ -509,7 +511,12 @@ export default {
       }
     }
     .dialog-input {
-      width: 100%;
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      width: 90%;
+      min-height: 50px;
       background: #e7f0f7;
       display: flex;
       justify-content: space-between;
@@ -518,12 +525,8 @@ export default {
       padding-left: 10px;
       .dialog-input-content {
         flex: 1;
-        min-height: 40px;
-        background: #ffffff;
-        border-radius: 5px;
         font-size: 20px;
-        margin: 10px 0;
-        box-sizing: border-box;
+        margin-bottom: 5px;
         display: flex;
         align-items: flex-end;
         div {
@@ -541,8 +544,7 @@ export default {
       }
       .dialog-input-send {
         width: 50px;
-        height: 60px;
-        padding: 15px 0;
+        margin-bottom: 8px;
         text-align: center;
         box-sizing: border-box;
         img {

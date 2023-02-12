@@ -286,7 +286,7 @@ export default {
   backdrop-filter: blur(8px);
 }
 .dialog {
-  background: #ffffff;
+  background: #f9f9f9;
   position: relative;
   .dialog-top {
     width: 100%;
@@ -433,7 +433,7 @@ export default {
     .dialog-input-more {
       width: 100%;
       height: 100px;
-      background: #e7f0f7;
+      background: #F0F3F8;
       position: absolute;
       left: 0;
       bottom: -100px;

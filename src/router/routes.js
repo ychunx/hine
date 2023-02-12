@@ -39,4 +39,8 @@ export default [
     path: "/dialog",
     component: () => import("../pages/Msg/EncryptedDialog"),
   },
+  {
+    path: "/groupdialog",
+    component: () => import("../pages/Msg/GroupDialog"),
+  },
 ];
