@@ -57,7 +57,7 @@
             :key="item._id"
             :class="item.userId == userId ? 'msg-ul-right' : 'msg-ul-left'"
           >
-            <img :src="userImgUrl(item.userId)" class="user-portrait" />
+            <img :src="userImgUrl(item.userId)" class="user-portrait" @click="intoDetails(item.userId)"/>
             <span>{{ userName(item.userId) }}</span>
             <!-- <div class="msg-li-content">{{ item.content }}</div> -->
             <div class="msg-li-content" v-if="item.types == '0'">
@@ -268,6 +268,16 @@ export default {
         this.toggleInputMore();
       }
     },
+
+    // 进入用户详情页
+    intoDetails(id) {
+      this.$router.push({
+        path: "/detail",
+        query: { id },
+      });
+    },
+
+    // ★进入群组详情页
 
     // 格式化时间
     formatDateTime(date) {
@@ -539,7 +549,7 @@ export default {
             overflow: hidden;
             position: absolute;
             left: -10px;
-            top: 40px;
+            top: 45px;
           }
           img {
             max-width: 100%;

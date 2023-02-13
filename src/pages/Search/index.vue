@@ -16,7 +16,7 @@
     </div>
     <ul class="search-list">
       <li class="title" v-show="searchUsers.length != 0">用户</li>
-      <li class="search-item" v-for="item in users" :key="item._id">
+      <li class="search-item" v-for="item in users" :key="item._id" @click="intoDetails(item._id)">
         <img :src="item.imgUrl" />
         <div class="info">
           <p class="info-name">{{ item.name }}</p>
@@ -134,6 +134,14 @@ export default {
         query: { id, name, imgUrl, type },
       });
     },
+    // 进入用户详情页
+    intoDetails(id) {
+      this.$router.push({
+        path: "/detail",
+        query: { id },
+      });
+    },
+    // ★进入群组详情页
   },
   computed: {
     ...mapState({

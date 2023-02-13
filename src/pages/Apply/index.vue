@@ -48,7 +48,7 @@ export default {
       } else {
         // 申请加入群组
         data.groupId = this.id;
-        //this.$socket.emit('groupApply', data)
+        this.$socket.emit('groupApply', data)
       }
       this.back();
     },

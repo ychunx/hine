@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     // 获取消息页数据
-    async getMsgData() {
+    async getMsgs() {
       // 普通一对一消息
       await this.$store.dispatch("Chat/reqAllMsgs");
       // 排序某个好友的记录，并添加最后发送的消息和时间方便展示
@@ -35,14 +35,18 @@ export default {
       });
       // 排序全部好友的列表
       this.allMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
+    },
 
+    async getEncryptedMsgs() {
       // 加密一对一消息
       await this.$store.dispatch("Chat/reqAllEncryptedMsgs");
       // 解密全部消息
       if (this.jsDecrypt) {
         this.decryptMsgs();
       }
+    },
 
+    async getGroupMsgs() {
       // 群消息
       await this.$store.dispatch("Chat/reqAllGroupMsgs");
       // 排序某个群组的聊天记录，并添加最后的消息和时间方便展示
@@ -58,6 +62,12 @@ export default {
       this.allGroupMsgs.groupMsgs.sort((a, b) =>
         a.lastTime < b.lastTime ? 1 : -1
       );
+    },
+
+    getMsgData() {
+      this.getMsgs()
+      this.getEncryptedMsgs()
+      this.getGroupMsgs()
     },
 
     // 获取通讯录页数据
@@ -255,11 +265,16 @@ export default {
       this.getContactsData();
     });
 
-    // 申请被同意，用户申请添加被通过，刷新全部数据
+    // 申请被同意，用户申请添加被通过
     this.$socket.on("acceptedApply", () => {
       this.getContactsData();
-      this.getMsgData();
+      this.getMsgs();
     });
+
+    // 群组新成员加入
+    this.$socket.on("newGroupMemberJoin", (data) => {
+      this.getGroupMsgs();
+    })
 
     // 关闭窗口前下线
     window.addEventListener("beforeunload", () => {

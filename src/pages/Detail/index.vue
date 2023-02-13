@@ -12,7 +12,7 @@
       <li>
         <p>{{ info && info.name }}</p>
       </li>
-      <li @click="toggleNickname">
+      <li @click="toggleNickname" v-show="isFriend">
         <div class="detail-main-left">备注</div>
         <div class="detail-main-center">{{ info && info.nickname }}</div>
         <div class="detail-main-right">
@@ -52,9 +52,12 @@
         <div class="detail-main-center">{{ info && info.signature }}</div>
       </li>
     </ul>
-    <div class="detail-bottom">
+    <div class="detail-bottom" v-if="isFriend">
       <div class="detail-delete" @click="deleteFriend">删除</div>
       <div class="detail-dialog" @click="intoDialog">发信息</div>
+    </div>
+    <div class="detail-bottom" v-else>
+      <div class="detail-apply" @click="intoApply">添加好友</div>
     </div>
   </div>
 </template>
@@ -67,6 +70,8 @@ export default {
       id: "",
       showNickname: false,
       nickname: "",
+      info: {},
+      isFriend: true,
     };
   },
   methods: {
@@ -136,17 +141,39 @@ export default {
         this.$bus.$emit("refreshData");
       }
     },
+
+    async getUserInfoById() {
+      let res = await this.$API.getUserInfoById({ userId: this.id });
+      if (res.status == 200) {
+        this.info = res.msg;
+      } else {
+        this.info = {};
+      }
+    },
+
+    intoApply() {
+      this.$router.push({
+        path: "/apply",
+        query: {
+          id: this.id,
+          name: this.info.name,
+          imgUrl: this.info.imgUrl,
+          type: "friend",
+        },
+      });
+    },
   },
   mounted() {
     let query = this.$route.query;
     this.id = query.id;
-  },
-  computed: {
-    info() {
-      return this.$store.state.Friend.friends.find(
-        (item) => item._id == this.id
-      );
-    },
+    this.info = this.$store.state.Friend.friends.find(
+      (item) => item._id == this.id
+    );
+
+    if (!this.info) {
+      this.isFriend = false;
+      this.getUserInfoById();
+    }
   },
 };
 </script>
@@ -293,7 +320,8 @@ export default {
       color: #dc143c;
     }
 
-    .detail-dialog {
+    .detail-dialog,
+    .detail-apply {
       width: 55%;
       height: 50px;
       background: #607d8b;
@@ -302,6 +330,9 @@ export default {
       text-align: center;
       line-height: 50px;
       border-radius: 10px;
+    }
+    .detail-apply {
+      width: 80%;
     }
   }
 }

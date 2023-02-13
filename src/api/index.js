@@ -139,3 +139,9 @@ export const reqAllGroupMsgs = () =>
 
 export const readGroupMsgs = (data) =>
   requests({ url: "/chat/readgroupmsgs", method: "post", data });
+
+export const getUserInfoById = (data) =>
+  requests({ url: "/detail/getuserinfobyid", method: "post", data });
+
+export const getGroupInfoById = (data) =>
+  requests({ url: "/group/getgroupinfobyid", method: "post", data });
