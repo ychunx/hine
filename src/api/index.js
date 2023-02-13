@@ -106,6 +106,16 @@ export const uploadImage = (data) =>
     },
   });
 
+export const uploadGroupImage = (data) =>
+  requests({
+    url: "/upload/groupimage",
+    method: "post",
+    data,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
 export const reqAllEncryptedMsgs = () =>
   requests({ url: "/chat/getallencryptedmsgs", method: "get" });
 
@@ -123,3 +133,9 @@ export const groupNameInUse = (name) =>
 
 export const buildGroup = (data) =>
   requests({ url: "/group/build", method: "post", data });
+
+export const reqAllGroupMsgs = () =>
+  requests({ url: "/chat/getallgroupmsgs", method: "get" });
+
+export const readGroupMsgs = (data) =>
+  requests({ url: "/chat/readgroupmsgs", method: "post", data });

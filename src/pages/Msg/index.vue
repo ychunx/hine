@@ -28,9 +28,9 @@
           <div class="msg-group-title">
             <span class="msg-group-title-text"
               >群组对话<span
-                v-show="unReadEncryptedNum != 0"
+                v-show="unReadGroupNum != 0"
                 class="msg-group-title-tip"
-                >{{ unReadEncryptedNum }}</span
+                >{{ unReadGroupNum }}</span
               ></span
             >
           </div>
@@ -187,6 +187,14 @@ export default {
       this.$store.state.Chat.allEncryptedMsgs.forEach((item) => {
         num += item.unReadNum;
       });
+      return num;
+    },
+    unReadGroupNum() {
+      let num = 0;
+      this.$store.state.Chat.allGroupMsgs.groupMsgs &&
+        this.$store.state.Chat.allGroupMsgs.groupMsgs.forEach((item) => {
+          num += item.unReadNum;
+        });
       return num;
     },
   },

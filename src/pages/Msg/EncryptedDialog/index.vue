@@ -310,7 +310,7 @@ export default {
 
 <style lang="less" scoped>
 .encrypted-dialog {
-  background: #F0F3F8;
+  background: #f0f3f8;
   height: 100vh;
   position: relative;
   .encrypted-dialog-top {

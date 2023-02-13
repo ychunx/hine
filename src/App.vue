@@ -20,11 +20,10 @@ export default {
     };
   },
   methods: {
-    // 获取消息页数据，★排序有问题
+    // 获取消息页数据
     async getMsgData() {
+      // 普通一对一消息
       await this.$store.dispatch("Chat/reqAllMsgs");
-      // 排序全部好友的列表
-      this.allMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
       // 排序某个好友的记录，并添加最后发送的消息和时间方便展示
       this.allMsgs.forEach((item) => {
         item.allMsgs.sort((a, b) => (a.time > b.time ? 1 : -1));
@@ -34,12 +33,31 @@ export default {
         }
         item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
       });
+      // 排序全部好友的列表
+      this.allMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
 
+      // 加密一对一消息
       await this.$store.dispatch("Chat/reqAllEncryptedMsgs");
       // 解密全部消息
       if (this.jsDecrypt) {
         this.decryptMsgs();
       }
+
+      // 群消息
+      await this.$store.dispatch("Chat/reqAllGroupMsgs");
+      // 排序某个群组的聊天记录，并添加最后的消息和时间方便展示
+      this.allGroupMsgs.groupMsgs.forEach((item) => {
+        item.allMsgs.sort((a, b) => (a.time > b.time ? 1 : -1));
+        item.lastMsg = item.allMsgs[item.allMsgs.length - 1].content;
+        if (item.allMsgs[item.allMsgs.length - 1].types == "1") {
+          item.lastMsg = "[图片]";
+        }
+        item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
+      });
+      // 排序全部群组的列表
+      this.allGroupMsgs.groupMsgs.sort((a, b) =>
+        a.lastTime < b.lastTime ? 1 : -1
+      );
     },
 
     // 获取通讯录页数据
@@ -82,8 +100,6 @@ export default {
         });
       });
 
-      // 排序全部好友的列表
-      this.allEncryptedMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
       // 排序某个好友的记录，并添加最后发送的消息和时间方便展示
       this.allEncryptedMsgs.forEach((item) => {
         item.allMsgs.sort((a, b) => (a.time > b.time ? 1 : -1));
@@ -93,6 +109,8 @@ export default {
         }
         item.lastTime = item.allMsgs[item.allMsgs.length - 1].time;
       });
+      // 排序全部好友的列表
+      this.allEncryptedMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
     },
   },
   computed: {
@@ -102,6 +120,7 @@ export default {
       userPrivateKey: (state) => state.User.userInfo.privateKey,
       allMsgs: (state) => state.Chat.allMsgs,
       allEncryptedMsgs: (state) => state.Chat.allEncryptedMsgs,
+      allGroupMsgs: (state) => state.Chat.allGroupMsgs,
     }),
   },
   watch: {
@@ -142,6 +161,9 @@ export default {
       if (friend) {
         friend.allMsgs.push(msg);
         friend.lastMsg = msg.content;
+        if (msg.types == '1') {
+          friend.lastMsg = '[图片]'
+        }
         friend.lastTime = msg.time;
         friend.unReadNum++;
       } else {
@@ -150,6 +172,9 @@ export default {
         data.allMsgs = [msg];
         data.friendId = msg.userId;
         data.lastMsg = msg.content;
+        if (msg.types == '1') {
+          friend.lastMsg = '[图片]'
+        }
         data.lastTime = msg.time;
         data.unReadNum = 1;
 
@@ -205,6 +230,24 @@ export default {
 
       // 判断是否已读消息，在该好友对话页则已读
       this.$bus.$emit("autoReadEncryptedMsg");
+    });
+
+    // 接收群组消息
+    this.$socket.on("receiveGroupMsg", (msg) => {
+      let group = this.$store.state.Chat.allGroupMsgs.groupMsgs.find(
+        (item) => item.groupId == msg.groupId
+      );
+
+      group.allMsgs.push(msg);
+      group.lastMsg = msg.content;
+      if (msg.types == '1') {
+        group.lastMsg = '[图片]'
+      }
+      group.lastTime = msg.time;
+      group.unReadNum++;
+
+      // 判断是否已读消息，在该群组对话页则已读
+      this.$bus.$emit("autoReadGroupMsg");
     });
 
     // 接收申请，有人请求添加，刷新申请列表
