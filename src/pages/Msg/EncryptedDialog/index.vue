@@ -314,6 +314,8 @@ export default {
         this.readMsg(this.friendId);
       }
     });
+
+    this.$bus.$on("showEncryptedDialog", this.intoDialog);
   },
 };
 </script>

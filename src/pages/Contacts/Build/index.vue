@@ -67,7 +67,7 @@ export default {
           // 判断用户当前能否进入加密对话页面（是否已验证密码）
           this.$router.push("/dialog");
           this.$nextTick(() => {
-            this.$bus.$emit("intoDialog", this.friendId);
+            this.$bus.$emit("showEncryptedDialog", this.friendId);
           });
         } else {
           this.$router.push("/msg");
