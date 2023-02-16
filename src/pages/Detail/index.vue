@@ -78,13 +78,18 @@ export default {
     // 根据进入路径不同判断如何返回
     back() {
       if (this.$route.query.from) {
-        this.$router.push("/msg");
-        this.$nextTick(() => {
-          this.$bus.$emit("intoDialog", this.id);
-        });
+        this.intoDialog();
       } else {
         this.$router.back();
       }
+    },
+
+    // 进入好友对话
+    intoDialog() {
+      this.$router.push("/msg");
+      this.$nextTick(() => {
+        this.$bus.$emit("intoDialog", this.id);
+      });
     },
 
     // 删除好友，(★没有使用socket刷新对方数据)
