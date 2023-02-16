@@ -50,10 +50,10 @@ export default {
   name: "BuildGroup",
   data() {
     return {
-      groupPortrait: "http://localhost:3000/user.png",
-      groupName: "",
-      invitationFriends: [],
-      groupNameInUse: null,
+      groupPortrait: "http://localhost:3000/user.png", // 存储群组头像链接
+      groupName: "", // 存储群组名称
+      invitationFriends: [], // 存储受邀请好友列表
+      groupNameInUse: null, // 群名称是否已被占用
     };
   },
   methods: {
@@ -61,6 +61,7 @@ export default {
       this.$bus.$emit("hideBuildGroup");
     },
 
+    // 上传群组头像文件
     async uploadGroupPortrait(e) {
       e.preventDefault();
 
@@ -95,6 +96,7 @@ export default {
       }
     },
 
+    // 建立群组
     async buildGroup() {
       if (
         this.groupNameInUse ||
@@ -112,19 +114,24 @@ export default {
 
       let res = await this.$API.buildGroup(data);
       if (res.status == 200) {
+        // 清空输入
         this.$bus.$emit("hideBuildGroup");
         this.groupName = "";
         this.invitationFriends = [];
         this.groupPortrait = "http://localhost:3000/user.png";
 
-        // ★进入群聊天页面
+        // 进入群组聊天页面
+        this.$bus.$emit("refreshGroupMsgs");
+        this.$router.push("/groupdialog");
       } else {
+        // 建立失败
         this.$refs.buildBtn.innerText = "失败";
         this.$refs.buildBtn.style.background = "rgba(255, 182, 193, 0.5)";
       }
     },
   },
   computed: {
+    // 获取好友列表
     friends() {
       return this.$store.state.Friend.friends;
     },

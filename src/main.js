@@ -16,6 +16,5 @@ new Vue({
     Vue.prototype.$bus = this;
     Vue.prototype.$API = API;
     Vue.prototype.$socket = io("http://localhost:3001");
-    //Vue.prototype.$socket = io('http://43.138.238.142:3001')
   },
 }).$mount("#app");

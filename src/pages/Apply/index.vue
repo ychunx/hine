@@ -35,6 +35,8 @@ export default {
     back() {
       this.$router.back();
     },
+
+    // 发送申请
     async send() {
       let data = {};
       data.content = this.$refs.applyInput.innerText.trim();
@@ -45,15 +47,18 @@ export default {
         // 申请添加好友
         data.friendId = this.id;
         this.$socket.emit("friendApply", data);
+        this.back();
       } else {
         // 申请加入群组
         data.groupId = this.id;
-        this.$socket.emit('groupApply', data)
+        this.$socket.emit("groupApply", data);
+        this.$bus.$emit("refreshGroupMsgs");
+        this.$router.push("/groupdialog");
       }
-      this.back();
     },
   },
   mounted() {
+    // 根据路由 query 参数，获取传递过来的信息（本路由非子路由）
     let query = this.$route.query;
     this.id = query.id;
     this.name = query.name;

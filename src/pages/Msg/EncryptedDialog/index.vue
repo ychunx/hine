@@ -2,7 +2,7 @@
   <div class="encrypted-dialog">
     <div class="encrypted-dialog-top">
       <div class="back" @click="back">
-        <img src="../../../assets/images/left.png" v-show="!dialogShow" />
+        <img src="../../../assets/images/left.png" :class="{ dialogShow }" />
       </div>
       <div class="encrypted-dialog-top-portraits" :class="{ dialogShow }">
         <div
@@ -44,11 +44,9 @@
     </ul>
     <div class="dialog" :class="{ dialogShow }">
       <div class="dialog-top">
-        <span></span>
         <div class="dialog-top-title">
           {{ (msgItem && msgItem.nickname) || (msgItem && msgItem.name) }}
         </div>
-        <img src="../../../assets/images/x.png" @click="toggleMsg" />
       </div>
       <div class="dialog-main" ref="dialogMain">
         <ul class="msg-ul">
@@ -102,8 +100,11 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
-      this.$bus.$emit("showTabBar");
+      if (this.dialogShow) {
+        this.toggleMsg();
+      } else {
+        this.$router.push("/msg");
+      }
     },
 
     // 进入对话
@@ -155,10 +156,15 @@ export default {
       };
 
       if (this.msgItem) {
-        // 添加进数组并更改最后消息和时间，socket 发送消息
+        // 添加进数组并更改最后消息和时间
         this.msgItem.allMsgs.push(msg);
         this.msgItem.lastMsg = content;
         this.msgItem.lastTime = time;
+
+        // 提升对话排位
+        this.$store.state.Chat.allEncryptedMsgs.sort((a, b) =>
+          a.lastTime < b.lastTime ? 1 : -1
+        );
       } else {
         // 如果没有当前会话则新建消息项
         let data = {};
@@ -196,6 +202,7 @@ export default {
 
       newMsg.content = `${oppositeEncrypted}|${ownEncrypted}`;
 
+      // socket 发送消息
       this.$socket.emit("sendMsg", newMsg);
 
       this.$refs.dialogInputContent.innerText = "";
@@ -282,14 +289,19 @@ export default {
     },
   },
   computed: {
+    // 所有加密消息
     allEncryptedMsgs() {
       return this.$store.state.Chat.allEncryptedMsgs;
     },
+
+    // 当前加密对话项数据
     msgItem() {
       return this.$store.state.Chat.allEncryptedMsgs.find(
         (item) => item.friendId == this.friendId
       );
     },
+
+    // 好友列表
     friends() {
       return this.$store.state.Friend.friends;
     },
@@ -302,8 +314,6 @@ export default {
         this.readMsg(this.friendId);
       }
     });
-
-    this.$bus.$on("intoDialog", this.intoDialog);
   },
 };
 </script>
@@ -327,6 +337,10 @@ export default {
       img {
         width: 25px;
         height: 25px;
+        transition: all 0.3s ease-out;
+        &.dialogShow {
+          transform: rotate(-90deg);
+        }
       }
     }
     .encrypted-dialog-top-portraits {
@@ -351,7 +365,7 @@ export default {
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          transition: all 0.3s;
+          transition: all 0.1s ease-out;
           &.portaitBoder {
             border: 3px solid #607d8b;
           }

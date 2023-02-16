@@ -16,7 +16,12 @@
     </div>
     <ul class="search-list">
       <li class="title" v-show="searchUsers.length != 0">用户</li>
-      <li class="search-item" v-for="item in users" :key="item._id" @click="intoDetails(item._id)">
+      <li
+        class="search-item"
+        v-for="item in users"
+        :key="item._id"
+        @click="intoDetails(item._id)"
+      >
         <img :src="item.imgUrl" />
         <div class="info">
           <p class="info-name">{{ item.name }}</p>
@@ -25,37 +30,48 @@
         <div
           class="enter-btn"
           v-if="item.relation == 200"
-          @click="intoDialog(item._id)"
+          @click.stop="intoDialog(item._id)"
         >
           发信息
         </div>
         <div
           class="apply-btn"
           v-else-if="item.relation == 201"
-          @click="intoApply(item._id, item.name, item.imgUrl, 'friend')"
+          @click.stop="intoApply(item._id, item.name, item.imgUrl, 'friend')"
         >
           申请中
         </div>
         <div
           class="apply-btn"
           v-else
-          @click="intoApply(item._id, item.name, item.imgUrl, 'friend')"
+          @click.stop="intoApply(item._id, item.name, item.imgUrl, 'friend')"
         >
           加好友
         </div>
       </li>
       <li class="title" v-show="searchGroups.length != 0">群组</li>
-      <li class="search-item" v-for="item in groups" :key="item._id">
+      <li
+        class="search-item"
+        v-for="item in groups"
+        :key="item._id"
+        @click="intoGroupDetail(item._id)"
+      >
         <img :src="item.imgUrl" />
         <div class="info">
           <p class="info-name">{{ item.name }}</p>
           <p class="info-email">{{ item.email }}</p>
         </div>
-        <div class="enter-btn" v-if="item.relation == 200">发信息</div>
+        <div
+          class="enter-btn"
+          v-if="item.relation == 200"
+          @click.stop="intoGroupDialog(item._id)"
+        >
+          发信息
+        </div>
         <div
           class="apply-btn"
           v-else
-          @click="intoApply(item._id, item.name, item.imgUrl, 'group')"
+          @click.stop="intoApply(item._id, item.name, item.imgUrl, 'group')"
         >
           申请加入
         </div>
@@ -70,24 +86,36 @@ export default {
   name: "Search",
   data() {
     return {
-      key: "",
-      users: [],
-      groups: [],
+      key: "", // 关键词
+      users: [], // 用户搜索结果
+      groups: [], // 群组搜索结果
       timer: null,
     };
   },
   methods: {
+    // 返回并清除搜索结果数据
     back() {
       this.$router.back();
       this.$store.dispatch("Search/clearResult");
     },
 
+    // 进入好友对话
     intoDialog(friendId) {
       this.$router.push("/msg");
       this.$nextTick(() => {
         this.$bus.$emit("intoDialog", friendId);
       });
     },
+
+    // 进入群组对话
+    intoGroupDialog(groupId) {
+      this.$router.push("/groupdialog");
+      this.$nextTick(() => {
+        this.$bus.$emit("intoGroupDialog", groupId);
+      });
+    },
+
+    // 搜索
     search() {
       // 防抖
       clearTimeout(this.timer);
@@ -106,6 +134,8 @@ export default {
         });
       }
     },
+
+    // 获取好友关系
     getUsers() {
       let usersArr = this.searchUsers;
       let relationsArr = this.relations;
@@ -117,6 +147,8 @@ export default {
       }
       this.users = usersArr;
     },
+
+    // 获取群组关系
     getGroups() {
       let groupsArr = this.searchGroups;
       let relationsArr = this.isInGroups;
@@ -128,12 +160,15 @@ export default {
       }
       this.groups = groupsArr;
     },
+
+    // 进入用户/群组申请页
     intoApply(id, name, imgUrl, type) {
       this.$router.push({
         path: "/apply",
         query: { id, name, imgUrl, type },
       });
     },
+
     // 进入用户详情页
     intoDetails(id) {
       this.$router.push({
@@ -141,10 +176,18 @@ export default {
         query: { id },
       });
     },
-    // ★进入群组详情页
+
+    // 进入群组详情页
+    intoGroupDetail(id) {
+      this.$router.push({
+        path: "/groupdetail",
+        query: { id },
+      });
+    },
   },
   computed: {
     ...mapState({
+      // 获取搜索结果数据
       searchUsers: (state) => state.Search.searchUsers,
       searchGroups: (state) => state.Search.searchGroups,
       relations: (state) => state.Search.relations,
@@ -153,6 +196,7 @@ export default {
     }),
   },
   mounted() {
+    // 从仍需保留结果的页面返回时，获取原始数据
     this.key = this.keyStore;
     this.searchHandle();
     this.$refs.searchInput.focus();
@@ -206,6 +250,9 @@ export default {
       border-bottom: 1px solid #ededed;
       display: flex;
       align-items: center;
+      &:active {
+        background: #f9f9f9;
+      }
       img {
         width: 50px;
         height: 50px;

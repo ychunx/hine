@@ -4,7 +4,7 @@
       <div class="back" @click="back">
         <img src="../../../assets/images/left.png" />
       </div>
-      <div class="build-select" @click="intoDialog">选择</div>
+      <div class="build-select" @click="select">选择</div>
     </div>
     <ul class="build-main-box">
       <li
@@ -25,34 +25,71 @@ export default {
   name: "Build",
   data() {
     return {
+      // 此组件供新建加密对话和邀请好友加入群组使用
       friendId: "",
+      groupId: "",
+      isInvite: false, // 是否用于邀请
     };
   },
   methods: {
+    // 根据实际情况判断如何返回
     back() {
-      this.$bus.$emit("hideBuild");
+      if (this.isInvite) {
+        this.$router.back();
+      } else {
+        this.$bus.$emit("hideBuild");
+      }
     },
+
+    // 选择好友
     changeFriend(id) {
       this.friendId = id;
     },
-    intoDialog() {
-      if (this.$bus.pwdCorrect) {
-        this.$router.push("/dialog");
-        this.$nextTick(() => {
-          this.$bus.$emit("intoDialog", this.friendId);
+
+    // 确认选择，发送请求
+    async select() {
+      if (this.isInvite) {
+        // 邀请好友进入群组
+        let res = await this.$API.groupInvite({
+          groupId: this.groupId,
+          userId: this.friendId,
         });
+
+        if (res.status == 200) {
+          this.$bus.$emit("refreshGroupMsgs");
+          this.$router.back();
+        } else {
+          this.$router.back();
+        }
       } else {
-        this.$router.push("/msg");
-        this.$nextTick(() => {
-          this.$bus.$emit("intoEncryptedDialog");
-        });
+        // 新建好友加密对话
+        if (this.$bus.pwdCorrect) {
+          // 判断用户当前能否进入加密对话页面（是否已验证密码）
+          this.$router.push("/dialog");
+          this.$nextTick(() => {
+            this.$bus.$emit("intoDialog", this.friendId);
+          });
+        } else {
+          this.$router.push("/msg");
+          this.$nextTick(() => {
+            this.$bus.$emit("intoEncryptedDialog");
+          });
+        }
       }
     },
   },
   computed: {
+    // 获取好友列表
     friends() {
       return this.$store.state.Friend.friends;
     },
+  },
+  mounted() {
+    // 判断组件是否用于邀请
+    if (this.$route.path == "/invite") {
+      this.isInvite = true;
+      this.groupId = this.$route.query.id;
+    }
   },
 };
 </script>

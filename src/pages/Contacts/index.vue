@@ -56,24 +56,29 @@ export default {
   components: { TopBar, New, Build, BuildGroup },
   data() {
     return {
-      newShow: false,
-      buildShow: false,
-      buildGroupShow: false,
+      newShow: false, // 是否显示好友申请页面
+      buildShow: false, // 是否显示新建加密消息页面
+      buildGroupShow: false, // 是否显示新建群组页面
     };
   },
   methods: {
+    // 进入/退出好友申请页面
     intoNew() {
       this.newShow = true;
     },
     hideNew() {
       this.newShow = false;
     },
+
+    // 进入/退出新建加密消息页面
     intoBuild() {
       this.buildShow = true;
     },
     hideBuild() {
       this.buildShow = false;
     },
+
+    // 进入/退出新建群组页面
     intoBuildGroup() {
       this.buildGroupShow = true;
     },
@@ -91,19 +96,22 @@ export default {
   },
   computed: {
     ...mapState({
-      friends: (state) => state.Friend.friends,
-      friendsNum: (state) => state.Friend.friends.length,
-      applyNum: (state) => state.Friend.friendApplys.length,
+      friends: (state) => state.Friend.friends, // 好友列表
+      friendsNum: (state) => state.Friend.friends.length, // 好友数量
+      applyNum: (state) => state.Friend.friendApplys.length, // 好友申请未处理数量
     }),
   },
   mounted() {
+    // 确保底栏显示
     this.$bus.$emit("activeTabBar");
 
+    // 绑定隐藏页面供子组件使用
     this.$bus.$on("hideNew", this.hideNew);
     this.$bus.$on("hideBuild", this.hideBuild);
     this.$bus.$on("hideBuildGroup", this.hideBuildGroup);
   },
   beforeDestroy() {
+    // 确保底栏隐藏
     this.$bus.$emit("deactiveTabBar");
   },
 };
@@ -157,20 +165,17 @@ export default {
       .contacts-main-box {
         width: 100%;
         background: #fff;
-
         li {
           display: flex;
           align-items: center;
           padding: 10px 20px;
           border-bottom: 1px solid #ededed;
-
           img {
             width: 35px;
             height: 35px;
             border-radius: 20%;
             margin-right: 25px;
           }
-
           span {
             font-size: 16px;
             font-weight: bold;

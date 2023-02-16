@@ -73,11 +73,20 @@ export default {
     return {
       hide: false,
       friendId: "",
-      inputShow: false,
+      inputShow: false, // 进入加密消息页时的密码输入框
       pwd: "",
     };
   },
   methods: {
+    // 切换显示隐藏对话窗
+    toggleMsg() {
+      this.hide = !this.hide;
+      if (!this.hide) {
+        this.friendId = "";
+      }
+    },
+
+    // 进入好友非加密对话
     intoDialog(friendId) {
       this.friendId = friendId;
 
@@ -90,6 +99,7 @@ export default {
       });
     },
 
+    // 进入加密消息页
     intoEncryptedDialog() {
       if (!this.$bus.pwdCorrect) {
         this.inputShow = true;
@@ -104,25 +114,18 @@ export default {
       }
     },
 
+    // 进入群组消息页
     intoGroupDialog() {
       this.$router.push("/groupdialog");
     },
 
-    // 进入加密聊天页的验证
+    // 进入加密聊天页前的验证
     matchPwd() {
       this.$store.dispatch("User/savePassword", this.pwd);
       // 暂时解决，需要等待监控 pwd 且解密完成
       setTimeout(() => {
         this.intoEncryptedDialog();
       }, 100);
-    },
-
-    // 切换显示隐藏对话窗
-    toggleMsg() {
-      this.hide = !this.hide;
-      if (!this.hide) {
-        this.friendId = "";
-      }
     },
 
     // 格式化时间
@@ -179,9 +182,12 @@ export default {
     },
   },
   computed: {
+    // 非加密消息
     allMsgs() {
       return this.$store.state.Chat.allMsgs;
     },
+
+    // 未读加密消息数
     unReadEncryptedNum() {
       let num = 0;
       this.$store.state.Chat.allEncryptedMsgs.forEach((item) => {
@@ -189,6 +195,8 @@ export default {
       });
       return num;
     },
+
+    // 未读群组消息数
     unReadGroupNum() {
       let num = 0;
       this.$store.state.Chat.allGroupMsgs.groupMsgs &&
@@ -199,7 +207,7 @@ export default {
     },
   },
   mounted() {
-    // 显示底栏
+    // 确保底栏显示
     this.$bus.$emit("activeTabBar");
 
     // 显示/隐藏对话页
@@ -217,6 +225,7 @@ export default {
     this.$bus.$on("intoEncryptedDialog", this.intoEncryptedDialog);
   },
   beforeDestroy() {
+    // 确保底栏隐藏
     this.$bus.$emit("deactiveTabBar");
   },
 };

@@ -34,8 +34,8 @@ export default {
   data() {
     return {
       tips: "",
-      acct: "",
-      pwd: "",
+      acct: "", // 账号
+      pwd: "", // 密码
     };
   },
   methods: {
@@ -47,10 +47,13 @@ export default {
     // 登录
     async login() {
       if (this.isComplete) {
+        // 用户已完成合法输入
         try {
           this.$refs.loginBtn.innerText = "登录中";
           let { acct, pwd } = this;
           await this.$store.dispatch("User/signIn", { acct, pwd });
+
+          // 登录成功则请求用户信息及跳转至消息页
           await this.$store.dispatch("User/getUserInfo");
           this.$router.push("/msg");
         } catch (error) {
@@ -65,7 +68,7 @@ export default {
     },
   },
   computed: {
-    // 判断是否全部正确填写
+    // 判断是否全部合法输入
     isComplete() {
       if (this.acct && this.pwd) {
         return true;
@@ -76,6 +79,7 @@ export default {
     },
   },
   mounted() {
+    // 确保底栏隐藏
     this.$bus.$emit("deactiveTabBar");
   },
 };

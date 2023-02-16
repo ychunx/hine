@@ -79,8 +79,8 @@ export default {
   props: ["friendId"],
   data() {
     return {
-      isEmoji: false,
-      showInputMore: false,
+      isEmoji: false, // 是否显示表情
+      showInputMore: false, // 是否显示附件发送选项
     };
   },
   methods: {
@@ -125,10 +125,18 @@ export default {
       };
 
       if (this.msgItem) {
-        // 添加进数组并更改最后消息和时间，socket 发送消息
+        // 添加进数组并更改最后消息和时间
         this.msgItem.allMsgs.push(msg);
         this.msgItem.lastMsg = content;
+        if (types == "1") {
+          this.msgItem.lastMsg = "[图片]";
+        }
         this.msgItem.lastTime = time;
+
+        // 提升对话排位
+        this.$store.state.Chat.allMsgs.sort((a, b) =>
+          a.lastTime < b.lastTime ? 1 : -1
+        );
       } else {
         // 如果没有当前会话则新建消息项
         let data = {};
@@ -148,6 +156,7 @@ export default {
         this.$store.state.Chat.allMsgs.unshift(data);
       }
 
+      // socket 发送消息
       this.$socket.emit("sendMsg", msg);
 
       this.$refs.dialogInputContent.innerText = "";
@@ -239,6 +248,7 @@ export default {
       });
     },
 
+    // 显示附件发送选项
     toggleInputMore() {
       this.showInputMore = !this.showInputMore;
       this.moveToBottom();
@@ -262,6 +272,7 @@ export default {
     },
   },
   computed: {
+    // 当前对话项数据
     msgItem() {
       return this.$store.state.Chat.allMsgs.find(
         (item) => item.friendId == this.friendId
@@ -433,7 +444,7 @@ export default {
     .dialog-input-more {
       width: 100%;
       height: 100px;
-      background: #F0F3F8;
+      background: #f0f3f8;
       position: absolute;
       left: 0;
       bottom: -100px;

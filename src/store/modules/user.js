@@ -30,7 +30,6 @@ const actions = {
       return Promise.reject(new Error("注册失败"));
     }
   },
-
   // 登录
   async signIn({ commit }, data) {
     let res = await login(data);
@@ -44,7 +43,6 @@ const actions = {
       return Promise.reject(new Error("登录失败"));
     }
   },
-
   // 获取用户的信息
   async getUserInfo({ commit }) {
     let res = await reqUserInfo();
@@ -55,7 +53,6 @@ const actions = {
       return Promise.reject(new Error("falie"));
     }
   },
-
   // 退出登录
   async logout({ commit }) {
     // 后端没有处理登出接口
@@ -68,7 +65,6 @@ const actions = {
       return Promise.reject(new Error("falie"));
     }
   },
-
   savePassword({ commit }, pwd) {
     commit("SAVE_PASSWORD", pwd);
   },

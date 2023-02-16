@@ -15,12 +15,13 @@ export default {
   components: { TabBar },
   data() {
     return {
+      // 加密对话解密模块
       myPrivateKey: "",
       jsDecrypt: null,
     };
   },
   methods: {
-    // 获取消息页数据
+    // 获取非加密消息数据
     async getMsgs() {
       // 普通一对一消息
       await this.$store.dispatch("Chat/reqAllMsgs");
@@ -37,6 +38,7 @@ export default {
       this.allMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
     },
 
+    // 获取加密消息数据
     async getEncryptedMsgs() {
       // 加密一对一消息
       await this.$store.dispatch("Chat/reqAllEncryptedMsgs");
@@ -46,6 +48,7 @@ export default {
       }
     },
 
+    // 获取群组消息数据
     async getGroupMsgs() {
       // 群消息
       await this.$store.dispatch("Chat/reqAllGroupMsgs");
@@ -64,10 +67,11 @@ export default {
       );
     },
 
+    // 获取聊天数据
     getMsgData() {
-      this.getMsgs()
-      this.getEncryptedMsgs()
-      this.getGroupMsgs()
+      this.getMsgs();
+      this.getEncryptedMsgs();
+      this.getGroupMsgs();
     },
 
     // 获取通讯录页数据
@@ -163,6 +167,9 @@ export default {
       this.getContactsData();
     });
 
+    // 刷新群组聊天数据
+    this.$bus.$on("refreshGroupMsgs", this.getGroupMsgs);
+
     // 接收非加密消息
     this.$socket.on("receiveMsg", (msg) => {
       let friend = this.$store.state.Chat.allMsgs.find(
@@ -171,19 +178,22 @@ export default {
       if (friend) {
         friend.allMsgs.push(msg);
         friend.lastMsg = msg.content;
-        if (msg.types == '1') {
-          friend.lastMsg = '[图片]'
+        if (msg.types == "1") {
+          friend.lastMsg = "[图片]";
         }
         friend.lastTime = msg.time;
         friend.unReadNum++;
+
+        // 提升对话排位
+        this.allMsgs.sort((a, b) => (a.lastTime < b.lastTime ? 1 : -1));
       } else {
         // 新建好友消息项（首次消息）
         let data = {};
         data.allMsgs = [msg];
         data.friendId = msg.userId;
         data.lastMsg = msg.content;
-        if (msg.types == '1') {
-          friend.lastMsg = '[图片]'
+        if (msg.types == "1") {
+          friend.lastMsg = "[图片]";
         }
         data.lastTime = msg.time;
         data.unReadNum = 1;
@@ -219,6 +229,11 @@ export default {
         friend.lastMsg = msg.content;
         friend.lastTime = msg.time;
         friend.unReadNum++;
+
+        // 提升对话排位
+        this.allEncryptedMsgs.sort((a, b) =>
+          a.lastTime < b.lastTime ? 1 : -1
+        );
       } else {
         // 新建好友消息项（首次消息）
         let data = {};
@@ -248,13 +263,22 @@ export default {
         (item) => item.groupId == msg.groupId
       );
 
-      group.allMsgs.push(msg);
-      group.lastMsg = msg.content;
-      if (msg.types == '1') {
-        group.lastMsg = '[图片]'
+      if (!group) {
+        this.getGroupMsgs();
+      } else {
+        group.allMsgs.push(msg);
+        group.lastMsg = msg.content;
+        if (msg.types == "1") {
+          group.lastMsg = "[图片]";
+        }
+        group.lastTime = msg.time;
+        group.unReadNum++;
+
+        // 提升对话排位
+        this.allGroupMsgs.groupMsgs.sort((a, b) =>
+          a.lastTime < b.lastTime ? 1 : -1
+        );
       }
-      group.lastTime = msg.time;
-      group.unReadNum++;
 
       // 判断是否已读消息，在该群组对话页则已读
       this.$bus.$emit("autoReadGroupMsg");
@@ -273,8 +297,9 @@ export default {
 
     // 群组新成员加入
     this.$socket.on("newGroupMemberJoin", (data) => {
+      console.log("a");
       this.getGroupMsgs();
-    })
+    });
 
     // 关闭窗口前下线
     window.addEventListener("beforeunload", () => {

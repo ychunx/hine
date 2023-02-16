@@ -48,6 +48,7 @@ export default {
   name: "new",
   data() {
     return {
+      // 成功或失败时显示对应 id 的过渡动画
       errorId: "",
       successId: "",
     };
@@ -61,7 +62,6 @@ export default {
     async agree(friendId) {
       this.$socket.emit("agreeApply", { friendId, userId: this.userId });
 
-      // 没有回复，没有出错处理
       this.successId = friendId;
       // 本应用动画回调函数执行，但只编写了过渡
       setTimeout(() => {
@@ -92,8 +92,8 @@ export default {
   },
   computed: {
     ...mapState({
-      friendApplys: (state) => state.Friend.friendApplys,
-      userId: (state) => state.User.userInfo._id,
+      friendApplys: (state) => state.Friend.friendApplys, // 好友申请列表
+      userId: (state) => state.User.userInfo._id, // 当前用户 id
     }),
   },
 };

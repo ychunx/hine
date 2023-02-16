@@ -37,7 +37,7 @@
         <img src="../../assets/images/more.png" />
         <img src="../../assets/images/more-fill.png" />
       </div>
-      <span>发现</span>
+      <span>我</span>
     </div>
   </div>
 </template>
@@ -52,18 +52,23 @@ export default {
     };
   },
   methods: {
+    // 完全显示/隐藏底栏
     deactiveTabBar() {
       this.deactive = true;
     },
     activeTabBar() {
       this.deactive = false;
     },
+
+    // 进入对话时的底栏过渡动画
     hideTabBar() {
       this.hide = true;
     },
     showTabBar() {
       this.hide = false;
     },
+
+    // 点击切换底栏场景
     changeScene(scene) {
       let curScene = this.getScene;
       if (scene != curScene) {
@@ -72,18 +77,23 @@ export default {
     },
   },
   mounted() {
+    // 完全显示/隐藏底栏
     this.$bus.$on("deactiveTabBar", this.deactiveTabBar);
     this.$bus.$on("activeTabBar", this.activeTabBar);
+    // 进入对话时的底栏过渡动画
     this.$bus.$on("hideTabBar", this.hideTabBar);
     this.$bus.$on("showTabBar", this.showTabBar);
   },
   computed: {
+    // 根据路由获取当前场景
     getScene() {
       return this.$route.path.slice(1);
     },
+    // 获取未处理好友请求数量
     applyNum() {
       return this.$store.state.Friend.friendApplys.length;
     },
+    // 计算非加密、加密和群组未读消息总和
     unReadNum() {
       let num = 0;
       this.$store.state.Chat.allMsgs.forEach((item) => {
@@ -92,6 +102,10 @@ export default {
       this.$store.state.Chat.allEncryptedMsgs.forEach((item) => {
         num += item.unReadNum;
       });
+      this.$store.state.Chat.allGroupMsgs.groupMsgs &&
+        this.$store.state.Chat.allGroupMsgs.groupMsgs.forEach((item) => {
+          num += item.unReadNum;
+        });
       return num;
     },
   },

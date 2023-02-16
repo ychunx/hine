@@ -12,6 +12,7 @@
 export default {
   name: "TopBar",
   methods: {
+    // 进入搜索页
     intoSearch() {
       // 跳转前清空搜索结果数据
       this.$store.dispatch("Search/clearResult");

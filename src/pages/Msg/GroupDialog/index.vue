@@ -2,7 +2,7 @@
   <div class="group-dialog">
     <div class="group-dialog-top">
       <div class="back" @click="back">
-        <img src="../../../assets/images/left.png" v-show="!dialogShow" />
+        <img src="../../../assets/images/left.png" :class="{ dialogShow }" />
       </div>
       <div class="group-dialog-top-portraits" :class="{ dialogShow }">
         <div
@@ -44,11 +44,13 @@
     </ul>
     <div class="dialog" :class="{ dialogShow }">
       <div class="dialog-top">
-        <span></span>
         <div class="dialog-top-title">
           {{ msgItem && msgItem.name }}
         </div>
-        <img src="../../../assets/images/x.png" @click="toggleMsg" />
+        <img
+          :src="msgItem && msgItem.imgUrl"
+          @click="intoGroupDetail(msgItem && msgItem.groupId)"
+        />
       </div>
       <div class="dialog-main" ref="dialogMain">
         <ul class="msg-ul">
@@ -57,9 +59,12 @@
             :key="item._id"
             :class="item.userId == userId ? 'msg-ul-right' : 'msg-ul-left'"
           >
-            <img :src="userImgUrl(item.userId)" class="user-portrait" @click="intoDetails(item.userId)"/>
+            <img
+              :src="userImgUrl(item.userId)"
+              class="user-portrait"
+              @click="intoDetails(item.userId)"
+            />
             <span>{{ userName(item.userId) }}</span>
-            <!-- <div class="msg-li-content">{{ item.content }}</div> -->
             <div class="msg-li-content" v-if="item.types == '0'">
               {{ item.content }}
             </div>
@@ -125,7 +130,11 @@ export default {
   },
   methods: {
     back() {
-      this.$router.back();
+      if (this.dialogShow) {
+        this.toggleMsg();
+      } else {
+        this.$router.push("/msg");
+      }
     },
 
     // 切换显示隐藏对话窗
@@ -200,6 +209,7 @@ export default {
         time,
       };
 
+      // 添加进数组并更改最后消息和时间
       this.msgItem.allMsgs.push(msg);
       this.msgItem.lastMsg = content;
       if (types == "1") {
@@ -207,6 +217,12 @@ export default {
       }
       this.msgItem.lastTime = time;
 
+      // 提升对话排位
+      this.$store.state.Chat.allGroupMsgs.groupMsgs.sort((a, b) =>
+        a.lastTime < b.lastTime ? 1 : -1
+      );
+
+      // socket 发送消息
       this.$socket.emit("sendGroupMsg", msg);
 
       this.$refs.dialogInputContent.innerText = "";
@@ -217,6 +233,7 @@ export default {
       this.$refs.dialogInputContent.focus();
     },
 
+    // 切换对话群组
     changeGroup(id) {
       this.groupId = id;
     },
@@ -247,6 +264,7 @@ export default {
       return info.nickName || info.name;
     },
 
+    // 显示/隐藏附件发送选项
     toggleInputMore() {
       this.showInputMore = !this.showInputMore;
       this.moveToBottom();
@@ -277,7 +295,13 @@ export default {
       });
     },
 
-    // ★进入群组详情页
+    // 进入群组详情页
+    intoGroupDetail(id) {
+      this.$router.push({
+        path: "/groupdetail",
+        query: { id },
+      });
+    },
 
     // 格式化时间
     formatDateTime(date) {
@@ -356,6 +380,12 @@ export default {
         this.readGroupMsg(this.groupId);
       }
     });
+
+    // 打开群组对话框
+    this.$bus.$on("intoGroupDialog", (groupId) => {
+      this.groupId = groupId;
+      this.dialogShow = true;
+    });
   },
 };
 </script>
@@ -378,6 +408,10 @@ export default {
       img {
         width: 25px;
         height: 25px;
+        transition: all 0.3s ease-out;
+        &.dialogShow {
+          transform: rotate(-90deg);
+        }
       }
     }
     .group-dialog-top-portraits {
@@ -402,7 +436,7 @@ export default {
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          transition: all 0.3s;
+          transition: all 0.1s ease-out;
           &.portaitBoder {
             border: 3px solid #607d8b;
           }
@@ -413,7 +447,6 @@ export default {
       }
     }
   }
-
   .group-dialog-ul {
     width: 100%;
     height: calc(100vh - 60px);
@@ -500,7 +533,7 @@ export default {
     }
     .dialog-top {
       height: 50px;
-      padding: 0 20px;
+      padding: 0 10px 0 50px;
       display: flex;
       align-items: center;
       background: #fff;
@@ -514,8 +547,9 @@ export default {
         text-align: center;
       }
       img {
-        width: 15px;
-        height: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
       }
     }
     .dialog-main {

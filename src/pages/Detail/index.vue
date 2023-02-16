@@ -67,26 +67,24 @@ export default {
   name: "detail",
   data() {
     return {
-      id: "",
+      id: "", // 用户 id
       showNickname: false,
-      nickname: "",
-      info: {},
-      isFriend: true,
+      nickname: "", // 新昵称
+      info: {}, // 用户资料
+      isFriend: true, // 是否为好友关系
     };
   },
   methods: {
+    // 根据进入路径不同判断如何返回
     back() {
       if (this.$route.query.from) {
-        this.intoDialog();
+        this.$router.push("/msg");
+        this.$nextTick(() => {
+          this.$bus.$emit("intoDialog", this.id);
+        });
       } else {
         this.$router.back();
       }
-    },
-    intoDialog() {
-      this.$router.push("/msg");
-      this.$nextTick(() => {
-        this.$bus.$emit("intoDialog", this.id);
-      });
     },
 
     // 删除好友，(★没有使用socket刷新对方数据)
@@ -94,9 +92,11 @@ export default {
       let data = {
         friendId: this.id,
       };
+
       let res = await this.$API.deleteFriend(data);
       if (res.status == 200) {
         if (this.$route.query.from) {
+          // 根据进入路径不同判断如何返回
           this.$router.replace("/msg");
           this.$bus.$emit("showTabBar");
         } else {
@@ -105,6 +105,50 @@ export default {
         this.$bus.$emit("refreshData");
       }
     },
+
+    // 显示/隐藏修改昵称
+    toggleNickname() {
+      this.showNickname = !this.showNickname;
+    },
+
+    // 提交修改昵称
+    async finishNickname() {
+      let data = {};
+      data.userId = this.$store.state.User.userInfo._id;
+      data.friendId = this.id;
+      data.newNickname = this.nickname;
+
+      let res = await this.$API.modifyNickname(data);
+      if (res.status == 200) {
+        this.nickname = "";
+        this.showNickname = false;
+        this.$bus.$emit("refreshData");
+      }
+    },
+
+    // 通过用户 id 获取资料（非好友）
+    async getUserInfoById() {
+      let res = await this.$API.getUserInfoById({ userId: this.id });
+      if (res.status == 200) {
+        this.info = res.msg;
+      } else {
+        this.info = {};
+      }
+    },
+
+    // 申请添加好友
+    intoApply() {
+      this.$router.push({
+        path: "/apply",
+        query: {
+          id: this.id,
+          name: this.info.name,
+          imgUrl: this.info.imgUrl,
+          type: "friend",
+        },
+      });
+    },
+
     // 格式化时间
     formatDateTime(date) {
       if (date == "" || !date) {
@@ -125,43 +169,6 @@ export default {
 
       return `${y}-${m}-${d}`;
     },
-
-    toggleNickname() {
-      this.showNickname = !this.showNickname;
-    },
-    async finishNickname() {
-      let data = {};
-      data.userId = this.$store.state.User.userInfo._id;
-      data.friendId = this.id;
-      data.newNickname = this.nickname;
-      let res = await this.$API.modifyNickname(data);
-      if (res.status == 200) {
-        this.nickname = "";
-        this.showNickname = false;
-        this.$bus.$emit("refreshData");
-      }
-    },
-
-    async getUserInfoById() {
-      let res = await this.$API.getUserInfoById({ userId: this.id });
-      if (res.status == 200) {
-        this.info = res.msg;
-      } else {
-        this.info = {};
-      }
-    },
-
-    intoApply() {
-      this.$router.push({
-        path: "/apply",
-        query: {
-          id: this.id,
-          name: this.info.name,
-          imgUrl: this.info.imgUrl,
-          type: "friend",
-        },
-      });
-    },
   },
   mounted() {
     let query = this.$route.query;
@@ -170,6 +177,7 @@ export default {
       (item) => item._id == this.id
     );
 
+    // 如果此用户不在好友列表，则说明非好友需通过用户 id 获取资料
     if (!this.info) {
       this.isFriend = false;
       this.getUserInfoById();

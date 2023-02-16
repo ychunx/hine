@@ -43,6 +43,7 @@ export default {
       name: "",
       email: "",
       pwd: "",
+      // 用户名、邮箱是否已被占用
       nameInUse: false,
       emailInUse: false,
     };
@@ -110,6 +111,7 @@ export default {
         try {
           let { name, email, pwd } = this;
           await this.$store.dispatch("User/register", { name, email, pwd });
+          // 注册成功则跳转至登录页
           this.intoLogin();
         } catch (error) {
           this.$refs.registerBtn.innerText = "注册";
@@ -126,7 +128,7 @@ export default {
     },
   },
   computed: {
-    // 判断是否全部正确填写
+    // 判断是否全部合法输入
     isComplete() {
       if (this.nameInUse || this.emailInUse) {
         return false;

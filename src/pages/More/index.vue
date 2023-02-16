@@ -133,10 +133,12 @@ export default {
   name: "More",
   data() {
     return {
+      // 是否进入更新用户名、邮箱、密码、性别、生日、个性签名状态
       showModify: false,
       showSex: false,
       showBirth: false,
       modifySignature: false,
+      // 存储欲更新数据
       modifySelect: "name",
       pwd: "",
       newData: "",
@@ -146,22 +148,24 @@ export default {
     };
   },
   methods: {
-    intoSearch() {
-      this.$router.push("/search");
-    },
-
+    // 进入/退出更新用户名、邮箱、密码状态
     toggleModify() {
+      // 先清空数据
       this.pwd = "";
       this.newData = "";
       this.tips = "";
       this.showModify = !this.showModify;
     },
+
     toggleSex() {
       this.showSex = !this.showSex;
     },
+
     toggleBirth() {
       this.showBirth = !this.showBirth;
     },
+
+    // 更新个性签名
     async toggleSignature(bool) {
       this.modifySignature = bool;
       if (bool) {
@@ -169,7 +173,7 @@ export default {
         this.$refs.userSignature.setAttribute("contenteditable", true);
         this.$refs.userSignature.focus();
       } else {
-        // 调用接口
+        // 调用接口提交更新
         let res = await this.$API.modifySignature({
           newSignature: this.$refs.userSignature.innerText,
         });
@@ -183,6 +187,8 @@ export default {
     modifyType(type) {
       this.modifySelect = type;
     },
+
+    // 提交更新用户名/邮箱/密码
     async finishModify() {
       if (this.grey) {
         return;
@@ -211,6 +217,8 @@ export default {
         this.tips = res.msg;
       }
     },
+
+    // 提交更新性别
     async finishSex() {
       let res = await this.$API.modifySex({ newSex: this.sex });
       if (res.status == 200) {
@@ -218,6 +226,8 @@ export default {
         this.showSex = false;
       }
     },
+
+    // 提交更新出生日期
     async finishBirth() {
       if (this.birth == "") {
         return;
@@ -229,6 +239,8 @@ export default {
         this.showBirth = false;
       }
     },
+
+    // 提交更新用户头像
     async modifyPortrait(e) {
       e.preventDefault();
 
@@ -249,9 +261,11 @@ export default {
       }
     },
 
+    // 登出
     logout() {
-      this.$socket.emit("offline", this.userInfo._id);
-      this.$store.dispatch("User/logout");
+      this.$socket.emit("offline", this.userInfo._id); // 下线
+      this.$store.dispatch("User/logout"); // 清除本地数据
+
       this.$router.go(0);
     },
 
@@ -277,6 +291,7 @@ export default {
     },
   },
   computed: {
+    // 获取用户信息
     userInfo() {
       return this.$store.state.User.userInfo;
     },
@@ -285,9 +300,11 @@ export default {
     },
   },
   mounted() {
+    // 确保显示底栏
     this.$bus.$emit("activeTabBar");
   },
   beforeDestroy() {
+    // 确保隐藏底栏
     this.$bus.$emit("deactiveTabBar");
   },
 };
