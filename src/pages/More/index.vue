@@ -56,7 +56,7 @@
       </li>
       <li @click="toggleBirth">
         <div class="more-main-left">生日</div>
-        <div class="more-main-center">{{ formatDateTime(userInfo.birth) }}</div>
+        <div class="more-main-center">{{ userInfo.birth | formatDateTime }}</div>
         <div class="more-main-right">
           <img src="../../assets/images/right.png" :class="{ showBirth }" />
         </div>
@@ -72,7 +72,7 @@
       <li>
         <div class="more-main-left">注册</div>
         <div class="more-main-center">
-          {{ formatDateTime(userInfo.registerTime) }}
+          {{ userInfo.registerTime | formatDateTime }}
         </div>
         <div class="more-main-right"></div>
       </li>
@@ -268,7 +268,17 @@ export default {
 
       this.$router.go(0);
     },
-
+  },
+  computed: {
+    // 获取用户信息
+    userInfo() {
+      return this.$store.state.User.userInfo;
+    },
+    grey() {
+      return !this.pwd || !this.newData;
+    },
+  },
+  filters: {
     // 格式化时间
     formatDateTime(date) {
       if (date == "" || !date) {
@@ -288,15 +298,6 @@ export default {
       // second = second < 10 ? ('0' + second) : second
 
       return `${y}-${m}-${d}`;
-    },
-  },
-  computed: {
-    // 获取用户信息
-    userInfo() {
-      return this.$store.state.User.userInfo;
-    },
-    grey() {
-      return !this.pwd || !this.newData;
     },
   },
   mounted() {

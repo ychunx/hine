@@ -101,13 +101,13 @@
       <li>
         <div class="detail-main-left">建立时间</div>
         <div class="detail-main-center">
-          {{ info && formatDateTime(info.time) }}
+          {{ info && info.time | formatDateTime }}
         </div>
       </li>
       <li v-show="isMember">
         <div class="detail-main-left">加入时间</div>
         <div class="detail-main-center">
-          {{ info && formatDateTime(info.joinTime) }}
+          {{ info && info.joinTime | formatDateTime }}
         </div>
       </li>
     </ul>
@@ -346,27 +346,6 @@ export default {
         query: { id },
       });
     },
-
-    // 格式化时间
-    formatDateTime(date) {
-      if (date == "" || !date) {
-        return "";
-      }
-      let newDate = new Date(date);
-      let y = newDate.getFullYear();
-      let m = newDate.getMonth() + 1;
-      m = m < 10 ? "0" + m : m;
-      let d = newDate.getDate();
-      d = d < 10 ? "0" + d : d;
-      // let h = newDate.getHours()
-      // h = h < 10 ? ('0' + h) : h
-      // let minute = newDate.getMinutes()
-      // minute = minute < 10 ? ('0' + minute) : minute
-      // let second = newDate.getSeconds()
-      // second = second < 10 ? ('0' + second) : second
-
-      return `${y}-${m}-${d}`;
-    },
   },
   computed: {
     // 获取/设置群组资料
@@ -397,6 +376,28 @@ export default {
           memberInfos: newVal,
         });
       },
+    },
+  },
+  filters: {
+    // 格式化时间
+    formatDateTime(date) {
+      if (date == "" || !date) {
+        return "";
+      }
+      let newDate = new Date(date);
+      let y = newDate.getFullYear();
+      let m = newDate.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      let d = newDate.getDate();
+      d = d < 10 ? "0" + d : d;
+      // let h = newDate.getHours()
+      // h = h < 10 ? ('0' + h) : h
+      // let minute = newDate.getMinutes()
+      // minute = minute < 10 ? ('0' + minute) : minute
+      // let second = newDate.getSeconds()
+      // second = second < 10 ? ('0' + second) : second
+
+      return `${y}-${m}-${d}`;
     },
   },
   mounted() {

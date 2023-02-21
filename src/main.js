@@ -8,6 +8,13 @@ import router from "./router";
 import * as API from "./api";
 import store from "./store";
 
+// 页面加载后元素自动获取到焦点
+Vue.directive("focus", {
+  inserted(e) {
+    e.focus();
+  },
+});
+
 new Vue({
   render: (h) => h(App),
   router,

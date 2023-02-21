@@ -27,7 +27,7 @@
               {{ item.content }}
             </div>
             <div class="msg-li-content" v-else><img :src="item.content" /></div>
-            <div class="msg-li-time">{{ formatDateTime(item.time) }}</div>
+            <div class="msg-li-time">{{ item.time | formatDateTime }}</div>
           </li>
         </ul>
       </div>
@@ -184,6 +184,49 @@ export default {
       }
     },
 
+    // 进入用户详情页
+    intoDetails(id) {
+      this.$router.push({
+        path: "/detail",
+        query: {
+          id,
+          from: "/msg",
+        },
+      });
+    },
+
+    // 显示附件发送选项
+    toggleInputMore() {
+      this.showInputMore = !this.showInputMore;
+      this.moveToBottom();
+    },
+
+    // 发送图片
+    async uploadImg(e) {
+      e.preventDefault();
+
+      let formData = new FormData();
+      let file = this.$refs.uploadImgFile.files[0];
+      let name = file.name;
+
+      formData.append("uploadImgFile", file, name);
+
+      let res = await this.$API.uploadImage(formData);
+      if (res.status == 200) {
+        this.send(res.msg);
+        this.toggleInputMore();
+      }
+    },
+  },
+  computed: {
+    // 当前对话项数据
+    msgItem() {
+      return this.$store.state.Chat.allMsgs.find(
+        (item) => item.friendId == this.friendId
+      );
+    },
+  },
+  filters: {
     // 格式化时间
     formatDateTime(date) {
       if (date == "" || !date) {
@@ -235,48 +278,6 @@ export default {
       } else {
         return `${h}:${minute}`;
       }
-    },
-
-    // 进入用户详情页
-    intoDetails(id) {
-      this.$router.push({
-        path: "/detail",
-        query: {
-          id,
-          from: "/msg",
-        },
-      });
-    },
-
-    // 显示附件发送选项
-    toggleInputMore() {
-      this.showInputMore = !this.showInputMore;
-      this.moveToBottom();
-    },
-
-    // 发送图片
-    async uploadImg(e) {
-      e.preventDefault();
-
-      let formData = new FormData();
-      let file = this.$refs.uploadImgFile.files[0];
-      let name = file.name;
-
-      formData.append("uploadImgFile", file, name);
-
-      let res = await this.$API.uploadImage(formData);
-      if (res.status == 200) {
-        this.send(res.msg);
-        this.toggleInputMore();
-      }
-    },
-  },
-  computed: {
-    // 当前对话项数据
-    msgItem() {
-      return this.$store.state.Chat.allMsgs.find(
-        (item) => item.friendId == this.friendId
-      );
     },
   },
   mounted() {

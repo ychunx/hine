@@ -16,9 +16,9 @@
             <input
               type="text"
               placeholder="请输入密码"
-              v-show="inputShow"
+              v-if="inputShow"
               v-model="pwd"
-              ref="pwdInput"
+              v-focus
             />
             <button v-show="inputShow" @click.stop="matchPwd">确认</button>
           </div>
@@ -48,7 +48,7 @@
           <div class="msg-item-main">
             <div class="msg-item-title">
               <span>{{ item.nickname ? item.nickname : item.name }}</span>
-              <span>{{ formatDateTime(item.lastTime) }}</span>
+              <span>{{ item.lastTime | formatDateTime }}</span>
             </div>
             <div class="msg-item-content">
               {{ item.lastMsg }}
@@ -103,9 +103,6 @@ export default {
     intoEncryptedDialog() {
       if (!this.$bus.pwdCorrect) {
         this.inputShow = true;
-        this.$nextTick(() => {
-          this.$refs.pwdInput.focus();
-        });
         if (this.$store.state.User.password) {
           this.pwd = "密码错误";
         }
@@ -127,7 +124,33 @@ export default {
         this.intoEncryptedDialog();
       }, 100);
     },
+  },
+  computed: {
+    // 非加密消息
+    allMsgs() {
+      return this.$store.state.Chat.allMsgs;
+    },
 
+    // 未读加密消息数
+    unReadEncryptedNum() {
+      let num = 0;
+      this.$store.state.Chat.allEncryptedMsgs.forEach((item) => {
+        num += item.unReadNum;
+      });
+      return num;
+    },
+
+    // 未读群组消息数
+    unReadGroupNum() {
+      let num = 0;
+      this.$store.state.Chat.allGroupMsgs.groupMsgs &&
+        this.$store.state.Chat.allGroupMsgs.groupMsgs.forEach((item) => {
+          num += item.unReadNum;
+        });
+      return num;
+    },
+  },
+  filters: {
     // 格式化时间
     formatDateTime(date) {
       if (date == "" || !date) {
@@ -179,31 +202,6 @@ export default {
       } else {
         return `${h}:${minute}`;
       }
-    },
-  },
-  computed: {
-    // 非加密消息
-    allMsgs() {
-      return this.$store.state.Chat.allMsgs;
-    },
-
-    // 未读加密消息数
-    unReadEncryptedNum() {
-      let num = 0;
-      this.$store.state.Chat.allEncryptedMsgs.forEach((item) => {
-        num += item.unReadNum;
-      });
-      return num;
-    },
-
-    // 未读群组消息数
-    unReadGroupNum() {
-      let num = 0;
-      this.$store.state.Chat.allGroupMsgs.groupMsgs &&
-        this.$store.state.Chat.allGroupMsgs.groupMsgs.forEach((item) => {
-          num += item.unReadNum;
-        });
-      return num;
     },
   },
   mounted() {

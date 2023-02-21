@@ -34,7 +34,7 @@
         <div class="li-main">
           <div class="li-title">
             <span>{{ item.nickname ? item.nickname : item.name }}</span>
-            <span>{{ formatDateTime(item.lastTime) }}</span>
+            <span>{{ item.lastTime | formatDateTime }}</span>
           </div>
           <div class="li-content">
             {{ item.lastMsg }}
@@ -56,7 +56,7 @@
             :class="item.friendId == friendId ? 'msg-ul-right' : 'msg-ul-left'"
           >
             <div class="msg-li-content">{{ item.content }}</div>
-            <div class="msg-li-time">{{ formatDateTime(item.time) }}</div>
+            <div class="msg-li-time">{{ item.time | formatDateTime }}</div>
           </li>
         </ul>
       </div>
@@ -222,6 +222,38 @@ export default {
       }, 100);
     },
 
+    // 点击头像更换聊天对象
+    changeFriend(id) {
+      this.friendId = id;
+    },
+
+    // 已读消息
+    readMsg(friendId) {
+      if (this.msgItem) {
+        this.msgItem.unReadNum = 0;
+        this.$API.readFriendEncryptedMsgs({ friendId });
+      }
+    },
+  },
+  computed: {
+    // 所有加密消息
+    allEncryptedMsgs() {
+      return this.$store.state.Chat.allEncryptedMsgs;
+    },
+
+    // 当前加密对话项数据
+    msgItem() {
+      return this.$store.state.Chat.allEncryptedMsgs.find(
+        (item) => item.friendId == this.friendId
+      );
+    },
+
+    // 好友列表
+    friends() {
+      return this.$store.state.Friend.friends;
+    },
+  },
+  filters: {
     // 格式化时间
     formatDateTime(date) {
       if (date == "" || !date) {
@@ -273,37 +305,6 @@ export default {
       } else {
         return `${h}:${minute}`;
       }
-    },
-
-    // 点击头像更换聊天对象
-    changeFriend(id) {
-      this.friendId = id;
-    },
-
-    // 已读消息
-    readMsg(friendId) {
-      if (this.msgItem) {
-        this.msgItem.unReadNum = 0;
-        this.$API.readFriendEncryptedMsgs({ friendId });
-      }
-    },
-  },
-  computed: {
-    // 所有加密消息
-    allEncryptedMsgs() {
-      return this.$store.state.Chat.allEncryptedMsgs;
-    },
-
-    // 当前加密对话项数据
-    msgItem() {
-      return this.$store.state.Chat.allEncryptedMsgs.find(
-        (item) => item.friendId == this.friendId
-      );
-    },
-
-    // 好友列表
-    friends() {
-      return this.$store.state.Friend.friends;
     },
   },
   mounted() {

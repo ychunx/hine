@@ -10,7 +10,7 @@
           placeholder="搜索..."
           @input="search"
           v-model="key"
-          ref="searchInput"
+          v-focus
         />
       </div>
     </div>
@@ -199,7 +199,6 @@ export default {
     // 从仍需保留结果的页面返回时，获取原始数据
     this.key = this.keyStore;
     this.searchHandle();
-    this.$refs.searchInput.focus();
   },
 };
 </script>

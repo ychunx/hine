@@ -9,6 +9,7 @@
             contenteditable="true"
             class="apply-input"
             ref="applyInput"
+            v-focus
           ></div>
         </div>
       </div>

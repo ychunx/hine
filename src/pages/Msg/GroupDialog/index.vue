@@ -34,7 +34,7 @@
         <div class="li-main">
           <div class="li-title">
             <span>{{ item.name }}</span>
-            <span>{{ formatDateTime(item.lastTime) }}</span>
+            <span>{{ item.lastTime | formatDateTime }}</span>
           </div>
           <div class="li-content">
             {{ item.lastMsg }}
@@ -69,7 +69,7 @@
               {{ item.content }}
             </div>
             <div class="msg-li-content" v-else><img :src="item.content" /></div>
-            <div class="msg-li-time">{{ formatDateTime(item.time) }}</div>
+            <div class="msg-li-time">{{ item.time | formatDateTime }}</div>
           </li>
         </ul>
       </div>
@@ -302,7 +302,24 @@ export default {
         query: { id },
       });
     },
-
+  },
+  computed: {
+    allGroupMsgs() {
+      return this.$store.state.Chat.allGroupMsgs.groupMsgs;
+    },
+    msgItem() {
+      return (
+        this.$store.state.Chat.allGroupMsgs.groupMsgs &&
+        this.$store.state.Chat.allGroupMsgs.groupMsgs.find(
+          (item) => item.groupId == this.groupId
+        )
+      );
+    },
+    userId() {
+      return this.$store.state.User.userInfo._id;
+    },
+  },
+  filters: {
     // 格式化时间
     formatDateTime(date) {
       if (date == "" || !date) {
@@ -354,22 +371,6 @@ export default {
       } else {
         return `${h}:${minute}`;
       }
-    },
-  },
-  computed: {
-    allGroupMsgs() {
-      return this.$store.state.Chat.allGroupMsgs.groupMsgs;
-    },
-    msgItem() {
-      return (
-        this.$store.state.Chat.allGroupMsgs.groupMsgs &&
-        this.$store.state.Chat.allGroupMsgs.groupMsgs.find(
-          (item) => item.groupId == this.groupId
-        )
-      );
-    },
-    userId() {
-      return this.$store.state.User.userInfo._id;
     },
   },
   mounted() {

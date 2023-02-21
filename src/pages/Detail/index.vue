@@ -38,13 +38,13 @@
       <li>
         <div class="detail-main-left">生日</div>
         <div class="detail-main-center">
-          {{ info && formatDateTime(info.birth) }}
+          {{ info && info.birth | formatDateTime }}
         </div>
       </li>
       <li>
         <div class="detail-main-left">注册</div>
         <div class="detail-main-center">
-          {{ info && formatDateTime(info.registerTime) }}
+          {{ info && info.registerTime | formatDateTime }}
         </div>
       </li>
       <li class="signature">
@@ -153,7 +153,8 @@ export default {
         },
       });
     },
-
+  },
+  filters: {
     // 格式化时间
     formatDateTime(date) {
       if (date == "" || !date) {
